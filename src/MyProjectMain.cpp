@@ -60,15 +60,14 @@ void MyProjectMain::GameAction() {
 
 	unsigned int start = GetTime();
 
-	//unsigned int tmp = sin(0.001 * GetTime()) * 128 + 127;
-	//SetupBackgroundBuffer((((tmp << 8) + tmp) << 8) + tmp);
 	SetupBackgroundBuffer(0x4295C8);
 	
+	m_backgroundTerrain->DoUpdate(GetTime());
+	m_backgroundTerrain->Draw();
+
 	m_sub->DoUpdate(GetTime());
 	m_sub->Draw();
 
-	m_backgroundTerrain->DoUpdate(GetTime());
-	m_backgroundTerrain->Draw();
 	m_foregroundTerrain->DoUpdate(GetTime());
 	m_foregroundTerrain->Draw();
 
@@ -93,6 +92,18 @@ void MyProjectMain::KeyDown(int iKeyCode) {
 	switch (iKeyCode) {
 	case SDLK_ESCAPE:
 		SetExitWithCode(0);
+		break;
+	case SDLK_UP:
+		m_sub->setYDelta(-10);
+		break;
+	case SDLK_DOWN:
+		m_sub->setYDelta(10);
+		break;
+	case SDLK_LEFT:
+		m_sub->setXDelta(-10);
+		break;
+	case SDLK_RIGHT:
+		m_sub->setXDelta(10);
 		break;
 	}
 }
