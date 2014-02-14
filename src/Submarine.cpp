@@ -2,7 +2,7 @@
 
 ImageSurface *Submarine::m_body = new ImageSurface();
 
-Submarine::Submarine(MyProjectMain *pEngine, unsigned int x, unsigned int y) : DisplayableObject(pEngine), m_friction(0.90) {
+Submarine::Submarine(MyProjectMain *engine, unsigned int x, unsigned int y) : DisplayableObject(engine), m_friction(0.90) {
 	/* Set the initial position */
 	m_iCurrentScreenX = x;
 	m_iCurrentScreenY = y;
@@ -21,7 +21,7 @@ void Submarine::Draw() {
 	/* Draw the main submarine body */
 	m_body->RenderImage(m_pEngine->GetBackground(), 0, 0, m_iCurrentScreenX, m_iCurrentScreenY, m_body->GetWidth(), m_body->GetHeight());
 
-	/* Draw the lights is required */
+	/* Draw the lights if required */
 	if (m_lightsOn) {
 		// ...
 	}

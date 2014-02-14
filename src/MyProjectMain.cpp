@@ -1,27 +1,27 @@
-#include "header.h"
-#include "BaseEngine.h"
-#include "MyProjectMain.h"
-#include "JPGImage.h"
-#include "TileManager.h"
-#include "DisplayableObject.h"
-#include "Submarine.h"
-#include "Terrain.h"
 #include <cmath>
+#include "header.h"
+#include "Terrain.h"
+#include "JPGImage.h"
+#include "Submarine.h"
+#include "BaseEngine.h"
+#include "TileManager.h"
+#include "MyProjectMain.h"
+#include "DisplayableObject.h"
 
-MyProjectMain::MyProjectMain() : BaseEngine(6), m_fpsTarget(60) {
-	this->m_sub = new Submarine(this, 100, 250);
-	this->m_foregroundTerrain = new Terrain(this, 110, 500);
-	this->m_backgroundTerrain = new Terrain(this, 110, 300);
-
-	m_backgroundTerrain->setColour(0x2E6D94);
-	m_backgroundTerrain->setSpeed(2.0);
-}
+MyProjectMain::MyProjectMain() : BaseEngine(6), m_fpsTarget(60) {}
 
 void MyProjectMain::SetupBackgroundBuffer(unsigned int colour) {
 	FillBackground(colour);
 }
 
 int MyProjectMain::InitialiseObjects() {
+	m_sub = new Submarine(this, 100, 250);
+	m_backgroundTerrain = new Terrain(this, 110, 300);
+	m_foregroundTerrain = new Terrain(this, 110, 500);
+
+	m_backgroundTerrain->setColour(0x2E6D94);
+	m_backgroundTerrain->setSpeed(2.0);
+
 	// Record the fact that we are about to change the array - so it doesn't get used elsewhere without reloading it
 	DrawableObjectsChanged();
 
@@ -29,12 +29,14 @@ int MyProjectMain::InitialiseObjects() {
 	DestroyOldObjects();
 
 	// Create an array one element larger than the number of objects that you want.
-	m_ppDisplayableObjects = new DisplayableObject*[2];
+	m_ppDisplayableObjects = new DisplayableObject*[4];
 
 	// You MUST set the array entry after the last one that you create to NULL, so that the system knows when to stop.
 	// i.e. The LAST entry has to be NULL. The fact that it is NULL is used in order to work out where the end of the array is.
-	m_ppDisplayableObjects[0] = NULL;
-	m_ppDisplayableObjects[1] = NULL;
+	m_ppDisplayableObjects[0] = m_sub;
+	m_ppDisplayableObjects[1] = m_backgroundTerrain;
+	m_ppDisplayableObjects[2] = m_foregroundTerrain;
+	m_ppDisplayableObjects[3] = NULL;
 
 	return 0;
 }
@@ -63,22 +65,21 @@ void MyProjectMain::GameAction() {
 
 	SetupBackgroundBuffer(0x4295C8);
 	
-	m_backgroundTerrain->DoUpdate(GetTime());
+	m_backgroundTerrain->DoUpdate(NULL);
 	m_backgroundTerrain->Draw();
 
-	m_sub->DoUpdate(elapsedTime);
 	m_sub->Draw();
 
 	m_foregroundTerrain->DoUpdate(GetTime());
 	m_foregroundTerrain->Draw();
 
-	ImageSurface water;
-	water.LoadImage("../resources/water.png");
-	water.RenderImage(this->GetBackground(), 0, 0, 0, 0, water.GetWidth(), water.GetHeight());
+	//ImageSurface water;
+	//water.LoadImage("../resources/water.png");
+	//water.RenderImage(this->GetBackground(), 0, 0, 0, 0, water.GetWidth(), water.GetHeight());
 
 	Redraw(true);
 	SetTimeToAct(1);
-	UpdateAllObjects(GetTime());
+	UpdateAllObjects(elapsedTime);
 
 	if (1000 / m_fpsTarget > GetTime() - thisFrameTime) {
 		SDL_Delay(1000 / m_fpsTarget - (GetTime() - thisFrameTime));
