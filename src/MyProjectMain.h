@@ -44,12 +44,7 @@ public:
 	* Handles the key-down event
 	*/
 	virtual void KeyDown(int iKeyCode);
-
-
-	void setStartupPath(const char *path) { m_startupPath = path; }
 protected:
-	const char *m_startupPath;
-
 	Submarine *m_sub;
 	Terrain *m_foregroundTerrain;
 	Terrain *m_backgroundTerrain;

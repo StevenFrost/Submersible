@@ -12,8 +12,6 @@ int main(int argc, char *argv[]) {
 	char buf[16];
 
 	srand(time(NULL));
-	main.setStartupPath(argv[0]);
-
 	sprintf(buf, "Submersible", BASE_SCREEN_WIDTH, BASE_SCREEN_HEIGHT);
 
 	result = main.Initialise(buf, BASE_SCREEN_WIDTH, BASE_SCREEN_HEIGHT, "Cornerstone Regular.ttf", 24);

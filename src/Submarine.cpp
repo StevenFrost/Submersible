@@ -30,7 +30,7 @@ void Submarine::Draw() {
 	// ...
 }
 
-void Submarine::DoUpdate(int iCurrentTime) {
+void Submarine::DoUpdate(int elapsedTime) {
 	if (m_iCurrentScreenY < 100) {
 		m_iCurrentScreenY = 100;
 		m_yDelta = 0;
@@ -54,8 +54,8 @@ void Submarine::DoUpdate(int iCurrentTime) {
 	}
 
 	m_yDelta *= m_friction;
-	m_iCurrentScreenY += m_yDelta;
+	m_iCurrentScreenY += (m_yDelta * elapsedTime / 1000.0);
 
 	m_xDelta *= m_friction;
-	m_iCurrentScreenX += m_xDelta;
+	m_iCurrentScreenX += (m_xDelta * elapsedTime / 1000.0);
 }

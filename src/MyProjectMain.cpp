@@ -36,8 +36,6 @@ int MyProjectMain::InitialiseObjects() {
 	m_ppDisplayableObjects[0] = NULL;
 	m_ppDisplayableObjects[1] = NULL;
 
-	printf("%s\r\n", m_startupPath);
-
 	return 0;
 }
 
@@ -58,14 +56,17 @@ void MyProjectMain::GameAction() {
 		return;
 	}
 
-	unsigned int start = GetTime();
+	static int lastFrameTime = GetTime();
+	int thisFrameTime = GetTime();
+	int elapsedTime = thisFrameTime - lastFrameTime;
+	lastFrameTime = thisFrameTime;
 
 	SetupBackgroundBuffer(0x4295C8);
 	
 	m_backgroundTerrain->DoUpdate(GetTime());
 	m_backgroundTerrain->Draw();
 
-	m_sub->DoUpdate(GetTime());
+	m_sub->DoUpdate(elapsedTime);
 	m_sub->Draw();
 
 	m_foregroundTerrain->DoUpdate(GetTime());
@@ -79,8 +80,8 @@ void MyProjectMain::GameAction() {
 	SetTimeToAct(1);
 	UpdateAllObjects(GetTime());
 
-	if (1000 / m_fpsTarget > GetTime() - start) {
-		SDL_Delay(1000 / m_fpsTarget - (GetTime() - start));
+	if (1000 / m_fpsTarget > GetTime() - thisFrameTime) {
+		SDL_Delay(1000 / m_fpsTarget - (GetTime() - thisFrameTime));
 	}
 }
 
@@ -94,16 +95,16 @@ void MyProjectMain::KeyDown(int iKeyCode) {
 		SetExitWithCode(0);
 		break;
 	case SDLK_UP:
-		m_sub->setYDelta(-10);
+		m_sub->setYDelta(-100);
 		break;
 	case SDLK_DOWN:
-		m_sub->setYDelta(10);
+		m_sub->setYDelta(100);
 		break;
 	case SDLK_LEFT:
-		m_sub->setXDelta(-10);
+		m_sub->setXDelta(-100);
 		break;
 	case SDLK_RIGHT:
-		m_sub->setXDelta(10);
+		m_sub->setXDelta(100);
 		break;
 	}
 }

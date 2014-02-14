@@ -13,7 +13,7 @@ public:
 
 	/* Overrides from DisplayableObject */
 	virtual void Draw();
-	virtual void DoUpdate(int iCurrentTime);
+	virtual void DoUpdate(int elapsedTime);
 
 	/* Getters */
 	ImageSurface *getSubBody()  { return m_body;     }
