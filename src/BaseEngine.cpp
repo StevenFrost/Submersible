@@ -103,7 +103,7 @@ int BaseEngine::Initialise(char* strCaption, int iScreenWidth, int iScreenHeight
 		g_pMainFont = m_oFontManager.GetFont(szFontName, iFontSize);
 
 	// Attempt to create a m_iScreenWidth x m_iScreenHeight window with 32bit pixels.
-	m_pActualScreen = SDL_SetVideoMode(m_iScreenWidth, m_iScreenHeight, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
+	m_pActualScreen = SDL_SetVideoMode(m_iScreenWidth, m_iScreenHeight, 32, SDL_SWSURFACE);
 	//	m_pActualScreen = SDL_SetVideoMode(m_iScreenWidth, m_iScreenHeight, 32, SDL_HWSURFACE);
 	//	m_pActualScreen = SDL_SetVideoMode(m_iScreenWidth, m_iScreenHeight, 32, SDL_DOUBLEBUF);
 
@@ -118,7 +118,7 @@ int BaseEngine::Initialise(char* strCaption, int iScreenWidth, int iScreenHeight
 	}
 #endif // WIN32
 
-	m_pBackgroundSurface = SDL_AllocSurface(SDL_HWSURFACE | SDL_DOUBLEBUF/*flags*/, m_iScreenWidth, m_iScreenHeight, 32, 0, 0, 0, 0);
+	m_pBackgroundSurface = SDL_AllocSurface(SDL_SWSURFACE/*flags*/, m_iScreenWidth, m_iScreenHeight, 32, 0, 0, 0, 0);
 
 	// If we fail, return error.
 	if (m_pActualScreen == NULL) {
@@ -196,7 +196,7 @@ int BaseEngine::MainLoop(void) {
 	while (m_iExitWithCode == -1) {
 		// Render stuff
 		m_iTick = SDL_GetTicks();
-
+		
 		// Poll for events, and handle the ones we care about.
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
