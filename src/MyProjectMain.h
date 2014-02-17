@@ -17,7 +17,7 @@ public:
 	* resulting background will be copied to the screen as and when it is
 	* needed.
 	*/
-	virtual void SetupBackgroundBuffer(unsigned int colour);
+	virtual void SetupBackgroundBuffer();
 
 	/**
 	* Creates moving objects. Subclasses need to implement this method
@@ -50,6 +50,9 @@ protected:
 	Terrain *m_backgroundTerrain;
 
 	const int m_fpsTarget;
+
+private:
+	void controlSub();
 };
 
 #endif // !MYPROJECTMAIN_H
