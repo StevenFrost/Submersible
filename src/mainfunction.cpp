@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
 	srand(time(NULL));
 	sprintf(buf, "Submersible", BASE_SCREEN_WIDTH, BASE_SCREEN_HEIGHT);
 
-	result = main.Initialise(buf, BASE_SCREEN_WIDTH, BASE_SCREEN_HEIGHT, "Cornerstone Regular.ttf", 24);
+	result = main.Initialise(buf, BASE_SCREEN_WIDTH, BASE_SCREEN_HEIGHT, "../resources/Segoe UI.ttf", 20);
 	result = main.MainLoop();
 	main.Deinitialise();
 

@@ -34,7 +34,7 @@ Font* FontManager::GetFont( char* szFontName, int iFontSize )
 	if ( (m_iFontCount+1) > m_iArraySize )
 		m_pArrayFonts = GrowArray( m_pArrayFonts, m_iArraySize, 10 );
 	// Array is now big enough
-	printf( "Loading font: %d point %s\n", iFontSize, szFontName );
+	//printf( "Loading font: %d point %s\n", iFontSize, szFontName );
 	if ( m_bInitialised )
 		m_pArrayFonts[m_iFontCount++] = new Font( TTF_OpenFont( szFontName, iFontSize ), szFontName, iFontSize );
 	else
