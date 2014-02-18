@@ -8,6 +8,7 @@
 
 class Submarine;
 class Terrain;
+class StatusBar;
 
 class MyProjectMain : public BaseEngine {
 public:
@@ -50,6 +51,7 @@ protected:
 	Terrain *m_backgroundTerrain;
 	Terrain *m_foregroundTerrain;
 	ImageSurface *m_sun;
+	StatusBar *m_statusBar;
 	Submarine *m_sub;
 
 	const int m_fpsTarget;

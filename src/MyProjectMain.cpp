@@ -2,6 +2,7 @@
 #include "header.h"
 #include "Terrain.h"
 #include "JPGImage.h"
+#include "StatusBar.h"
 #include "Submarine.h"
 #include "BaseEngine.h"
 #include "TileManager.h"
@@ -22,9 +23,8 @@ void MyProjectMain::SetupBackgroundBuffer() {
 	/* Now we draw the sun and help effect */
 	m_sun->RenderImage(GetBackground(), 0, 0, GetScreenWidth() - m_sun->GetWidth(), 0, m_sun->GetWidth(), m_sun->GetHeight());
 
-	/* Status bar background and seperating line */
-	DrawRectangle(0, 0, GetScreenWidth(), 40, 0x2D4452, GetBackground());
-	DrawLine(0, 40, GetScreenWidth(), 40, 0x292929, GetBackground());
+	/* Draw the status bar background */
+	m_statusBar->drawBackground();
 
 	/* Finally, draw the water background */
 	DrawRectangle(0, 120, GetScreenWidth(), GetScreenHeight(), WATER_COLOUR, GetBackground());
@@ -38,6 +38,9 @@ int MyProjectMain::InitialiseObjects() {
 	/* Load the sun graphic */
 	m_sun = new ImageSurface();
 	m_sun->LoadImage("../resources/sun.png");
+
+	/* Initialise the status bar */
+	m_statusBar = new StatusBar(this);
 
 	/* Load the submarine */
 	m_sub = new Submarine(this, 100, 250);
@@ -64,6 +67,8 @@ void MyProjectMain::GameAction() {
 	int thisFrameTime = GetTime();
 	int elapsedTime = thisFrameTime - lastFrameTime;
 	lastFrameTime = thisFrameTime;
+
+	m_statusBar->Draw();
 
 	UpdateAllObjects(elapsedTime);
 	Redraw(false);
