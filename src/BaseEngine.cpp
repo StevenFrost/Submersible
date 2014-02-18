@@ -714,7 +714,7 @@ void BaseEngine::DrawString(int iX, int iY, const char* pText,
 	SDL_Color color = {(uiColour & 0xff0000) >> 16, (uiColour & 0xff00) >> 8, (uiColour & 0xff), 0};
 
 	if ((pFont != NULL) && (pFont->GetFont() != NULL)) {
-		SDL_Surface *sText = TTF_RenderText_Solid(pFont->GetFont(), pText, color);
+		SDL_Surface *sText = TTF_RenderText_Blended(pFont->GetFont(), pText, color);
 		SDL_Rect rcDest = {iX, iY, 0, 0};
 
 		SDL_BlitSurface(sText, NULL, pTarget, &rcDest);
