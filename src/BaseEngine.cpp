@@ -310,8 +310,7 @@ void BaseEngine::GameRender(void) {
 			SDL_UnlockSurface(m_pActualScreen);
 		m_bInsideDraw = false;
 
-		SDL_Flip(m_pActualScreen);
-		//SDL_UpdateRect(m_pActualScreen, 0, 0, m_iScreenWidth, m_iScreenHeight);
+		SDL_UpdateRect(m_pActualScreen, 0, 0, m_iScreenWidth, m_iScreenHeight);
 	} else {
 		// Here we assume that the background buffer has already been set up
 
@@ -340,13 +339,11 @@ void BaseEngine::GameRender(void) {
 			//printf( "Update whole window\n" );
 			//SDL_UpdateRect(m_pActualScreen, 0, 0, m_iScreenWidth, m_iScreenHeight);    
 			
-			SDL_Flip(m_pActualScreen);
-			//SDL_UpdateRect(m_pActualScreen, 0, 0, 0, 0);
+			SDL_UpdateRect(m_pActualScreen, 0, 0, 0, 0);
 		} else {
 			//printf( "Update %d rectangles\n", m_iUpdateRectsInUse );
 
-			SDL_Flip(m_pActualScreen);
-			//SDL_UpdateRects(m_pActualScreen, m_iUpdateRectsInUse, m_pUpdateRectangles);
+			SDL_UpdateRects(m_pActualScreen, m_iUpdateRectsInUse, m_pUpdateRectangles);
 		}
 		// DEBUG
 		//printf( "%d update rectangles found\n", m_iUpdateRectsInUse );

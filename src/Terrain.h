@@ -11,7 +11,7 @@
 * algorithm.
 *
 * Default terrain configuration has a displacement of 150, roughness of 0.82
-* and a colour of 0x232A2F.
+* and a colour of 0x28485D.
 *
 * Buffer layout for terrain surface arrays:
 *   +-------------------+---------------------------+--------------------+

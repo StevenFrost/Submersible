@@ -11,20 +11,31 @@
 MyProjectMain::MyProjectMain() : BaseEngine(6), m_fpsTarget(60) {}
 
 void MyProjectMain::SetupBackgroundBuffer() {
-	FillBackground(0x4295C8);
+	// We want a two-tone background for water and sky. The seam will then be
+	// covered up by the wave animation
+	static const unsigned int SKY_COLOUR = 0x3990C6;
+	static const unsigned int WATER_COLOUR = 0x3686B8;
+
+	DrawRectangle(0, 0, GetScreenWidth(), 120, SKY_COLOUR, GetBackground());
+	DrawRectangle(0, 120, GetScreenWidth(), GetScreenHeight(), WATER_COLOUR, GetBackground());
 }
 
 int MyProjectMain::InitialiseObjects() {
-	m_sub = new Submarine(this, 100, 250);
+	m_backgroundTerrain = new Terrain(this, 110, 300);
 	m_foregroundTerrain = new Terrain(this, 110, 500);
+	m_sub = new Submarine(this, 100, 250);
+	
+	m_backgroundTerrain->setColour(0x2E6D94);
+	m_backgroundTerrain->setSpeed(10.0);
 
 	DrawableObjectsChanged();
 	DestroyOldObjects();
 
-	m_ppDisplayableObjects = new DisplayableObject*[3];
-	m_ppDisplayableObjects[0] = m_sub;
+	m_ppDisplayableObjects = new DisplayableObject*[4];
+	m_ppDisplayableObjects[0] = m_backgroundTerrain;
 	m_ppDisplayableObjects[1] = m_foregroundTerrain;
-	m_ppDisplayableObjects[2] = NULL;
+	m_ppDisplayableObjects[2] = m_sub;
+	m_ppDisplayableObjects[3] = NULL;
 	
 	return 0;
 }
@@ -36,8 +47,6 @@ void MyProjectMain::GameAction() {
 	int thisFrameTime = GetTime();
 	int elapsedTime = thisFrameTime - lastFrameTime;
 	lastFrameTime = thisFrameTime;
-
-	m_sub->Draw();
 
 	UpdateAllObjects(elapsedTime);
 	Redraw(false);

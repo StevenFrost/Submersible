@@ -1,6 +1,6 @@
 #include "Terrain.h"
 
-Terrain::Terrain(MyProjectMain *engine, unsigned int width, unsigned int height) : DisplayableObject(engine), m_width(width), m_height(height), m_offset(-10.0), m_displacement(60), m_roughness(0.77), m_colour(0x232A2F), m_speed(50.0) {
+Terrain::Terrain(MyProjectMain *engine, unsigned int width, unsigned int height) : DisplayableObject(engine), m_width(width), m_height(height), m_offset(-10.0), m_displacement(60), m_roughness(0.77), m_colour(0x28485D), m_speed(50.0) {
 	/* Get the next-largest power of two to the width of the terrain */
 	m_numPoints = pow(2, ceil(log10(m_width) / log10(2)));
 	m_bufSize = m_numPoints + 2;
@@ -120,6 +120,10 @@ void Terrain::DoUpdate(int elapsedTime) {
 }
 
 void Terrain::GetRedrawRect(SDL_Rect *rectangle) {
+	/*
+	* Maybe have some sort of static variable to keep the higest possible
+	* terrain point for all visible terrain surfaces to avoid redrawing regions
+	*/
 	rectangle->x = 0;
 	rectangle->y = m_yPointsMin < m_yBufferMin ? m_yPointsMin : m_yBufferMin;
 	rectangle->w = m_pEngine->GetScreenWidth();
@@ -129,6 +133,6 @@ void Terrain::GetRedrawRect(SDL_Rect *rectangle) {
 void Terrain::RedrawBackground() {
 	SDL_Rect *rect = new SDL_Rect();
 	GetRedrawRect(rect);
-
+	
 	m_pEngine->CopyBackgroundPixels(rect->x, rect->y, rect->w, rect->h);
 }
