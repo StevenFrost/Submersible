@@ -14,17 +14,21 @@ public:
 	virtual void Draw();
 	virtual void DoUpdate(int elapsedTime);
 	virtual void GetRedrawRect(SDL_Rect *rectangle);
-	virtual void RedrawBackground();
 
 	void drawBackground();
+
+	void incrementDistance()             { m_distance++;    }
+	void incrementPoints()               { m_points++;      }
+	void fuelQuantityDelta(double delta) { m_fuel += delta; }
 protected:
 	unsigned int m_distance;
 	unsigned int m_points;
-	unsigned int m_seconds;
+	double m_seconds;
 	double m_fuel;
 private:
 	unsigned int m_alpha;
 	unsigned int m_height;
+	unsigned int m_fuelColour;
 };
 
 #endif // !STATUS_BAR_H

@@ -57,7 +57,7 @@
       <Filter>Header Files\Submersible</Filter>
     </ClInclude>
     <ClInclude Include="StatusBar.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Submersible</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -89,7 +89,7 @@
       <Filter>Source Files\Submersible</Filter>
     </ClCompile>
     <ClCompile Include="StatusBar.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Submersible</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

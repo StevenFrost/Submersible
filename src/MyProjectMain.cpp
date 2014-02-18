@@ -51,11 +51,12 @@ int MyProjectMain::InitialiseObjects() {
 	DrawableObjectsChanged();
 	DestroyOldObjects();
 
-	m_ppDisplayableObjects = new DisplayableObject*[4];
+	m_ppDisplayableObjects = new DisplayableObject*[5];
 	m_ppDisplayableObjects[0] = m_backgroundTerrain;
 	m_ppDisplayableObjects[1] = m_foregroundTerrain;
-	m_ppDisplayableObjects[2] = m_sub;
-	m_ppDisplayableObjects[3] = NULL;
+	m_ppDisplayableObjects[2] = m_statusBar;
+	m_ppDisplayableObjects[3] = m_sub;
+	m_ppDisplayableObjects[4] = NULL;
 	
 	return 0;
 }
@@ -67,8 +68,6 @@ void MyProjectMain::GameAction() {
 	int thisFrameTime = GetTime();
 	int elapsedTime = thisFrameTime - lastFrameTime;
 	lastFrameTime = thisFrameTime;
-
-	m_statusBar->Draw();
 
 	UpdateAllObjects(elapsedTime);
 	Redraw(false);
@@ -100,6 +99,15 @@ void MyProjectMain::KeyDown(int iKeyCode) {
 	switch (iKeyCode) {
 	case SDLK_ESCAPE:
 		SetExitWithCode(0);
+		break;
+	case SDLK_d:
+		m_statusBar->incrementDistance();
+		break;
+	case SDLK_p:
+		m_statusBar->incrementPoints();
+		break;
+	case SDLK_f:
+		m_statusBar->fuelQuantityDelta(-1.0);
 		break;
 	case SDLK_UP:
 		m_sub->setYDelta(-100);
