@@ -22,6 +22,10 @@ void MyProjectMain::SetupBackgroundBuffer() {
 	/* Now we draw the sun and help effect */
 	m_sun->RenderImage(GetBackground(), 0, 0, GetScreenWidth() - m_sun->GetWidth(), 0, m_sun->GetWidth(), m_sun->GetHeight());
 
+	/* Status bar background and seperating line */
+	DrawRectangle(0, 0, GetScreenWidth(), 40, 0x2D4452, GetBackground());
+	DrawLine(0, 40, GetScreenWidth(), 40, 0x292929, GetBackground());
+
 	/* Finally, draw the water background */
 	DrawRectangle(0, 120, GetScreenWidth(), GetScreenHeight(), WATER_COLOUR, GetBackground());
 }
