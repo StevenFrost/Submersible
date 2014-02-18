@@ -2,6 +2,7 @@
 #define MYPROJECTMAIN_H
 
 #include "header.h"
+#include "JPGImage.h"
 #include "BaseEngine.h"
 #include <cmath>
 
@@ -45,9 +46,11 @@ public:
 	*/
 	virtual void KeyDown(int iKeyCode);
 protected:
-	Submarine *m_sub;
-	Terrain *m_foregroundTerrain;
+	/* Game objects */
 	Terrain *m_backgroundTerrain;
+	Terrain *m_foregroundTerrain;
+	ImageSurface *m_sun;
+	Submarine *m_sub;
 
 	const int m_fpsTarget;
 

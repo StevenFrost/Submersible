@@ -8,24 +8,37 @@
 #include "MyProjectMain.h"
 #include "DisplayableObject.h"
 
+/* General private properties */
+static const unsigned int SKY_COLOUR                = 0x3990C6;
+static const unsigned int WATER_COLOUR              = 0x2F76A2;
+static const unsigned int BACKGROUND_TERRAIN_COLOUR = 0x2E6D94;
+
 MyProjectMain::MyProjectMain() : BaseEngine(6), m_fpsTarget(60) {}
 
 void MyProjectMain::SetupBackgroundBuffer() {
-	// We want a two-tone background for water and sky. The seam will then be
-	// covered up by the wave animation
-	static const unsigned int SKY_COLOUR = 0x3990C6;
-	static const unsigned int WATER_COLOUR = 0x3686B8;
-
+	/* Start by drawing the sky background */
 	DrawRectangle(0, 0, GetScreenWidth(), 120, SKY_COLOUR, GetBackground());
+
+	/* Now we draw the sun and help effect */
+	m_sun->RenderImage(GetBackground(), 0, 0, GetScreenWidth() - m_sun->GetWidth(), 0, m_sun->GetWidth(), m_sun->GetHeight());
+
+	/* Finally, draw the water background */
 	DrawRectangle(0, 120, GetScreenWidth(), GetScreenHeight(), WATER_COLOUR, GetBackground());
 }
 
 int MyProjectMain::InitialiseObjects() {
+	/* Terrain initialisation */
 	m_backgroundTerrain = new Terrain(this, 110, 300);
 	m_foregroundTerrain = new Terrain(this, 110, 500);
+
+	/* Load the sun graphic */
+	m_sun = new ImageSurface();
+	m_sun->LoadImage("../resources/sun.png");
+
+	/* Load the submarine */
 	m_sub = new Submarine(this, 100, 250);
 	
-	m_backgroundTerrain->setColour(0x2E6D94);
+	m_backgroundTerrain->setColour(BACKGROUND_TERRAIN_COLOUR);
 	m_backgroundTerrain->setSpeed(10.0);
 
 	DrawableObjectsChanged();
