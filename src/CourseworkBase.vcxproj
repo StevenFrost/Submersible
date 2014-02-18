@@ -94,6 +94,7 @@
     <ClInclude Include="FontManager.h" />
     <ClInclude Include="JPGImage.h" />
     <ClInclude Include="MovementPosition.h" />
+    <ClInclude Include="StatusBar.h" />
     <ClInclude Include="Submarine.h" />
     <ClInclude Include="templates.h" />
     <ClInclude Include="Terrain.h" />
@@ -107,6 +108,7 @@
     <ClCompile Include="FontManager.cpp" />
     <ClCompile Include="JPGImage.cpp" />
     <ClCompile Include="MyProjectMain.cpp" />
+    <ClCompile Include="StatusBar.cpp" />
     <ClCompile Include="Submarine.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="TileManager.cpp" />
