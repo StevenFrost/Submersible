@@ -1,4 +1,5 @@
 #include "StatusBar.h"
+#include "Submarine.h"
 
 /* File-scoped constants */
 static const unsigned int BACKGROUND_COLOUR     = 0x2D4452;
@@ -20,7 +21,11 @@ static const unsigned int TIME_LABEL_Y          = 5;
 static const unsigned int TIME_LABEL_HEIGHT     = 35;
 static const unsigned int TIME_LABEL_WIDTH      = 150;
 
-StatusBar::StatusBar(MyProjectMain *engine) : DisplayableObject(engine), m_alpha(0xBD), m_height(40), m_distance(0), m_points(0), m_seconds(0.0), m_fuel(100) {}
+StatusBar::StatusBar(MyProjectMain *engine) : DisplayableObject(engine), m_alpha(0xBD), m_height(40), m_distance(0), m_points(0), m_seconds(0.0), m_fuel(100) {
+	/* Listen for updates on the submarine */
+	Submarine *sub = dynamic_cast<Submarine *>(m_pEngine->GetDisplayableObject(2));
+	sub->attach(this);
+}
 StatusBar::~StatusBar() {}
 
 void StatusBar::drawBackground() {
@@ -74,16 +79,21 @@ void StatusBar::Draw() {
 	m_pEngine->SetNextUpdateRect(TIME_LABEL_X, TIME_LABEL_Y, TIME_LABEL_WIDTH, TIME_LABEL_HEIGHT);
 
 	/* Fuel */
-	unsigned int colour = (((static_cast<int>(fabs(floor(100 - m_fuel) * 2.5)) << 8) + 200) << 8) + 70;
-
 	m_pEngine->CopyBackgroundPixels(m_pEngine->GetScreenWidth() - (138 + 9), 10, 138, 20);
-	m_pEngine->DrawRectangle(m_pEngine->GetScreenWidth() - (138 + 8), 10, m_pEngine->GetScreenWidth() - (fabs(floor(100 - m_fuel)) + 10), 29, colour, m_pEngine->GetForeground());
+	if (m_fuel > 2.0) {
+		unsigned int colour = (((static_cast<int>(fabs(floor(100 - m_fuel) * 2.5)) << 8) + 200) << 8) + 70;
+		m_pEngine->DrawRectangle(m_pEngine->GetScreenWidth() - (138 + 8), 10, m_pEngine->GetScreenWidth() - ((fabs(100 - m_fuel) * 1.38) + 10), 29, colour, m_pEngine->GetForeground());
+	}
 	m_pEngine->SetNextUpdateRect(m_pEngine->GetScreenWidth() - (138 + 9), 10, 138, 20);
 }
 
 void StatusBar::DoUpdate(int elapsedTime) {
 	/* Increment the number of seconds the game has been active for */
 	m_seconds += elapsedTime / 1000.0;
+}
+
+void StatusBar::update(IObservable *observable) {
+	m_fuel = dynamic_cast<Submarine *>(m_pEngine->GetDisplayableObject(2))->getFuel();
 }
 
 void StatusBar::GetRedrawRect(SDL_Rect *rectangle) {
