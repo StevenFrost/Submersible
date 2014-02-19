@@ -9,6 +9,7 @@
 class Submarine;
 class Terrain;
 class StatusBar;
+class Waves;
 
 class MyProjectMain : public BaseEngine {
 public:
@@ -51,6 +52,7 @@ protected:
 	Terrain *m_backgroundTerrain;
 	Terrain *m_foregroundTerrain;
 	ImageSurface *m_sun;
+	Waves *m_waves;
 	StatusBar *m_statusBar;
 	Submarine *m_sub;
 

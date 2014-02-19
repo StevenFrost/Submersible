@@ -1,4 +1,5 @@
 #include <cmath>
+#include "Waves.h"
 #include "header.h"
 #include "Terrain.h"
 #include "JPGImage.h"
@@ -31,33 +32,39 @@ void MyProjectMain::SetupBackgroundBuffer() {
 }
 
 int MyProjectMain::InitialiseObjects() {
+	DrawableObjectsChanged();
+	DestroyOldObjects();
+
+	m_ppDisplayableObjects = new DisplayableObject*[6];
+
 	/* Terrain initialisation */
 	m_backgroundTerrain = new Terrain(this, 110, 300);
+	m_backgroundTerrain->setColour(BACKGROUND_TERRAIN_COLOUR);
+	m_backgroundTerrain->setSpeed(10.0);
+	m_ppDisplayableObjects[0] = m_backgroundTerrain;
+
 	m_foregroundTerrain = new Terrain(this, 110, 500);
+	m_ppDisplayableObjects[1] = m_foregroundTerrain;
 
 	/* Load the sun graphic */
 	m_sun = new ImageSurface();
 	m_sun->LoadImage("../resources/sun.png");
 
-	/* Initialise the status bar */
-	m_statusBar = new StatusBar(this);
-
 	/* Load the submarine */
 	m_sub = new Submarine(this, 100, 250);
-	
-	m_backgroundTerrain->setColour(BACKGROUND_TERRAIN_COLOUR);
-	m_backgroundTerrain->setSpeed(10.0);
+	m_ppDisplayableObjects[2] = m_sub;
 
-	DrawableObjectsChanged();
-	DestroyOldObjects();
+	/* Load the waves */
+	m_waves = new Waves(this);
+	m_ppDisplayableObjects[3] = m_waves;
 
-	m_ppDisplayableObjects = new DisplayableObject*[5];
-	m_ppDisplayableObjects[0] = m_backgroundTerrain;
-	m_ppDisplayableObjects[1] = m_foregroundTerrain;
-	m_ppDisplayableObjects[2] = m_statusBar;
-	m_ppDisplayableObjects[3] = m_sub;
-	m_ppDisplayableObjects[4] = NULL;
+	/* Initialise the status bar */
+	m_statusBar = new StatusBar(this);
+	m_ppDisplayableObjects[4] = m_statusBar;
+
+	m_ppDisplayableObjects[5] = NULL;
 	
+
 	return 0;
 }
 
@@ -105,9 +112,6 @@ void MyProjectMain::KeyDown(int iKeyCode) {
 		break;
 	case SDLK_p:
 		m_statusBar->incrementPoints();
-		break;
-	case SDLK_f:
-		m_statusBar->fuelQuantityDelta(-1.0);
 		break;
 	case SDLK_UP:
 		m_sub->setYDelta(-100);
