@@ -3,10 +3,11 @@
 
 #include "header.h"
 #include "JPGImage.h"
+#include "IObservable.h"
 #include "MyProjectMain.h"
 #include "DisplayableObject.h"
 
-class Submarine : public DisplayableObject {
+class Submarine : public DisplayableObject, public IObservable {
 public:
 	Submarine(MyProjectMain *engine, unsigned int x, unsigned int y);
 	virtual ~Submarine();
@@ -18,6 +19,7 @@ public:
 	/* Getters */
 	ImageSurface *getSubBody()  { return m_body;     }
 	bool          getLightsOn() { return m_lightsOn; }
+	double        getFuel()     { return m_fuel;     }
 	double        getXDelta()   { return m_xDelta;   }
 	double        getYDelta()   { return m_yDelta;   }
 
@@ -28,6 +30,8 @@ public:
 protected:
 	static ImageSurface *m_body;
 	bool m_lightsOn;
+
+	double m_fuel;
 
 	double m_friction;
 	double m_xDelta;
