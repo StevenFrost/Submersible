@@ -7,10 +7,18 @@ Submarine::Submarine(MyProjectMain *engine, unsigned int x, unsigned int y) : Di
 	m_iCurrentScreenX = x;
 	m_iCurrentScreenY = y;
 
+	m_iStartDrawPosX = 0;
+	m_iPreviousScreenX = m_iCurrentScreenX;
+	m_iStartDrawPosY = 0;
+	m_iPreviousScreenY = m_iCurrentScreenY;
+
 	/* Load the graphic */
 	if (!m_body->IsLoaded()) {
 		m_body->LoadImage("../resources/sub.png");
 	}
+
+	m_iDrawWidth = m_body->GetWidth();
+	m_iDrawHeight = m_body->GetHeight();
 }
 
 Submarine::~Submarine() {
@@ -19,7 +27,9 @@ Submarine::~Submarine() {
 
 void Submarine::Draw() {
 	/* Draw the main submarine body */
-	m_body->RenderImage(m_pEngine->GetBackground(), 0, 0, m_iCurrentScreenX, m_iCurrentScreenY, m_body->GetWidth(), m_body->GetHeight());
+	m_body->RenderImage(m_pEngine->GetForeground(), 0, 0, m_iCurrentScreenX, m_iCurrentScreenY, m_body->GetWidth(), m_body->GetHeight());
+
+	StoreLastScreenPositionAndUpdateRect();
 
 	/* Draw the lights if required */
 	if (m_lightsOn) {
