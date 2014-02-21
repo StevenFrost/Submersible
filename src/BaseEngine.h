@@ -274,11 +274,12 @@ public:
 			pTarget = m_pActualScreen;
 
 		// Validate that the position is within the screen
-		if ( ( iX < 0 ) || ( iX >= m_iIntsPerScreenRow ) || ( iY < 0 ) || ( iY >= m_iScreenHeight ) )
+		// CHANGE: This is so I can draw polygons on surfaces larger than the width of the screen
+		if ((iX < 0) || (iX >= pTarget->pitch / sizeof(unsigned int)) || (iY < 0) || (iY >= pTarget->h))
 			return;
 
 		// Set the value of the pixel
-		((unsigned int *)pTarget->pixels)[iX + iY * m_iIntsPerScreenRow] = uiColour;
+		((unsigned int *)pTarget->pixels)[iX + iY * pTarget->pitch / sizeof(unsigned int)] = uiColour;
 	}
 
 	
@@ -305,12 +306,13 @@ public:
 	// Set a pixel on a specific surface
 	inline void SetPixel( int iX, int iY, unsigned int uiColour, SDL_Surface* pTarget )
 	{
+		// CHANGE: As with SafeSetPixel
 		assert( iX >= 0 );
-		assert( iX < m_iIntsPerScreenRow );
+		assert( iX < pTarget->pitch / sizeof(unsigned int) );
 		assert( iY >= 0 );
-		assert( iY < m_iScreenHeight );
+		assert(iY < pTarget->h);
 		// Set the value of the pixel
-		((unsigned int *)pTarget->pixels)[iX + iY * m_iIntsPerScreenRow] = uiColour;
+		((unsigned int *)pTarget->pixels)[iX + iY * pTarget->pitch / sizeof(unsigned int)] = uiColour;
 	}
 
 	// Draw a line on the foreground
