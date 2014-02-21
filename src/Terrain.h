@@ -30,7 +30,7 @@
 */
 class Terrain : public DisplayableObject {
 public:
-	Terrain(MyProjectMain *engine, unsigned int width, unsigned int height);
+	Terrain(MyProjectMain *engine, unsigned int width, unsigned int height, unsigned int colour);
 	virtual ~Terrain();
 
 	/* Overrides from DisplayableObject */
@@ -40,15 +40,20 @@ public:
 	virtual void RedrawBackground();
 
 	/* Setters */
-	void setMaxDisplacement(double displacement) { m_displacement = displacement; }
-	void setRoughness(double roughness)          { m_roughness = roughness;       }
-	void setColour(unsigned int colour)          { m_colour = colour;             }
 	void setSpeed(double speed)                  { m_speed = speed;               }
+
+	/**
+	* Initialises core terrain objects, such as the surfaces onto which to the
+	* terrain is drawn.
+	*
+	* @return true if the terrain was initialised successfully
+	*/
+	bool initialise();
 protected:
 	/* Generic terrain properties */
-	unsigned int m_width;
-	unsigned int m_height;
-	double m_colour;
+	unsigned int m_colour;			// The colour of the terrain (32-bit ARGB)
+	unsigned int m_width;			// The width of the terrain, scaled by SCALING_FACTOR
+	unsigned int m_height;			// The maximum height of the terrain
 
 	/**
 	* Generates a new terrain surface and puts the resulting points into
@@ -59,28 +64,52 @@ protected:
 	* @param rightSeed the right-most height value. If zero then a random point
 	*                  will be generated.
 	*/
-	virtual void generate(double leftSeed, double rightSeed);
+	virtual void generateTerrain(double *buffer, double leftSeed, double rightSeed);
 private:
-	int m_numPoints;
-	int m_bufSize;
+	/* Class-contruction members */
+	bool m_initialised;				// True if the terrain class has been correctly initialised
 
-	/* Primary terrain arrays */
-	double *m_xPoints;
-	double *m_yPoints;
+	/* Surfaces */
+	SDL_Surface *m_terrainMain;		// Primary terrain surface
+	SDL_Surface *m_terrainBuffer;	// Secondary terrain surface for drawing off-screen polygons
+
+	/* Rectangles */
+	SDL_Rect *m_terrainMainRect;
+	SDL_Rect *m_terrainBufferRect;
+
+	/* Buffer limits */
+	int m_numPoints;				// The number of terrain surface points
+	int m_bufSize;					// The number of elements in each buffer
 
 	/* Terrain buffers */
-	double *m_xBuffer;
-	double *m_yBuffer;
+	double *m_terrainMainX;			// Array containing X-coordinates of each terrain surface point
+	double *m_terrainMainY;			// Array containing Y-coordinates for the main terrain section
+	double *m_terrainBufferY;		// Array containing Y-coordinates for the buffer terrain section
 
-	/* Highest points on the terrain */
-	double m_yPointsMin;
-	double m_yBufferMin;
+	/* General implementation-specific terrain properties */
+	double m_offset;				// Current pixel offset of the terrain surface
+	double m_displacement;			// Maximum displacement from the terrain seed
+	double m_roughness;				// Roughness of the terrain
+	double m_speed;					// Speed of terrain movement, in pixels/s
+	double m_seed;					// The rightmost point of the previously generated terrain surface
 
-	/* General internal terrain properties */
-	double m_offset;
-	double m_displacement;
-	double m_roughness;
-	double m_speed;
+	/**
+	* Initialises the specified surface with a new RGB SDL Surface, with alpha.
+	*
+	* @param surface	the surface to initialise
+	* @return true		if the surface was created successfully
+	*/
+	bool createTerrainSurface(SDL_Surface *&surface);
+
+	/**
+	* Draws the specified buffer (containing height values) to the surface. This
+	* function assumes that the buffer contains exactly m_bufSize elements and
+	* that the SDL Surface has been correctly initialised.
+	*
+	* @param surface	the surface to draw onto
+	* @param buffer		the buffer containing terrain height values
+	*/
+	void drawTerrainSurface(SDL_Surface *surface, double *buffer);
 };
 
 #endif // !TERRAIN_H

@@ -13,7 +13,8 @@
 /* General private properties */
 static const unsigned int SKY_COLOUR                = 0x3990C6;
 static const unsigned int WATER_COLOUR              = 0x2F76A2;
-static const unsigned int BACKGROUND_TERRAIN_COLOUR = 0x2E6D94;
+static const unsigned int FOREGROUND_TERRAIN_COLOUR = 0xFF28485D;
+static const unsigned int BACKGROUND_TERRAIN_COLOUR = 0xFF2E6D94;
 
 MyProjectMain::MyProjectMain() : BaseEngine(6), m_fpsTarget(60) {}
 
@@ -38,12 +39,13 @@ int MyProjectMain::InitialiseObjects() {
 	m_ppDisplayableObjects = new DisplayableObject*[6];
 
 	/* Terrain initialisation */
-	m_backgroundTerrain = new Terrain(this, 110, 300);
-	m_backgroundTerrain->setColour(BACKGROUND_TERRAIN_COLOUR);
-	m_backgroundTerrain->setSpeed(10.0);
+	m_backgroundTerrain = new Terrain(this, GetScreenWidth(), 600, BACKGROUND_TERRAIN_COLOUR);
+	m_backgroundTerrain->initialise();
+	m_backgroundTerrain->setSpeed(20.0);
 	m_ppDisplayableObjects[0] = m_backgroundTerrain;
 
-	m_foregroundTerrain = new Terrain(this, 110, 500);
+	m_foregroundTerrain = new Terrain(this, GetScreenWidth(), 400, FOREGROUND_TERRAIN_COLOUR);
+	m_foregroundTerrain->initialise();
 	m_ppDisplayableObjects[1] = m_foregroundTerrain;
 
 	/* Load the sun graphic */
@@ -63,7 +65,6 @@ int MyProjectMain::InitialiseObjects() {
 	m_ppDisplayableObjects[4] = m_statusBar;
 
 	m_ppDisplayableObjects[5] = NULL;
-	
 
 	return 0;
 }
