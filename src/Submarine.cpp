@@ -2,7 +2,7 @@
 
 ImageSurface *Submarine::m_body = new ImageSurface();
 
-Submarine::Submarine(MyProjectMain *engine, unsigned int x, unsigned int y) : DisplayableObject(engine), m_friction(0.92), m_fuel(100.0) {
+Submarine::Submarine(MyProjectMain *engine, unsigned int x, unsigned int y) : DisplayableObject(engine), m_friction(0.96), m_fuel(100.0) {
 	/* Set the initial position */
 	m_iCurrentScreenX = x;
 	m_iCurrentScreenY = y;
@@ -13,7 +13,7 @@ Submarine::Submarine(MyProjectMain *engine, unsigned int x, unsigned int y) : Di
 
 	/* Load the graphic */
 	if (!m_body->IsLoaded()) {
-		m_body->LoadImage("../resources/sub-underwater.png");
+		m_body->LoadImage("../resources/sub.png");
 	}
 
 	/* Set the width and height of the rectangle to draw */
@@ -57,7 +57,7 @@ void Submarine::DoUpdate(int elapsedTime) {
 	m_iCurrentScreenX += (m_xDelta * elapsedTime / 1000.0);
 
 	/* Calculate the quantity of fuel remaining */
-	m_fuel -= (0.8 * (elapsedTime / 100.0));
+	m_fuel -= (0.2 * (elapsedTime / 100.0));
 
 	/* Notify any observers that something changed */
 	notify();

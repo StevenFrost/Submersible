@@ -24,6 +24,12 @@
     <Filter Include="Header Files\Interfaces">
       <UniqueIdentifier>{1638c1cf-0868-49bb-a245-f91d398bc4ce}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Utilities">
+      <UniqueIdentifier>{d031aa7c-69f3-4ba6-aa5e-30cb13f3e63c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utilities">
+      <UniqueIdentifier>{b019de45-e935-454f-8f52-22cbdbf1f0fb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header.h">
@@ -71,6 +77,9 @@
     <ClInclude Include="Waves.h">
       <Filter>Header Files\Submersible</Filter>
     </ClInclude>
+    <ClInclude Include="Collision.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="mainfunction.cpp">
@@ -105,6 +114,9 @@
     </ClCompile>
     <ClCompile Include="Waves.cpp">
       <Filter>Source Files\Submersible</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision.cpp">
+      <Filter>Source Files\Utilities</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

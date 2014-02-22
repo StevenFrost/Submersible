@@ -40,7 +40,12 @@ public:
 	virtual void RedrawBackground();
 
 	/* Setters */
-	void setSpeed(double speed)                  { m_speed = speed;               }
+	void setSpeed(double speed) { m_speed = speed; }
+
+	/* Getters */
+	SDL_Surface *getMainSurface() { return m_terrainMain; }
+	SDL_Surface *getBufferSurface() { return m_terrainBuffer; }
+	double getSpeed() { return m_speed; }
 
 	/**
 	* Initialises core terrain objects, such as the surfaces onto which to the

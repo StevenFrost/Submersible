@@ -21,10 +21,10 @@ public:
 
 	void drawBackground();
 
-	void incrementDistance()             { m_distance++;    }
-	void incrementPoints()               { m_points++;      }
+	inline void incrementDistance(double delta) { m_distance += delta; }
+	inline void incrementPoints()               { m_points++;          }
 protected:
-	unsigned int m_distance;
+	double m_distance;
 	unsigned int m_points;
 	double m_seconds;
 private:

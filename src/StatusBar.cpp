@@ -61,7 +61,7 @@ void StatusBar::Draw() {
 	char buf[56];
 	
 	/* Distance */
-	sprintf(buf, "Distance: %dm", m_distance);
+	sprintf(buf, "Distance: %.0fm", m_distance);
 	m_pEngine->CopyBackgroundPixels(DISTANCE_LABEL_X, DISTANCE_LABEL_Y, DISTANCE_LABEL_WIDTH, DISTANCE_LABEL_HEIGHT);
 	m_pEngine->DrawString(DISTANCE_LABEL_X, DISTANCE_LABEL_Y, buf, FONT_COLOUR, NULL, m_pEngine->GetForeground());
 	m_pEngine->SetNextUpdateRect(DISTANCE_LABEL_X, DISTANCE_LABEL_Y, DISTANCE_LABEL_WIDTH, DISTANCE_LABEL_HEIGHT);

@@ -10,11 +10,15 @@
 #include "MyProjectMain.h"
 #include "DisplayableObject.h"
 
+#include "Collision.h"
+
 /* General private properties */
 static const unsigned int SKY_COLOUR                = 0x3990C6;
 static const unsigned int WATER_COLOUR              = 0x2F76A2;
 static const unsigned int FOREGROUND_TERRAIN_COLOUR = 0xFF28485D;
 static const unsigned int BACKGROUND_TERRAIN_COLOUR = 0xFF2E6D94;
+
+#define PIXELS_TO_M 0.153
 
 MyProjectMain::MyProjectMain() : BaseEngine(6), m_fpsTarget(60) {}
 
@@ -77,6 +81,13 @@ void MyProjectMain::GameAction() {
 	int elapsedTime = thisFrameTime - lastFrameTime;
 	lastFrameTime = thisFrameTime;
 
+	/* Update the travelled distance */
+	m_statusBar->incrementDistance(m_foregroundTerrain->getSpeed() * PIXELS_TO_M * (elapsedTime / 1000.0));
+
+	controlSub();
+
+	Collision::boundingBox(m_sub, m_foregroundTerrain);
+	
 	UpdateAllObjects(elapsedTime);
 	Redraw(false);
 
@@ -107,9 +118,6 @@ void MyProjectMain::KeyDown(int iKeyCode) {
 	switch (iKeyCode) {
 	case SDLK_ESCAPE:
 		SetExitWithCode(0);
-		break;
-	case SDLK_d:
-		m_statusBar->incrementDistance();
 		break;
 	case SDLK_p:
 		m_statusBar->incrementPoints();

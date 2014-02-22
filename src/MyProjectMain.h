@@ -60,6 +60,9 @@ protected:
 
 private:
 	void controlSub();
+
+	bool pixelCollideTest(SDL_Surface *surface, int x, int y);
+	bool collide(SDL_Surface *a, SDL_Surface *b, int aX, int aY, int bX, int bY);
 };
 
 #endif // !MYPROJECTMAIN_H
