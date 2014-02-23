@@ -17,11 +17,11 @@ public:
 	virtual void DoUpdate(int elapsedTime);
 
 	/* Getters */
-	ImageSurface *getSubBody()  { return m_body;     }
-	bool          getLightsOn() { return m_lightsOn; }
-	double        getFuel()     { return m_fuel;     }
-	double        getXDelta()   { return m_xDelta;   }
-	double        getYDelta()   { return m_yDelta;   }
+	ImageSurface *getSubBody()  const { return m_body;     }
+	bool          getLightsOn() const { return m_lightsOn; }
+	double        getFuel()     const { return m_fuel;     }
+	double        getXDelta()   const { return m_xDelta;   }
+	double        getYDelta()   const { return m_yDelta;   }
 
 	/* Setters */
 	void setLightsOn(bool lightsOn) { m_lightsOn = lightsOn; }
