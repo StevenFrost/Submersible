@@ -43,9 +43,9 @@ public:
 	void setSpeed(double speed) { m_speed = speed; }
 
 	/* Getters */
-	SDL_Surface *getMainSurface() { return m_terrainMain; }
-	SDL_Surface *getBufferSurface() { return m_terrainBuffer; }
-	double getSpeed() { return m_speed; }
+	SDL_Surface *getMainSurface()   const { return m_terrainMain;   }
+	SDL_Surface *getBufferSurface() const { return m_terrainBuffer; }
+	double getSpeed()               const { return m_speed;         }
 
 	/**
 	* Initialises core terrain objects, such as the surfaces onto which to the
@@ -69,7 +69,7 @@ protected:
 	* @param rightSeed the right-most height value. If zero then a random point
 	*                  will be generated.
 	*/
-	virtual void generateTerrain(double *buffer, double leftSeed, double rightSeed);
+	virtual void generateTerrain(double *buffer, int &max, double leftSeed, double rightSeed);
 private:
 	/* Class-contruction members */
 	bool m_initialised;				// True if the terrain class has been correctly initialised
@@ -82,9 +82,14 @@ private:
 	SDL_Rect *m_terrainMainRect;
 	SDL_Rect *m_terrainBufferRect;
 
+	int m_terrainMainMaxHeight;		// The maximum height of the main surface points
+	int m_terrainBufferMaxHeight;	// The maximum height of the buffer surface points
+	int m_terrainMaxHeight;			// The maximum height of both the main and buffer surface points
+
 	/* Buffer limits */
 	int m_numPoints;				// The number of terrain surface points
 	int m_bufSize;					// The number of elements in each buffer
+	double m_polygonWidth;			// The width of the terrain polygon in pixels
 
 	/* Terrain buffers */
 	double *m_terrainMainX;			// Array containing X-coordinates of each terrain surface point

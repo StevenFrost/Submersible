@@ -43,18 +43,23 @@ bool Terrain::initialise() {
 	/* Set the end points */
 	m_terrainMainX[0] = m_terrainMainX[1];
 	m_terrainMainX[m_bufSize - 1] = m_terrainMainX[m_numPoints];
+	m_polygonWidth = m_terrainMainX[m_numPoints];
+
+	/* Generate and draw some terrain */
+	generateTerrain(m_terrainMainY, m_terrainMainMaxHeight, 0, 0);
+	generateTerrain(m_terrainBufferY, m_terrainBufferMaxHeight, m_seed, 0);
+
+	printf("m_terrainMainMaxHeight: %d\r\nm_terrainbufferMaxHeight: %d\r\n", m_terrainMainMaxHeight, m_terrainBufferMaxHeight);
+
+	/* Build the rectangles required for blitting the terrain */
+	GetRedrawRect(m_terrainMainRect);
+	GetRedrawRect(m_terrainBufferRect);
 
 	/* Create the initial terrain surfaces */
 	createTerrainSurface(m_terrainMain);
 	createTerrainSurface(m_terrainBuffer);
 
-	/* Now build the rectangles required for blitting */
-	GetRedrawRect(m_terrainMainRect);
-	GetRedrawRect(m_terrainBufferRect);
-
-	/* Generate and draw some terrain */
-	generateTerrain(m_terrainMainY, 0, 0);
-	generateTerrain(m_terrainBufferY, m_seed, 0);
+	/* Draw the generated terrain on the surface */
 	drawTerrainSurface(m_terrainMain, m_terrainMainY);
 	drawTerrainSurface(m_terrainBuffer, m_terrainBufferY);
 
@@ -62,7 +67,7 @@ bool Terrain::initialise() {
 	return m_initialised;
 }
 
-void Terrain::generateTerrain(double *buffer, double leftSeed, double rightSeed) {
+void Terrain::generateTerrain(double *buffer, int &max, double leftSeed, double rightSeed) {
 	/* Generate a seed for the left and right elements if needed */
 	if (!leftSeed)  { leftSeed  = (m_height / 2.0) + (((double)rand() / RAND_MAX) * m_displacement * 2) - m_displacement; }
 	if (!rightSeed) { rightSeed = (m_height / 2.0) + (((double)rand() / RAND_MAX) * m_displacement * 2) - m_displacement; }
@@ -74,6 +79,7 @@ void Terrain::generateTerrain(double *buffer, double leftSeed, double rightSeed)
 
 	/* Make a copy of the displacement member so we don't mutate the original value */
 	double displacement = m_displacement;
+	max = m_height;
 
 	/* Run the midpoint displacement algorithm */
 	for (int i = 1; i < m_numPoints; i *= 2) {
@@ -84,15 +90,25 @@ void Terrain::generateTerrain(double *buffer, double leftSeed, double rightSeed)
 		}
 	}
 
+	for (int i = 0; i < m_bufSize - 1; i++) {
+		if (buffer[i] < max) {
+			max = buffer[i];
+		}
+	}
+
 	/* Set the first and last values */
-	buffer[0] = m_pEngine->GetScreenHeight();
+	buffer[0] = m_height;
 	buffer[1] = leftSeed;
 	buffer[m_bufSize - 1] = buffer[0];
 }
 
 bool Terrain::createTerrainSurface(SDL_Surface *&surface) {
+	// We build a new ARGB surface of size height:m_height and width:m_terrainMainX[m_bufSize - 1].
+	// The height is not the size of the redraw rectangle because this will force the terrain
+	// off-screen. Instead, we deal with a large surface but only consider a smaller area
+	// when drawing
 	surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_ANYFORMAT,
-		m_terrainMainX[m_bufSize - 1], m_height,
+		m_polygonWidth, m_height,
 		m_pEngine->GetForeground()->format->BitsPerPixel, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 	return (surface != NULL);
 }
@@ -113,30 +129,42 @@ void Terrain::drawTerrainSurface(SDL_Surface *surface, double *buffer) {
 void Terrain::Draw() {
 	if (!m_initialised) return;
 
+	double tmp = (m_terrainMainMaxHeight < m_terrainBufferMaxHeight) ? m_terrainMainMaxHeight : m_terrainBufferMaxHeight;
+	SDL_Rect mainRectSource = {(Sint16)0, tmp, m_polygonWidth, m_height - tmp};
+	SDL_Rect bufferRectSource = {(Sint16)0, tmp, m_polygonWidth, m_height - tmp};
+
 	/* Blit the terrain surfaces to the foreground surface */
-	SDL_BlitSurface(m_terrainMain, NULL, m_pEngine->GetForeground(), m_terrainMainRect);
-	SDL_BlitSurface(m_terrainBuffer, NULL, m_pEngine->GetForeground(), m_terrainBufferRect);
+	SDL_BlitSurface(m_terrainMain, &mainRectSource, m_pEngine->GetForeground(), m_terrainMainRect);
+	SDL_BlitSurface(m_terrainBuffer, &bufferRectSource, m_pEngine->GetForeground(), m_terrainBufferRect);
 }
 
 void Terrain::DoUpdate(int elapsedTime) {
 	if (!m_initialised) return;
 
-	if (m_terrainMainX[m_bufSize - 1] + m_offset <= 0) {
+	if (m_polygonWidth + m_offset <= 0) {
 		/* Delete the old terrain points and free the surface */
 		delete[] m_terrainMainY;
+		delete m_terrainMainRect;
 		SDL_FreeSurface(m_terrainMain);
 
 		/* Update the main terrain pointer to point to the buffer */
 		m_terrainMain = m_terrainBuffer;
 		m_terrainMainY = m_terrainBufferY;
+		m_terrainMainMaxHeight = m_terrainBufferMaxHeight;
+		m_terrainMainRect = m_terrainBufferRect;
 
 		/* Assign new memory */
 		m_terrainBufferY = new double[m_bufSize];
-		createTerrainSurface(m_terrainBuffer);
+		m_terrainBufferRect = new SDL_Rect;
 
-		/* Generate some new terrain for the buffer */
-		generateTerrain(m_terrainBufferY, m_seed, 0);
+		/* Generate some new terrain in the buffer */
+		generateTerrain(m_terrainBufferY, m_terrainBufferMaxHeight, m_seed, 0);
+		GetRedrawRect(m_terrainMainRect);
+		GetRedrawRect(m_terrainBufferRect);
+		createTerrainSurface(m_terrainBuffer);
 		drawTerrainSurface(m_terrainBuffer, m_terrainBufferY);
+
+		/* Reset the offset */
 		m_offset = 0.0;
 	}
 
@@ -145,18 +173,14 @@ void Terrain::DoUpdate(int elapsedTime) {
 
 	/* Calculate the new terrain positions */
 	m_terrainMainRect->x = (Sint16)(0 + static_cast<int>(m_offset));
-	m_terrainBufferRect->x = (Sint16)(m_terrainMainX[m_bufSize - 1] + static_cast<int>(m_offset));
+	m_terrainBufferRect->x = (Sint16)(m_polygonWidth + static_cast<int>(m_offset));
 }
 
 void Terrain::GetRedrawRect(SDL_Rect *rectangle) {
-	/*
-	* Maybe have some sort of static variable to keep the higest possible
-	* terrain point for all visible terrain surfaces to avoid redrawing regions
-	*/
 	rectangle->x = 0;
-	rectangle->y = (Sint16)m_pEngine->GetScreenHeight() - m_height;
-	rectangle->w = (Sint16)m_pEngine->GetScreenWidth();
-	rectangle->h = (Sint16)m_height;
+	rectangle->h = (Sint16)(m_height - ((m_terrainMainMaxHeight < m_terrainBufferMaxHeight) ? m_terrainMainMaxHeight : m_terrainBufferMaxHeight));
+	rectangle->y = (Sint16)m_pEngine->GetScreenHeight() - rectangle->h;
+	rectangle->w = (Sint16)m_polygonWidth;
 }
 
 void Terrain::RedrawBackground() {
