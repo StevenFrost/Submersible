@@ -23,7 +23,7 @@ static const unsigned int TIME_LABEL_WIDTH      = 150;
 
 StatusBar::StatusBar(MyProjectMain *engine) : DisplayableObject(engine), m_alpha(0xBD), m_height(40), m_distance(0), m_points(0), m_seconds(0.0), m_fuel(100) {
 	/* Listen for updates on the submarine */
-	Submarine *sub = dynamic_cast<Submarine *>(m_pEngine->GetDisplayableObject(2));
+	Submarine *sub = dynamic_cast<Submarine *>(m_pEngine->GetDisplayableObject(3));
 	sub->attach(this);
 }
 StatusBar::~StatusBar() {}
@@ -93,7 +93,7 @@ void StatusBar::DoUpdate(int elapsedTime) {
 }
 
 void StatusBar::update(IObservable *observable) {
-	m_fuel = dynamic_cast<Submarine *>(m_pEngine->GetDisplayableObject(2))->getFuel();
+	m_fuel = dynamic_cast<Submarine *>(m_pEngine->GetDisplayableObject(3))->getFuel();
 }
 
 void StatusBar::GetRedrawRect(SDL_Rect *rectangle) {

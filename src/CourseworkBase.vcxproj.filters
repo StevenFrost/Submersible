@@ -80,6 +80,9 @@
     <ClInclude Include="Collision.h">
       <Filter>Header Files\Utilities</Filter>
     </ClInclude>
+    <ClInclude Include="NavalMine.h">
+      <Filter>Header Files\Submersible</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="mainfunction.cpp">
@@ -117,6 +120,9 @@
     </ClCompile>
     <ClCompile Include="Collision.cpp">
       <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="NavalMine.cpp">
+      <Filter>Source Files\Submersible</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

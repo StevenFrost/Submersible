@@ -10,6 +10,7 @@ class Submarine;
 class Terrain;
 class StatusBar;
 class Waves;
+class NavalMine;
 
 class MyProjectMain : public BaseEngine {
 public:
@@ -55,6 +56,7 @@ protected:
 	Waves *m_waves;
 	StatusBar *m_statusBar;
 	Submarine *m_sub;
+	NavalMine *m_mine;
 
 	const int m_fpsTarget;
 

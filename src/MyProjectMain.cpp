@@ -5,6 +5,7 @@
 #include "JPGImage.h"
 #include "StatusBar.h"
 #include "Submarine.h"
+#include "NavalMine.h"
 #include "BaseEngine.h"
 #include "TileManager.h"
 #include "MyProjectMain.h"
@@ -13,8 +14,8 @@
 #include "Collision.h"
 
 /* General private properties */
-static const unsigned int SKY_COLOUR                = 0x3990C6;
-static const unsigned int WATER_COLOUR              = 0x2F76A2;
+static const unsigned int SKY_COLOUR = 0x3990C6;
+static const unsigned int WATER_COLOUR = 0x2F76A2;
 static const unsigned int FOREGROUND_TERRAIN_COLOUR = 0xFF28485D;
 static const unsigned int BACKGROUND_TERRAIN_COLOUR = 0xFF2E6D94;
 
@@ -40,7 +41,7 @@ int MyProjectMain::InitialiseObjects() {
 	DrawableObjectsChanged();
 	DestroyOldObjects();
 
-	m_ppDisplayableObjects = new DisplayableObject*[6];
+	m_ppDisplayableObjects = new DisplayableObject*[7];
 
 	/* Terrain initialisation */
 	m_backgroundTerrain = new Terrain(this, GetScreenWidth(), 600, BACKGROUND_TERRAIN_COLOUR);
@@ -48,9 +49,12 @@ int MyProjectMain::InitialiseObjects() {
 	m_backgroundTerrain->setSpeed(20.0);
 	m_ppDisplayableObjects[0] = m_backgroundTerrain;
 
+	m_mine = new NavalMine(this);
+	m_ppDisplayableObjects[1] = m_mine;
+
 	m_foregroundTerrain = new Terrain(this, GetScreenWidth(), 400, FOREGROUND_TERRAIN_COLOUR);
 	m_foregroundTerrain->initialise();
-	m_ppDisplayableObjects[1] = m_foregroundTerrain;
+	m_ppDisplayableObjects[2] = m_foregroundTerrain;
 
 	/* Load the sun graphic */
 	m_sun = new ImageSurface();
@@ -58,17 +62,17 @@ int MyProjectMain::InitialiseObjects() {
 
 	/* Load the submarine */
 	m_sub = new Submarine(this, 100, 250);
-	m_ppDisplayableObjects[2] = m_sub;
+	m_ppDisplayableObjects[3] = m_sub;
 
 	/* Load the waves */
 	m_waves = new Waves(this);
-	m_ppDisplayableObjects[3] = m_waves;
+	m_ppDisplayableObjects[4] = m_waves;
 
 	/* Initialise the status bar */
 	m_statusBar = new StatusBar(this);
-	m_ppDisplayableObjects[4] = m_statusBar;
+	m_ppDisplayableObjects[5] = m_statusBar;
 
-	m_ppDisplayableObjects[5] = NULL;
+	m_ppDisplayableObjects[6] = NULL;
 
 	return 0;
 }
@@ -87,7 +91,7 @@ void MyProjectMain::GameAction() {
 	controlSub();
 
 	Collision::boundingBox(m_sub, m_foregroundTerrain);
-	
+
 	UpdateAllObjects(elapsedTime);
 	Redraw(false);
 

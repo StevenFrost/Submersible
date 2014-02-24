@@ -49,8 +49,6 @@ bool Terrain::initialise() {
 	generateTerrain(m_terrainMainY, m_terrainMainMaxHeight, 0, 0);
 	generateTerrain(m_terrainBufferY, m_terrainBufferMaxHeight, m_seed, 0);
 
-	printf("m_terrainMainMaxHeight: %d\r\nm_terrainbufferMaxHeight: %d\r\n", m_terrainMainMaxHeight, m_terrainBufferMaxHeight);
-
 	/* Build the rectangles required for blitting the terrain */
 	GetRedrawRect(m_terrainMainRect);
 	GetRedrawRect(m_terrainBufferRect);
