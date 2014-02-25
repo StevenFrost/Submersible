@@ -1,8 +1,8 @@
 #include "NavalMine.h"
 
-ImageSurface *NavalMine::m_mine = new ImageSurface();
-ImageSurface *NavalMine::m_chain = new ImageSurface();
-ImageSurface *NavalMine::m_lights = new ImageSurface();
+Image *NavalMine::m_mine = new Image();
+Image *NavalMine::m_chain = new Image();
+Image *NavalMine::m_lights = new Image();
 
 NavalMine::NavalMine(MyProjectMain *engine) : DisplayableObject(engine), m_offset(0.0) {
 	m_iStartDrawPosX = 0;
@@ -30,6 +30,7 @@ NavalMine::~NavalMine() {
 void NavalMine::Draw() {
 	m_mine->RenderImage(m_pEngine->GetForeground(), 0, 0, m_iCurrentScreenX + m_offset, m_iCurrentScreenY, m_mine->GetWidth(), m_mine->GetHeight());
 	m_lights->RenderImage(m_pEngine->GetForeground(), 0, 0, (m_iCurrentScreenX - 6) + m_offset, m_iCurrentScreenY - 6, m_lights->GetWidth(), m_lights->GetHeight());
+	
 	for (int i = m_iCurrentScreenY + 80; i < m_pEngine->GetScreenHeight(); i += m_chain->GetHeight()) {
 		m_chain->RenderImage(m_pEngine->GetForeground(), 0, 0, (m_iCurrentScreenX + 41) + m_offset, i, m_chain->GetWidth(), m_chain->GetHeight());
 	}

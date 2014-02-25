@@ -2,7 +2,7 @@
 #define NAVAL_MINE_H
 
 #include "header.h"
-#include "JPGImage.h"
+#include "Image.h"
 #include "MyProjectMain.h"
 #include "DisplayableObject.h"
 
@@ -17,9 +17,9 @@ public:
 	virtual void GetRedrawRect(SDL_Rect *rectangle);
 	virtual void RedrawBackground();
 protected:
-	static ImageSurface *m_mine;
-	static ImageSurface *m_chain;
-	static ImageSurface *m_lights;
+	static Image *m_mine;
+	static Image *m_chain;
+	static Image *m_lights;
 
 	double m_offset;
 };
