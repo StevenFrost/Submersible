@@ -20,8 +20,9 @@ static const unsigned int FOREGROUND_TERRAIN_COLOUR = 0xFF28485D;
 static const unsigned int BACKGROUND_TERRAIN_COLOUR = 0xFF2E6D94;
 
 #define PIXELS_TO_M 0.153
+#define MAX_OBECTS 30
 
-MyProjectMain::MyProjectMain() : BaseEngine(6), m_fpsTarget(60) {}
+MyProjectMain::MyProjectMain() : BaseEngine(MAX_OBECTS), m_fpsTarget(60) {}
 
 void MyProjectMain::SetupBackgroundBuffer() {
 	/* Start by drawing the sky background */
@@ -41,7 +42,7 @@ int MyProjectMain::InitialiseObjects() {
 	DrawableObjectsChanged();
 	DestroyOldObjects();
 
-	m_ppDisplayableObjects = new DisplayableObject*[7];
+	m_ppDisplayableObjects = new DisplayableObject*[MAX_OBECTS];
 
 	/* Terrain initialisation */
 	m_backgroundTerrain = new Terrain(this, GetScreenWidth(), 600, BACKGROUND_TERRAIN_COLOUR);

@@ -41,9 +41,6 @@
     <ClInclude Include="DisplayableObject.h">
       <Filter>Header Files\Shared</Filter>
     </ClInclude>
-    <ClInclude Include="FontManager.h">
-      <Filter>Header Files\Shared</Filter>
-    </ClInclude>
     <ClInclude Include="JPGImage.h">
       <Filter>Header Files\Shared</Filter>
     </ClInclude>
@@ -82,6 +79,12 @@
     </ClInclude>
     <ClInclude Include="NavalMine.h">
       <Filter>Header Files\Submersible</Filter>
+    </ClInclude>
+    <ClInclude Include="Image.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="FontManager.h">
+      <Filter>Header Files\Shared</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -93,6 +93,7 @@
     <ClInclude Include="BaseEngine.h" />
     <ClInclude Include="DisplayableObject.h" />
     <ClInclude Include="FontManager.h" />
+    <ClInclude Include="Image.h" />
     <ClInclude Include="IObservable.h" />
     <ClInclude Include="IObserver.h" />
     <ClInclude Include="JPGImage.h" />
