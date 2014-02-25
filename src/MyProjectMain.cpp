@@ -78,8 +78,6 @@ int MyProjectMain::InitialiseObjects() {
 	return 0;
 }
 
-void MyProjectMain::DrawStrings() {}
-
 void MyProjectMain::GameAction() {
 	static int lastFrameTime = GetTime();
 	int thisFrameTime = GetTime();
@@ -115,8 +113,18 @@ void MyProjectMain::controlSub() {
 	}
 }
 
-void MyProjectMain::MouseDown(int iButton, int iX, int iY) {
+void MyProjectMain::GetUpdateRectanglesForChangingObjects() {
+	// TODO: Override this to take into account that some objects do not
+	//       inherit from DisplayableObject, so we need to manually set the
+	//       rectangles for these
+	SDL_Rect* pRect;
 
+	if (m_ppDisplayableObjects != NULL) {
+		for (int i = 0; m_ppDisplayableObjects[i] != NULL; i++) {
+			pRect = GetNextUpdateRect();
+			m_ppDisplayableObjects[i]->GetRedrawRect(pRect);
+		}
+	}
 }
 
 void MyProjectMain::KeyDown(int iKeyCode) {

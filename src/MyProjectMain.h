@@ -29,20 +29,12 @@ public:
 	int InitialiseObjects();
 
 	/**
-	* Draws any text to the screen
-	*/
-	void DrawStrings();
-
-	/**
 	* The main game logic method. Moves objects and changes state if necessary.
 	* This method must call redraw if any visible object changes.
 	*/
 	virtual void GameAction();
 
-	/**
-	* Handles the mouse-down event
-	*/
-	void MouseDown(int iButton, int iX, int iY);
+	virtual void GetUpdateRectanglesForChangingObjects();
 
 	/**
 	* Handles the key-down event
@@ -62,9 +54,6 @@ protected:
 
 private:
 	void controlSub();
-
-	bool pixelCollideTest(SDL_Surface *surface, int x, int y);
-	bool collide(SDL_Surface *a, SDL_Surface *b, int aX, int aY, int bX, int bY);
 };
 
 #endif // !MYPROJECTMAIN_H
