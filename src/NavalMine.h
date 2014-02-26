@@ -22,6 +22,11 @@ protected:
 
 	double m_currentScreenXPrecise;		// A more precise version of m_iCurrentScreenX
 	double m_currentScreenYPrecise;		// A More precise version of m_iCurrentScreenY
+
+private:
+	int m_lightSpriteOffset;
+
+	void animateLights(int elapsedTime);
 };
 
 #endif // !NAVAL_MINE_H
