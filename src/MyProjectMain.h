@@ -51,9 +51,6 @@ protected:
 	NavalMine *m_mine;
 
 	const int m_fpsTarget;
-
-private:
-	void controlSub();
 };
 
 #endif // !MYPROJECTMAIN_H

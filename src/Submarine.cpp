@@ -1,13 +1,13 @@
 #include "Submarine.h"
 
-ImageSurface *Submarine::m_body = new ImageSurface();
+Image *Submarine::m_body = new Image();
 
 Submarine::Submarine(MyProjectMain *engine, unsigned int x, unsigned int y) : DisplayableObject(engine), m_friction(0.96), m_fuel(100.0) {
 	/* Set the initial position */
-	m_iCurrentScreenX = x;
-	m_iCurrentScreenY = y;
 	m_iStartDrawPosX = 0;
 	m_iStartDrawPosY = 0;
+	m_iCurrentScreenX = x;
+	m_iCurrentScreenY = y;
 	m_iPreviousScreenX = m_iCurrentScreenX;
 	m_iPreviousScreenY = m_iCurrentScreenY;
 
@@ -30,17 +30,11 @@ void Submarine::Draw() {
 	m_body->RenderImage(m_pEngine->GetForeground(), 0, 0, m_iCurrentScreenX, m_iCurrentScreenY, m_body->GetWidth(), m_body->GetHeight());
 
 	StoreLastScreenPositionAndUpdateRect();
-
-	/* Draw the lights if required */
-	if (m_lightsOn) {
-		// ...
-	}
-
-	/* Draw the jet at the rear of the sub */
-	// ...
 }
 
 void Submarine::DoUpdate(int elapsedTime) {
+	controlSub();
+
 	/* Limitations */
 	if (m_iCurrentScreenY < 125) {
 		m_iCurrentScreenY = 125;
@@ -61,4 +55,18 @@ void Submarine::DoUpdate(int elapsedTime) {
 
 	/* Notify any observers that something changed */
 	notify();
+}
+
+void Submarine::controlSub() {
+	if (m_pEngine->IsKeyPressed(SDLK_RIGHT)) {
+		setXDelta(100);
+	} else if (m_pEngine->IsKeyPressed(SDLK_LEFT)) {
+		setXDelta(-100);
+	}
+
+	if (m_pEngine->IsKeyPressed(SDLK_UP)) {
+		setYDelta(-100);
+	} else if (m_pEngine->IsKeyPressed(SDLK_DOWN)) {
+		setYDelta(100);
+	}
 }

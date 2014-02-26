@@ -87,8 +87,6 @@ void MyProjectMain::GameAction() {
 	/* Update the travelled distance */
 	m_statusBar->incrementDistance(m_foregroundTerrain->getSpeed() * PIXELS_TO_M * (elapsedTime / 1000.0));
 
-	controlSub();
-
 	Collision::boundingBox(m_sub, m_foregroundTerrain);
 
 	UpdateAllObjects(elapsedTime);
@@ -96,20 +94,6 @@ void MyProjectMain::GameAction() {
 
 	if (1000 / m_fpsTarget > GetTime() - thisFrameTime) {
 		SDL_Delay(1000 / m_fpsTarget - (GetTime() - thisFrameTime));
-	}
-}
-
-void MyProjectMain::controlSub() {
-	if (IsKeyPressed(SDLK_RIGHT)) {
-		m_sub->setXDelta(100);
-	} else if (IsKeyPressed(SDLK_LEFT)) {
-		m_sub->setXDelta(-100);
-	}
-
-	if (IsKeyPressed(SDLK_UP)) {
-		m_sub->setYDelta(-100);
-	} else if (IsKeyPressed(SDLK_DOWN)) {
-		m_sub->setYDelta(100);
 	}
 }
 
