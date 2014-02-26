@@ -9,7 +9,7 @@ static const unsigned int FONT_COLOUR           = 0xEEEEEE;
 static const unsigned int DISTANCE_LABEL_X      = 10;
 static const unsigned int DISTANCE_LABEL_Y      = 5;
 static const unsigned int DISTANCE_LABEL_HEIGHT = 35;
-static const unsigned int DISTANCE_LABEL_WIDTH  = 150;
+static const unsigned int DISTANCE_LABEL_WIDTH  = 160;
 
 static const unsigned int POINTS_LABEL_X        = 200;
 static const unsigned int POINTS_LABEL_Y        = 5;
