@@ -14,14 +14,14 @@ public:
 	/* Overrides from DisplayableObject */
 	virtual void Draw();
 	virtual void DoUpdate(int elapsedTime);
-	virtual void GetRedrawRect(SDL_Rect *rectangle);
 	virtual void RedrawBackground();
 protected:
 	static Image *m_mine;
 	static Image *m_chain;
 	static Image *m_lights;
 
-	double m_offset;
+	double m_currentScreenXPrecise;		// A more precise version of m_iCurrentScreenX
+	double m_currentScreenYPrecise;		// A More precise version of m_iCurrentScreenY
 };
 
 #endif // !NAVAL_MINE_H

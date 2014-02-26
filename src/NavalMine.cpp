@@ -4,11 +4,13 @@ Image *NavalMine::m_mine = new Image();
 Image *NavalMine::m_chain = new Image();
 Image *NavalMine::m_lights = new Image();
 
-NavalMine::NavalMine(MyProjectMain *engine) : DisplayableObject(engine), m_offset(0.0) {
+NavalMine::NavalMine(MyProjectMain *engine) : DisplayableObject(engine) {
 	m_iStartDrawPosX = 0;
 	m_iStartDrawPosY = 0;
 	m_iCurrentScreenX = 900;
-	m_iCurrentScreenY = 300;
+	m_iCurrentScreenY = 400;
+	m_currentScreenXPrecise = m_iCurrentScreenX;
+	m_currentScreenYPrecise = m_iCurrentScreenY;
 	m_iPreviousScreenX = m_iCurrentScreenX;
 	m_iPreviousScreenY = m_iCurrentScreenY;
 
@@ -21,31 +23,39 @@ NavalMine::NavalMine(MyProjectMain *engine) : DisplayableObject(engine), m_offse
 	if (!m_lights->IsLoaded()) {
 		m_lights->LoadImage("../resources/mine-lights.png");
 	}
+
+	m_iDrawWidth = m_lights->GetWidth();
+	m_iDrawHeight = m_pEngine->GetScreenHeight() - m_iCurrentScreenY;
 }
 
 NavalMine::~NavalMine() {
-	delete m_mine, m_chain;
+	delete m_mine, m_chain, m_lights;
 }
 
 void NavalMine::Draw() {
-	m_mine->RenderImage(m_pEngine->GetForeground(), 0, 0, m_iCurrentScreenX + m_offset, m_iCurrentScreenY, m_mine->GetWidth(), m_mine->GetHeight());
-	m_lights->RenderImage(m_pEngine->GetForeground(), 0, 0, (m_iCurrentScreenX - 6) + m_offset, m_iCurrentScreenY - 6, m_lights->GetWidth(), m_lights->GetHeight());
+	/* Draw the mine and lights */
+	m_mine->RenderImage(m_pEngine->GetForeground(), 0, 0, m_currentScreenXPrecise + 6, m_currentScreenYPrecise + 6, m_mine->GetWidth(), m_mine->GetHeight());
+	m_lights->RenderImage(m_pEngine->GetForeground(), 0, 0, m_currentScreenXPrecise, m_currentScreenYPrecise, m_lights->GetWidth(), m_lights->GetHeight());
 	
-	for (int i = m_iCurrentScreenY + 80; i < m_pEngine->GetScreenHeight(); i += m_chain->GetHeight()) {
-		m_chain->RenderImage(m_pEngine->GetForeground(), 0, 0, (m_iCurrentScreenX + 41) + m_offset, i, m_chain->GetWidth(), m_chain->GetHeight());
+	/* Draw the terrain to the bottom of the screen */
+	for (int i = m_iCurrentScreenY + 86; i < m_pEngine->GetScreenHeight(); i += m_chain->GetHeight()) {
+		m_chain->RenderImage(m_pEngine->GetForeground(), 0, 0, m_currentScreenXPrecise + 47, i, m_chain->GetWidth(), m_chain->GetHeight());
 	}
 }
 
 void NavalMine::DoUpdate(int elapsedTime) {
-	/* We can't use m_iCurrentScreenX as it's too inaccurate and we can't sync mines with the terrain */
-	m_offset -= (70.0 * elapsedTime / 1000.0);
-}
+	// We can't use m_iCurrentScreenX as it's too inaccurate and we can't sync
+	// mines with the terrain. Instead, we use the more accurate member
+	// m_currentScreenXPrecise
+	m_currentScreenXPrecise -= (70.0 * elapsedTime / 1000.0);
+	m_currentScreenYPrecise -= (17.0 * elapsedTime / 1000.0);
 
-void NavalMine::GetRedrawRect(SDL_Rect *rectangle) {
-	rectangle->x = (m_iCurrentScreenX - 6) + m_offset;
-	rectangle->y = (m_iCurrentScreenY - 6);
-	rectangle->w = m_lights->GetWidth() + 1;
-	rectangle->h = m_pEngine->GetScreenHeight() - rectangle->y;
+	/* Keep the less precise version updated, we need it for redrawing */
+	m_iCurrentScreenX = static_cast<int>(m_currentScreenXPrecise);
+	m_iCurrentScreenY = static_cast<int>(m_currentScreenYPrecise);
+
+	/* Update the redraw rectangles */
+	StoreLastScreenPositionAndUpdateRect();
 }
 
 void NavalMine::RedrawBackground() {
