@@ -17,24 +17,34 @@ public:
 	virtual void DoUpdate(int elapsedTime);
 
 	/* Getters */
-	Image       *getSubBody()  const { return m_body;               }
-	SDL_Surface *getSurface()  const { return m_body->getSurface(); }
-	double       getFuel()     const { return m_fuel;               }
-	double       getXDelta()   const { return m_xDelta;             }
-	double       getYDelta()   const { return m_yDelta;             }
+	Image       *getSubBody()   const  { return m_body;               }
+	SDL_Surface *getSurface()   const  { return m_body->getSurface(); }
+	double       getFuel()      const  { return m_fuel;               }
+	double       getXVelocity() const  { return m_xVelocity;          }
+	double       getYVelocity() const  { return m_yVelocity;          }
 
 	/* Setters */
-	void setXDelta(double delta)      { m_xDelta = delta;           }
-	void setYDelta(double delta)      { m_yDelta = delta;           }
+	void setXVelocity(double velocity) { m_xVelocity = velocity;      }
+	void setYVelocity(double velocity) { m_yVelocity = velocity;      }
 protected:
 	static Image *m_body;
 private:
 	double m_fuel;
-	double m_friction;
-	double m_xDelta;
-	double m_yDelta;
 
-	void controlSub();
+	double m_xVelocity;
+	double m_yVelocity;
+	const double m_maxVelocityX;
+	const double m_maxVelocityY;
+	const double m_acceleration;
+
+	double m_currentScreenXPrecise;		// A more precise version of m_iCurrentScreenX
+	double m_currentScreenYPrecise;		// A More precise version of m_iCurrentScreenY
+
+	/**
+	* Handles the submarine movement when the user holds down
+	* keys that
+	*/
+	void controlSub(int elapsedTime);
 };
 
 #endif // !SUBMARINE_H

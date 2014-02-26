@@ -87,14 +87,13 @@ void MyProjectMain::GameAction() {
 	/* Update the travelled distance */
 	m_statusBar->incrementDistance(m_foregroundTerrain->getSpeed() * PIXELS_TO_M * (elapsedTime / 1000.0));
 
+	/* Collision detection */
 	Collision::boundingBox(m_sub, m_foregroundTerrain);
 
 	UpdateAllObjects(elapsedTime);
 	Redraw(false);
 
-	if (1000 / m_fpsTarget > GetTime() - thisFrameTime) {
-		SDL_Delay(1000 / m_fpsTarget - (GetTime() - thisFrameTime));
-	}
+	SDL_Delay(1);
 }
 
 void MyProjectMain::GetUpdateRectanglesForChangingObjects() {
@@ -119,17 +118,9 @@ void MyProjectMain::KeyDown(int iKeyCode) {
 	case SDLK_p:
 		m_statusBar->incrementPoints();
 		break;
-	case SDLK_UP:
-		m_sub->setYDelta(-100);
-		break;
-	case SDLK_DOWN:
-		m_sub->setYDelta(100);
-		break;
-	case SDLK_LEFT:
-		m_sub->setXDelta(-100);
-		break;
-	case SDLK_RIGHT:
-		m_sub->setXDelta(100);
-		break;
 	}
+}
+
+void MyProjectMain::printDebugInformation() {
+
 }

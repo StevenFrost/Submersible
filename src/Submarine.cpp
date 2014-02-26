@@ -2,7 +2,7 @@
 
 Image *Submarine::m_body = new Image();
 
-Submarine::Submarine(MyProjectMain *engine, unsigned int x, unsigned int y) : DisplayableObject(engine), m_friction(0.96), m_fuel(100.0) {
+Submarine::Submarine(MyProjectMain *engine, unsigned int x, unsigned int y) : DisplayableObject(engine), m_fuel(100.0), m_maxVelocityX(0.25), m_maxVelocityY(0.4), m_acceleration(0.6) {
 	/* Set the initial position */
 	m_iStartDrawPosX = 0;
 	m_iStartDrawPosY = 0;
@@ -10,6 +10,8 @@ Submarine::Submarine(MyProjectMain *engine, unsigned int x, unsigned int y) : Di
 	m_iCurrentScreenY = y;
 	m_iPreviousScreenX = m_iCurrentScreenX;
 	m_iPreviousScreenY = m_iCurrentScreenY;
+	m_currentScreenXPrecise = m_iCurrentScreenX;
+	m_currentScreenYPrecise = m_iCurrentScreenY;
 
 	/* Load the graphic */
 	if (!m_body->IsLoaded()) {
@@ -27,28 +29,14 @@ Submarine::~Submarine() {
 
 void Submarine::Draw() {
 	/* Draw the main submarine body */
-	m_body->RenderImage(m_pEngine->GetForeground(), 0, 0, m_iCurrentScreenX, m_iCurrentScreenY, m_body->GetWidth(), m_body->GetHeight());
+	m_body->RenderImage(m_pEngine->GetForeground(), 0, 0, m_currentScreenXPrecise, m_iCurrentScreenY, m_body->GetWidth(), m_body->GetHeight());
 
 	StoreLastScreenPositionAndUpdateRect();
 }
 
 void Submarine::DoUpdate(int elapsedTime) {
-	controlSub();
-
-	/* Limitations */
-	if (m_iCurrentScreenY < 125) {
-		m_iCurrentScreenY = 125;
-		m_yDelta = 0;
-		return;
-	}
-
-	/* Apply a frictional force */
-	m_yDelta *= m_yDelta < 0.0 ? (1.0 - m_friction) : m_friction;
-	m_xDelta *= m_xDelta < 0.0 ? (1.0 - m_friction) : m_friction;
-
 	/* Update the submarine position */
-	m_iCurrentScreenY += (m_yDelta * elapsedTime / 1000.0);
-	m_iCurrentScreenX += (m_xDelta * elapsedTime / 1000.0);
+	controlSub(elapsedTime);
 
 	/* Calculate the quantity of fuel remaining */
 	m_fuel -= (0.2 * (elapsedTime / 100.0));
@@ -57,16 +45,67 @@ void Submarine::DoUpdate(int elapsedTime) {
 	notify();
 }
 
-void Submarine::controlSub() {
+void Submarine::controlSub(int elapsedTime) {
+	double secondsThisFrame = elapsedTime / 1000.0;
+	double delta = m_acceleration * secondsThisFrame;
+	static bool subRight = true;
+	static bool subUp = true;
+
+	/* Handle Right, Left, Up and Down array key presses for submarine movement */
 	if (m_pEngine->IsKeyPressed(SDLK_RIGHT)) {
-		setXDelta(100);
+		subRight = true;
+		m_xVelocity += (m_xVelocity < m_maxVelocityX ? delta : 0);
 	} else if (m_pEngine->IsKeyPressed(SDLK_LEFT)) {
-		setXDelta(-100);
+		subRight = false;
+		m_xVelocity -= (m_xVelocity > -m_maxVelocityX ? delta : 0);
+	} else {
+		if (subRight) {
+			m_xVelocity -= (m_xVelocity > 0.0 ? delta : 0);
+		} else {
+			m_xVelocity += (m_xVelocity < 0.0 ? delta : 0);
+		}
+	}
+	if (m_pEngine->IsKeyPressed(SDLK_UP)) {
+		subUp = true;
+		m_yVelocity -= (m_yVelocity > -m_maxVelocityY ? delta : 0);
+	} else if (m_pEngine->IsKeyPressed(SDLK_DOWN)) {
+		subUp = false;
+		m_yVelocity += (m_yVelocity < m_maxVelocityY ? delta : 0);
+	} else {
+		if (subUp) {
+			m_yVelocity += (m_yVelocity < 0.0 ? delta : 0);
+		} else {
+			m_yVelocity -= (m_yVelocity > 0.0 ? delta : 0);
+		}
 	}
 
-	if (m_pEngine->IsKeyPressed(SDLK_UP)) {
-		setYDelta(-100);
-	} else if (m_pEngine->IsKeyPressed(SDLK_DOWN)) {
-		setYDelta(100);
+	/* Limit the range of the submarine */
+	if (m_iCurrentScreenY < 125) {
+		m_iCurrentScreenY = 125;
+		m_yVelocity = 0.0;
+		return;
 	}
+	if (m_iCurrentScreenY >(m_pEngine->GetScreenHeight() - m_body->GetHeight())) {
+		m_iCurrentScreenY = (m_pEngine->GetScreenHeight() - m_body->GetHeight());
+		m_yVelocity = 0.0;
+		return;
+	}
+	if (m_iCurrentScreenX < 0) {
+		m_iCurrentScreenX = 0;
+		m_xVelocity = 0;
+		return;
+	}
+	if (m_iCurrentScreenX >(m_pEngine->GetScreenWidth() - m_body->GetWidth())) {
+		m_iCurrentScreenX = (m_pEngine->GetScreenWidth() - m_body->GetWidth());
+		m_xVelocity = 0;
+		return;
+	}
+
+	/* Update the precise submarine location */
+	m_currentScreenXPrecise += m_xVelocity;
+	m_currentScreenYPrecise += m_yVelocity;
+
+	/* Keep the less-precise coordinates so we can stil redraw easily */
+	m_iCurrentScreenX = static_cast<int>(m_currentScreenXPrecise);
+	m_iCurrentScreenY = static_cast<int>(m_currentScreenYPrecise);
 }
