@@ -2,6 +2,7 @@
 #define TERRAIN_H
 
 #include "header.h"
+#include "IObservable.h"
 #include "MyProjectMain.h"
 #include "DisplayableObject.h"
 
@@ -31,7 +32,7 @@
 * the pointers are swaped and we continue to scroll the terrain as usual.
 * This approach allows us to have seamless random terrain of infinite length.
 */
-class Terrain : public DisplayableObject {
+class Terrain : public DisplayableObject, public IObservable {
 public:
 	Terrain(MyProjectMain *engine, unsigned int width, unsigned int height, unsigned int colour);
 	virtual ~Terrain();
@@ -43,7 +44,7 @@ public:
 	virtual void RedrawBackground();
 
 	/* Setters */
-	void setSpeed(double speed)               { m_speed = speed;               }
+	void setSpeed(double speed)               { m_speed = speed; notify();     }
 	void setRoughness(double roughness)       { m_roughness = roughness;       }
 	void setDisplacement(double displacement) { m_displacement = displacement; }
 

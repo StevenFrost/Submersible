@@ -23,6 +23,8 @@ public:
 
 	inline void incrementDistance(double delta) { m_distance += delta; }
 	inline void incrementPoints()               { m_points++;          }
+
+	void initialise();
 protected:
 	double m_distance;
 	unsigned int m_points;

@@ -48,32 +48,29 @@ int MyProjectMain::InitialiseObjects() {
 	m_backgroundTerrain = new Terrain(this, GetScreenWidth(), 600, BACKGROUND_TERRAIN_COLOUR);
 	m_backgroundTerrain->initialise();
 	m_backgroundTerrain->setSpeed(20.0);
-	m_ppDisplayableObjects[0] = m_backgroundTerrain;
-
-	m_mine = new NavalMine(this);
-	m_ppDisplayableObjects[1] = m_mine;
-
+	
 	m_foregroundTerrain = new Terrain(this, GetScreenWidth(), 400, FOREGROUND_TERRAIN_COLOUR);
 	m_foregroundTerrain->initialise();
-	m_ppDisplayableObjects[2] = m_foregroundTerrain;
+	m_foregroundTerrain->setSpeed(70.0);
 
-	/* Load the sun graphic */
 	m_sun = new ImageSurface();
 	m_sun->LoadImage("../resources/sun.png");
 
-	/* Load the submarine */
 	m_sub = new Submarine(this, 100, 250);
-	m_ppDisplayableObjects[3] = m_sub;
-
-	/* Load the waves */
+	m_mine = new NavalMine(this);
 	m_waves = new Waves(this);
-	m_ppDisplayableObjects[4] = m_waves;
-
-	/* Initialise the status bar */
 	m_statusBar = new StatusBar(this);
-	m_ppDisplayableObjects[5] = m_statusBar;
+	
+	m_ppDisplayableObjects[BACKGROUND_TERRAIN] = m_backgroundTerrain;
+	m_ppDisplayableObjects[NAVAL_MINE_0] = m_mine;
+	m_ppDisplayableObjects[FOREGROUND_TERRAIN] = m_foregroundTerrain;
+	m_ppDisplayableObjects[SUBMARINE] = m_sub;
+	m_ppDisplayableObjects[WAVES] = m_waves;
+	m_ppDisplayableObjects[STATUS_BAR] = m_statusBar;
+	m_ppDisplayableObjects[NONE] = NULL;
 
-	m_ppDisplayableObjects[6] = NULL;
+	m_mine->initialise();
+	m_statusBar->initialise();
 
 	return 0;
 }

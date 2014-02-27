@@ -1,4 +1,6 @@
 #include "NavalMine.h"
+#include "Terrain.h"
+#include "MyProjectMain.h"
 
 Image *NavalMine::m_mine = new Image();
 Image *NavalMine::m_chain = new Image();
@@ -30,6 +32,11 @@ NavalMine::NavalMine(MyProjectMain *engine) : DisplayableObject(engine) {
 
 NavalMine::~NavalMine() {
 	delete m_mine, m_chain, m_lights;
+	dynamic_cast<Terrain *>(m_pEngine->GetDisplayableObject(MyProjectMain::GameObjects::FOREGROUND_TERRAIN))->detatch(this);
+}
+
+void NavalMine::initialise() {
+	dynamic_cast<Terrain *>(m_pEngine->GetDisplayableObject(MyProjectMain::GameObjects::FOREGROUND_TERRAIN))->attach(this);
 }
 
 void NavalMine::Draw() {
@@ -39,7 +46,7 @@ void NavalMine::Draw() {
 	/* Draw the lights */
 	m_lights->RenderImage(m_pEngine->GetForeground(), m_lightSpriteOffset, 0, m_currentScreenXPrecise + 42, m_currentScreenYPrecise, 15, 14);
 	m_lights->RenderImage(m_pEngine->GetForeground(), m_lightSpriteOffset, 0, m_currentScreenXPrecise + 12, m_currentScreenYPrecise + 11, 15, 14);
-	m_lights->RenderImage(m_pEngine->GetForeground(), m_lightSpriteOffset, 0, m_currentScreenXPrecise + 85, m_currentScreenYPrecise + 40, 15, 14);
+	m_lights->RenderImage(m_pEngine->GetForeground(), m_lightSpriteOffset, 0, m_currentScreenXPrecise + 84, m_currentScreenYPrecise + 40, 15, 14);
 	m_lights->RenderImage(m_pEngine->GetForeground(), m_lightSpriteOffset, 0, m_currentScreenXPrecise + 73, m_currentScreenYPrecise + 68, 15, 14);
 	m_lights->RenderImage(m_pEngine->GetForeground(), m_lightSpriteOffset, 0, m_currentScreenXPrecise + 11, m_currentScreenYPrecise + 68, 15, 14);
 	m_lights->RenderImage(m_pEngine->GetForeground(), m_lightSpriteOffset, 0, m_currentScreenXPrecise + 0, m_currentScreenYPrecise + 40, 15, 14);
@@ -67,6 +74,10 @@ void NavalMine::DoUpdate(int elapsedTime) {
 
 	/* Update the redraw rectangles */
 	StoreLastScreenPositionAndUpdateRect();
+}
+
+void NavalMine::update(IObservable *observerable) {
+	m_speed = dynamic_cast<Terrain *>(m_pEngine->GetDisplayableObject(MyProjectMain::GameObjects::FOREGROUND_TERRAIN))->getSpeed();
 }
 
 void NavalMine::animateLights(int elapsedTime) {

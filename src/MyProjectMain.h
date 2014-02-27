@@ -14,6 +14,16 @@ class NavalMine;
 
 class MyProjectMain : public BaseEngine {
 public:
+	enum GameObjects {
+		BACKGROUND_TERRAIN,
+		NAVAL_MINE_0,
+		FOREGROUND_TERRAIN,
+		SUBMARINE,
+		WAVES,
+		STATUS_BAR,
+		NONE
+	};
+
 	MyProjectMain();
 
 	/**
