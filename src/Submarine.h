@@ -29,20 +29,25 @@ public:
 protected:
 	static Image *m_body;
 private:
-	double m_fuel;
+	/* Generic properties */
+	double m_fuel;						// The submarine fuel quantity
 
-	double m_xVelocity;
-	double m_yVelocity;
-	const double m_maxVelocityX;
-	const double m_maxVelocityY;
-	const double m_acceleration;
+	/* Movement */
+	double m_xVelocity;					// Submarine x-axis velocity
+	double m_yVelocity;					// Submarine y-axis velocity
+	const double m_maxVelocityX;		// The maximum allowable x-axis velocity
+	const double m_maxVelocityY;		// The maximum allowable y-axis velocity
+	const double m_acceleration;		// Acceleration constant
 
+	/* Position */
 	double m_currentScreenXPrecise;		// A more precise version of m_iCurrentScreenX
 	double m_currentScreenYPrecise;		// A More precise version of m_iCurrentScreenY
 
 	/**
-	* Handles the submarine movement when the user holds down
-	* keys that
+	* Handles the submarine movement when the user holds down keys that affect
+	* the submarine control surfaces
+	*
+	* @param elapsedTime	the elapsed time for the current frame
 	*/
 	void controlSub(int elapsedTime);
 };
