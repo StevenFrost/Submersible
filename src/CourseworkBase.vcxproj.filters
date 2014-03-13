@@ -86,6 +86,9 @@
     <ClInclude Include="FontManager.h">
       <Filter>Header Files\Shared</Filter>
     </ClInclude>
+    <ClInclude Include="GameObjectManager.h">
+      <Filter>Header Files\Submersible</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="mainfunction.cpp">
@@ -125,6 +128,9 @@
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
     <ClCompile Include="NavalMine.cpp">
+      <Filter>Source Files\Submersible</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObjectManager.cpp">
       <Filter>Source Files\Submersible</Filter>
     </ClCompile>
   </ItemGroup>

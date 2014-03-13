@@ -11,57 +11,59 @@ class Terrain;
 class StatusBar;
 class Waves;
 class NavalMine;
+class GameObjectManager;
 
 class MyProjectMain : public BaseEngine {
 public:
-	enum GameObjects {
+	typedef enum GameState {
+		MENU,
+		PLAYING,
+		CRASHED,
+		PAUSED,
+		HELP
+	} GameState;
+
+	typedef enum StaticGameObject {
 		BACKGROUND_TERRAIN,
-		NAVAL_MINE_0,
+		GAME_OBJECTS,
 		FOREGROUND_TERRAIN,
 		SUBMARINE,
 		WAVES,
 		STATUS_BAR,
 		NONE
-	};
+	} StaticGameObject;
 
 	MyProjectMain();
+	~MyProjectMain();
 
-	/**
-	* Builds the background buffer prior to locking the screen buffer. The
-	* resulting background will be copied to the screen as and when it is
-	* needed.
-	*/
+	virtual int GameInit();
+	virtual void GameAction();
+	virtual void CleanUp();
+
+	virtual int InitialiseObjects();
 	virtual void SetupBackgroundBuffer();
 
-	/**
-	* Creates moving objects. Subclasses need to implement this method
-	*/
-	int InitialiseObjects();
+	virtual void KeyDown(int keyCode);
 
-	/**
-	* The main game logic method. Moves objects and changes state if necessary.
-	* This method must call redraw if any visible object changes.
-	*/
-	virtual void GameAction();
-
-	virtual void GetUpdateRectanglesForChangingObjects();
-
-	/**
-	* Handles the key-down event
-	*/
-	virtual void KeyDown(int iKeyCode);
+	/* Getters */
+	inline GameObjectManager *getObjectManager()                       const { return m_objectManager; }
+	DisplayableObject *       getStaticObject(StaticGameObject object) const;
 protected:
 	/* Game objects */
+	GameObjectManager *m_objectManager;
 	Terrain *m_backgroundTerrain;
 	Terrain *m_foregroundTerrain;
-	ImageSurface *m_sun;
-	Waves *m_waves;
 	StatusBar *m_statusBar;
 	Submarine *m_sub;
-	NavalMine *m_mine;
+	Waves *m_waves;
 
+	/* Game properties */
 	const int m_fpsTarget;
+
+	void updateDisplayableObjectArray();
 private:
+	GameState m_state;
+
 	void printDebugInformation();
 };
 

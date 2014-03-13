@@ -7,19 +7,15 @@
 #include "MyProjectMain.h"
 #include "DisplayableObject.h"
 
-class NavalMine : public DisplayableObject, public IObserver {
+class NavalMine : public DisplayableObject {
 public:
-	NavalMine(MyProjectMain *engine);
+	NavalMine(MyProjectMain *engine, int x, int y, double speed);
 	virtual ~NavalMine();
 
 	/* Overrides from DisplayableObject */
 	virtual void Draw();
 	virtual void DoUpdate(int elapsedTime);
 	virtual void RedrawBackground();
-
-	virtual void update(IObservable *observerable);
-
-	void initialise();
 protected:
 	static Image *m_mine;
 	static Image *m_chain;
@@ -31,6 +27,7 @@ protected:
 private:
 	int m_lightSpriteOffset;
 	double m_speed;
+	int m_totalTimeElapsed;
 
 	void animateLights(int elapsedTime);
 };

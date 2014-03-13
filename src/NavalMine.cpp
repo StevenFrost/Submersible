@@ -6,11 +6,11 @@ Image *NavalMine::m_mine = new Image();
 Image *NavalMine::m_chain = new Image();
 Image *NavalMine::m_lights = new Image();
 
-NavalMine::NavalMine(MyProjectMain *engine) : DisplayableObject(engine) {
+NavalMine::NavalMine(MyProjectMain *engine, int x, int y, double speed) : DisplayableObject(engine), m_totalTimeElapsed(0), m_speed(speed){
 	m_iStartDrawPosX = 0;
 	m_iStartDrawPosY = 0;
-	m_iCurrentScreenX = 900;
-	m_iCurrentScreenY = 400;
+	m_iCurrentScreenX = x;
+	m_iCurrentScreenY = y;
 	m_currentScreenXPrecise = m_iCurrentScreenX;
 	m_currentScreenYPrecise = m_iCurrentScreenY;
 	m_iPreviousScreenX = m_iCurrentScreenX;
@@ -32,11 +32,6 @@ NavalMine::NavalMine(MyProjectMain *engine) : DisplayableObject(engine) {
 
 NavalMine::~NavalMine() {
 	delete m_mine, m_chain, m_lights;
-	dynamic_cast<Terrain *>(m_pEngine->GetDisplayableObject(MyProjectMain::GameObjects::FOREGROUND_TERRAIN))->detatch(this);
-}
-
-void NavalMine::initialise() {
-	dynamic_cast<Terrain *>(m_pEngine->GetDisplayableObject(MyProjectMain::GameObjects::FOREGROUND_TERRAIN))->attach(this);
 }
 
 void NavalMine::Draw() {
@@ -65,6 +60,11 @@ void NavalMine::DoUpdate(int elapsedTime) {
 	m_currentScreenXPrecise -= (70.0 * elapsedTime / 1000.0);
 	m_currentScreenYPrecise -= (0.0 * elapsedTime / 1000.0);
 
+	if (m_currentScreenXPrecise < (0 - m_mine->GetWidth() - 6)) {
+		m_currentScreenXPrecise = m_pEngine->GetScreenWidth() + 6;
+		m_currentScreenYPrecise = (rand() % (500 - 200)) + 200;
+	}
+
 	/* Animate the mine lights */
 	animateLights(elapsedTime);
 
@@ -76,15 +76,10 @@ void NavalMine::DoUpdate(int elapsedTime) {
 	StoreLastScreenPositionAndUpdateRect();
 }
 
-void NavalMine::update(IObservable *observerable) {
-	m_speed = dynamic_cast<Terrain *>(m_pEngine->GetDisplayableObject(MyProjectMain::GameObjects::FOREGROUND_TERRAIN))->getSpeed();
-}
-
 void NavalMine::animateLights(int elapsedTime) {
-	static int totalElapsed = elapsedTime;
-	totalElapsed += elapsedTime;
+	m_totalTimeElapsed += elapsedTime;
 
-	int mod = totalElapsed % 1000;
+	int mod = m_totalTimeElapsed % 1000;
 
 	if (mod < 100) {
 		m_lightSpriteOffset = 0;

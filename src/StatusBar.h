@@ -26,6 +26,8 @@ public:
 
 	void initialise();
 protected:
+	MyProjectMain *m_pEngine;
+
 	double m_distance;
 	unsigned int m_points;
 	double m_seconds;

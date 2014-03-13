@@ -21,7 +21,7 @@ static const unsigned int TIME_LABEL_Y          = 5;
 static const unsigned int TIME_LABEL_HEIGHT     = 35;
 static const unsigned int TIME_LABEL_WIDTH      = 150;
 
-StatusBar::StatusBar(MyProjectMain *engine) : DisplayableObject(engine),
+StatusBar::StatusBar(MyProjectMain *engine) : DisplayableObject(engine), m_pEngine(engine),
 	m_alpha(0xBD),
 	m_height(40),
 	m_distance(0),
@@ -30,10 +30,11 @@ StatusBar::StatusBar(MyProjectMain *engine) : DisplayableObject(engine),
 	m_fuel(100)
 {}
 
-StatusBar::~StatusBar() {}
+StatusBar::~StatusBar() {
+}
 
 void StatusBar::initialise() {
-	dynamic_cast<Submarine *>(m_pEngine->GetDisplayableObject(MyProjectMain::GameObjects::SUBMARINE))->attach(this);
+	dynamic_cast<Submarine *>(m_pEngine->getStaticObject(MyProjectMain::SUBMARINE))->attach(this);
 }
 
 void StatusBar::drawBackground() {
@@ -101,7 +102,7 @@ void StatusBar::DoUpdate(int elapsedTime) {
 }
 
 void StatusBar::update(IObservable *observable) {
-	m_fuel = dynamic_cast<Submarine *>(m_pEngine->GetDisplayableObject(MyProjectMain::GameObjects::SUBMARINE))->getFuel();
+	m_fuel = dynamic_cast<Submarine *>(m_pEngine->getStaticObject(MyProjectMain::SUBMARINE))->getFuel();
 }
 
 void StatusBar::GetRedrawRect(SDL_Rect *rectangle) {

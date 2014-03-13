@@ -6,30 +6,38 @@
 #include "StatusBar.h"
 #include "Submarine.h"
 #include "NavalMine.h"
+#include "Collision.h"
 #include "BaseEngine.h"
-#include "TileManager.h"
 #include "MyProjectMain.h"
 #include "DisplayableObject.h"
+#include "GameObjectManager.h"
 
-#include "Collision.h"
+/* General properties */
+#define SKY_COLOUR                0x3990C6
+#define WATER_COLOUR              0x2F76A2
+#define FOREGROUND_TERRAIN_COLOUR 0xFF28485D
+#define BACKGROUND_TERRAIN_COLOUR 0xFF2E6D94
+#define PIXELS_TO_M               0.153
+#define MAX_OBJECTS               30
+#define PERMINANT_OBJECTS         6
 
-/* General private properties */
-static const unsigned int SKY_COLOUR = 0x3990C6;
-static const unsigned int WATER_COLOUR = 0x2F76A2;
-static const unsigned int FOREGROUND_TERRAIN_COLOUR = 0xFF28485D;
-static const unsigned int BACKGROUND_TERRAIN_COLOUR = 0xFF2E6D94;
+MyProjectMain::MyProjectMain() : BaseEngine(MAX_OBJECTS), m_fpsTarget(60), m_state(MENU) {}
 
-#define PIXELS_TO_M 0.153
-#define MAX_OBECTS 30
-
-MyProjectMain::MyProjectMain() : BaseEngine(MAX_OBECTS), m_fpsTarget(60) {}
+MyProjectMain::~MyProjectMain() {
+	delete m_objectManager;
+	delete m_backgroundTerrain, m_foregroundTerrain;
+	delete m_waves, m_statusBar, m_sub;
+}
 
 void MyProjectMain::SetupBackgroundBuffer() {
 	/* Start by drawing the sky background */
 	DrawRectangle(0, 0, GetScreenWidth(), 120, SKY_COLOUR, GetBackground());
 
-	/* Now we draw the sun and help effect */
-	m_sun->RenderImage(GetBackground(), 0, 0, GetScreenWidth() - m_sun->GetWidth(), 0, m_sun->GetWidth(), m_sun->GetHeight());
+	/* Now we draw the sun and helo effect */
+	ImageSurface *sun = new ImageSurface();
+	sun->LoadImage("../resources/sun.png");
+	sun->RenderImage(GetBackground(), 0, 0, GetScreenWidth() - sun->GetWidth(), 0, sun->GetWidth(), sun->GetHeight());
+	delete sun;
 
 	/* Draw the status bar background */
 	m_statusBar->drawBackground();
@@ -39,40 +47,42 @@ void MyProjectMain::SetupBackgroundBuffer() {
 }
 
 int MyProjectMain::InitialiseObjects() {
-	DrawableObjectsChanged();
 	DestroyOldObjects();
 
-	m_ppDisplayableObjects = new DisplayableObject*[MAX_OBECTS];
+	/* Displayable object array initialisation */
+	m_ppDisplayableObjects = new DisplayableObject*[MAX_OBJECTS];
+	m_objectManager = new GameObjectManager(this, MAX_OBJECTS - PERMINANT_OBJECTS);
 
-	/* Terrain initialisation */
+	/* Background terrain initialisation */
 	m_backgroundTerrain = new Terrain(this, GetScreenWidth(), 600, BACKGROUND_TERRAIN_COLOUR);
 	m_backgroundTerrain->initialise();
 	m_backgroundTerrain->setSpeed(20.0);
 	
+	/* Foreground terrain initialisation */
 	m_foregroundTerrain = new Terrain(this, GetScreenWidth(), 400, FOREGROUND_TERRAIN_COLOUR);
 	m_foregroundTerrain->initialise();
 	m_foregroundTerrain->setSpeed(70.0);
 
-	m_sun = new ImageSurface();
-	m_sun->LoadImage("../resources/sun.png");
-
+	/* Submarine, waves and the status bar */
 	m_sub = new Submarine(this, 100, 250);
-	m_mine = new NavalMine(this);
 	m_waves = new Waves(this);
 	m_statusBar = new StatusBar(this);
-	
-	m_ppDisplayableObjects[BACKGROUND_TERRAIN] = m_backgroundTerrain;
-	m_ppDisplayableObjects[NAVAL_MINE_0] = m_mine;
-	m_ppDisplayableObjects[FOREGROUND_TERRAIN] = m_foregroundTerrain;
-	m_ppDisplayableObjects[SUBMARINE] = m_sub;
-	m_ppDisplayableObjects[WAVES] = m_waves;
-	m_ppDisplayableObjects[STATUS_BAR] = m_statusBar;
-	m_ppDisplayableObjects[NONE] = NULL;
-
-	m_mine->initialise();
 	m_statusBar->initialise();
+	
+	return 0;
+}
+
+int MyProjectMain::GameInit() {
+	InitialiseObjects();
+	updateDisplayableObjectArray();
+
+	SetupBackgroundBuffer();
 
 	return 0;
+}
+
+void MyProjectMain::CleanUp(void) {
+
 }
 
 void MyProjectMain::GameAction() {
@@ -87,37 +97,70 @@ void MyProjectMain::GameAction() {
 	/* Collision detection */
 	Collision::boundingBox(m_sub, m_foregroundTerrain);
 
+	/* Update and redraw all displayable objects */
 	UpdateAllObjects(elapsedTime);
 	Redraw(false);
 
 	SDL_Delay(1);
 }
 
-void MyProjectMain::GetUpdateRectanglesForChangingObjects() {
-	// TODO: Override this to take into account that some objects do not
-	//       inherit from DisplayableObject, so we need to manually set the
-	//       rectangles for these
-	SDL_Rect* pRect;
-
-	if (m_ppDisplayableObjects != NULL) {
-		for (int i = 0; m_ppDisplayableObjects[i] != NULL; i++) {
-			pRect = GetNextUpdateRect();
-			m_ppDisplayableObjects[i]->GetRedrawRect(pRect);
-		}
-	}
-}
-
-void MyProjectMain::KeyDown(int iKeyCode) {
-	switch (iKeyCode) {
+void MyProjectMain::KeyDown(int keyCode) {
+	switch (keyCode) {
 	case SDLK_ESCAPE:
 		SetExitWithCode(0);
 		break;
+	case SDLK_h:
+		m_state = HELP;
+		break;
 	case SDLK_p:
-		m_statusBar->incrementPoints();
+		m_state = PAUSED;
 		break;
 	}
 }
 
 void MyProjectMain::printDebugInformation() {
+	
+}
 
+void MyProjectMain::updateDisplayableObjectArray() {
+	/* Background terrain */
+	m_ppDisplayableObjects[0] = m_backgroundTerrain;
+
+	/* Game objects */
+	int objID = 1;
+	DisplayableObject **gameObjects = m_objectManager->getWaveObjects();
+	for (objID = 1; objID < m_objectManager->getNumWaveObjects(); objID++) {
+		if (gameObjects[objID] != NULL) {
+			m_ppDisplayableObjects[objID] = gameObjects[objID - 1];
+		}
+	}
+
+	/* All other perminant items */
+	m_ppDisplayableObjects[objID++] = m_foregroundTerrain;
+	m_ppDisplayableObjects[objID++] = m_sub;
+	m_ppDisplayableObjects[objID++] = m_waves;
+	m_ppDisplayableObjects[objID++] = m_statusBar;
+
+	/* End of array */
+	m_ppDisplayableObjects[objID++] = NULL;
+
+	/* Let other functions know we changed the array */
+	DrawableObjectsChanged();
+}
+
+DisplayableObject *MyProjectMain::getStaticObject(StaticGameObject object) const {
+	switch (object) {
+	case BACKGROUND_TERRAIN:
+		return m_backgroundTerrain;
+	case FOREGROUND_TERRAIN:
+		return m_foregroundTerrain;
+	case SUBMARINE:
+		return m_sub;
+	case WAVES:
+		return m_waves;
+	case STATUS_BAR:
+		return m_statusBar;
+	default:
+		return NULL;
+	}
 }

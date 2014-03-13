@@ -44,7 +44,7 @@ public:
 	virtual void RedrawBackground();
 
 	/* Setters */
-	void setSpeed(double speed)               { m_speed = speed; notify();     }
+	void setSpeed(double speed)               { m_speed = speed;               }
 	void setRoughness(double roughness)       { m_roughness = roughness;       }
 	void setDisplacement(double displacement) { m_displacement = displacement; }
 
@@ -52,6 +52,8 @@ public:
 	SDL_Surface *getMainSurface()   const     { return m_terrainMain;          }
 	SDL_Surface *getBufferSurface() const     { return m_terrainBuffer;        }
 	double       getSpeed()         const     { return m_speed;                }
+	double       getWidth()         const     { return m_polygonWidth * 2;     }
+	int          getHighestPoint()  const     { return m_terrainMaxHeight;     }
 
 	/**
 	* Initialises core terrain objects, such as the surfaces onto which to the
@@ -104,7 +106,7 @@ private:
 	double *m_terrainMainY;			// Array containing Y-coordinates for the main terrain section
 	double *m_terrainBufferY;		// Array containing Y-coordinates for the buffer terrain section
 
-	/* General implementation-specific terrain properties */
+	/* General properties */
 	double m_offset;				// Current pixel offset of the terrain surface
 	double m_displacement;			// Maximum displacement from the terrain seed
 	double m_roughness;				// Roughness of the terrain

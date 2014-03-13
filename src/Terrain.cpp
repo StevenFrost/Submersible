@@ -179,6 +179,9 @@ void Terrain::DoUpdate(int elapsedTime) {
 
 		/* Reset the offset */
 		m_offset = 0.0;
+
+		/* Notify observers that we generated some new terrain */
+		notify();
 	}
 
 	/* Move the terrain backwards. This gives the impression that the user is moving forwards */
