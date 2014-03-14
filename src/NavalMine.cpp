@@ -30,9 +30,7 @@ NavalMine::NavalMine(MyProjectMain *engine, int x, int y, double speed) : Displa
 	m_iDrawHeight = m_pEngine->GetScreenHeight() - m_iCurrentScreenY;
 }
 
-NavalMine::~NavalMine() {
-	delete m_mine, m_chain, m_lights;
-}
+NavalMine::~NavalMine() {}
 
 void NavalMine::Draw() {
 	/* Draw the mine body */
@@ -47,7 +45,7 @@ void NavalMine::Draw() {
 	m_lights->RenderImage(m_pEngine->GetForeground(), m_lightSpriteOffset, 0, m_currentScreenXPrecise + 0, m_currentScreenYPrecise + 40, 15, 14);
 	m_lights->RenderImage(m_pEngine->GetForeground(), m_lightSpriteOffset, 0, m_currentScreenXPrecise + 71, m_currentScreenYPrecise + 11, 15, 14);
 
-	/* Draw the terrain to the bottom of the screen */
+	/* Draw the chain to the bottom of the screen */
 	for (int i = m_iCurrentScreenY + 86; i < m_pEngine->GetScreenHeight(); i += m_chain->GetHeight()) {
 		m_chain->RenderImage(m_pEngine->GetForeground(), 0, 0, m_currentScreenXPrecise + 47, i, m_chain->GetWidth(), m_chain->GetHeight());
 	}

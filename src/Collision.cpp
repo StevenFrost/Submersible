@@ -27,3 +27,14 @@ bool Collision::boundingBox(DisplayableObject *a, DisplayableObject *b) {
 
 	return false;
 }
+
+bool Collision::surface(SDL_Surface *a, SDL_Surface *b) {
+	for (int x = 0; x < a->w; x++) {
+		for (int y = 0; x < a->h; y++) {
+
+		}
+	}
+
+	//unsigned int *aPixel = ((unsigned int *)a->pixels)[iX + iY * pTarget->pitch / sizeof(unsigned int)]
+	return false;
+}

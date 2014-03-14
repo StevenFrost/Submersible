@@ -1,5 +1,6 @@
 #include <cmath>
 #include "Waves.h"
+#include "Button.h"
 #include "header.h"
 #include "Terrain.h"
 #include "JPGImage.h"
@@ -21,12 +22,9 @@
 #define MAX_OBJECTS               30
 #define PERMINANT_OBJECTS         6
 
-MyProjectMain::MyProjectMain() : BaseEngine(MAX_OBJECTS), m_fpsTarget(60), m_state(MENU) {}
-
+MyProjectMain::MyProjectMain() : BaseEngine(MAX_OBJECTS), m_fpsTarget(60), m_gameState(MENU), m_menuState(MENU_PLAY) {}
 MyProjectMain::~MyProjectMain() {
 	delete m_objectManager;
-	delete m_backgroundTerrain, m_foregroundTerrain;
-	delete m_waves, m_statusBar, m_sub;
 }
 
 void MyProjectMain::SetupBackgroundBuffer() {
@@ -69,13 +67,15 @@ int MyProjectMain::InitialiseObjects() {
 	m_statusBar = new StatusBar(this);
 	m_statusBar->initialise();
 	
+	/* Menu objects */
+	m_menuPlay = new Button(this, 300, 200, "Play", GetFont("../resources/Segoe UI.ttf", 42), true);
+	m_menuHelp = new Button(this, 667, 200, "Help", GetFont("../resources/Segoe UI.ttf", 42), false);
 	return 0;
 }
 
 int MyProjectMain::GameInit() {
 	InitialiseObjects();
 	updateDisplayableObjectArray();
-
 	SetupBackgroundBuffer();
 
 	return 0;
@@ -91,17 +91,40 @@ void MyProjectMain::GameAction() {
 	int elapsedTime = thisFrameTime - lastFrameTime;
 	lastFrameTime = thisFrameTime;
 
+	switch (m_gameState) {
+	case PLAYING:
+		playingAction(elapsedTime);
+		break;
+	case MENU:
+		menuAction(elapsedTime);
+		break;
+	}
+
+	/* Update and redraw all displayable objects */
+	UpdateAllObjects(elapsedTime);
+	Redraw(false);
+	//SDL_Delay(1);
+}
+
+void MyProjectMain::menuAction(int elapsedTime) {
+	switch (m_menuState) {
+	case MENU_PLAY:
+		m_menuPlay->setSelected(true);
+		m_menuHelp->setSelected(false);
+		break;
+	case MENU_HELP:
+		m_menuHelp->setSelected(true);
+		m_menuPlay->setSelected(false);
+		break;
+	}
+}
+
+void MyProjectMain::playingAction(int elapsedTime) {
 	/* Update the travelled distance */
 	m_statusBar->incrementDistance(m_foregroundTerrain->getSpeed() * PIXELS_TO_M * (elapsedTime / 1000.0));
 
 	/* Collision detection */
 	Collision::boundingBox(m_sub, m_foregroundTerrain);
-
-	/* Update and redraw all displayable objects */
-	UpdateAllObjects(elapsedTime);
-	Redraw(false);
-
-	SDL_Delay(1);
 }
 
 void MyProjectMain::KeyDown(int keyCode) {
@@ -109,11 +132,32 @@ void MyProjectMain::KeyDown(int keyCode) {
 	case SDLK_ESCAPE:
 		SetExitWithCode(0);
 		break;
+	case SDLK_RETURN:
+		if (m_gameState == MENU) {
+			if (m_menuState == MENU_PLAY) {
+				m_gameState = PLAYING;
+				updateDisplayableObjectArray();
+				Redraw(true);
+			} else if (m_menuState == MENU_HELP) {
+				m_gameState = HELP;
+			}
+		}
+		break;
 	case SDLK_h:
-		m_state = HELP;
+		m_gameState = HELP;
 		break;
 	case SDLK_p:
-		m_state = PAUSED;
+		m_gameState = PAUSED;
+		break;
+	case SDLK_LEFT:
+		if (m_menuState == MENU_HELP) {
+			m_menuState = MENU_PLAY;
+		}
+		break;
+	case SDLK_RIGHT:
+		if (m_menuState == MENU_PLAY) {
+			m_menuState = MENU_HELP;
+		}
 		break;
 	}
 }
@@ -123,11 +167,15 @@ void MyProjectMain::printDebugInformation() {
 }
 
 void MyProjectMain::updateDisplayableObjectArray() {
-	/* Background terrain */
-	m_ppDisplayableObjects[0] = m_backgroundTerrain;
-
-	/* Game objects */
-	int objID = 1;
+	/* There are several displayable objects that are perminant and visible in all
+	 * game states. These include the background and foreground terrain, waves and
+	 * the status bar.
+	 * Game objects are inserted after the background terrain and before the
+	 * foreground terrain to avoid drawing issues. Any state-dependant displayable
+	 * objects (other than core game objects) are inserted at the end of the array.
+	 */
+	int objID = 0;
+	m_ppDisplayableObjects[objID++] = m_backgroundTerrain;
 	DisplayableObject **gameObjects = m_objectManager->getWaveObjects();
 	for (objID = 1; objID < m_objectManager->getNumWaveObjects(); objID++) {
 		if (gameObjects[objID] != NULL) {
@@ -135,16 +183,26 @@ void MyProjectMain::updateDisplayableObjectArray() {
 		}
 	}
 
-	/* All other perminant items */
 	m_ppDisplayableObjects[objID++] = m_foregroundTerrain;
-	m_ppDisplayableObjects[objID++] = m_sub;
 	m_ppDisplayableObjects[objID++] = m_waves;
 	m_ppDisplayableObjects[objID++] = m_statusBar;
 
+	/* State depentant objects */
+	switch (m_gameState) {
+	case PLAYING:
+	case PAUSED:
+	case CRASHED:
+	case HELP:
+		m_ppDisplayableObjects[objID++] = m_sub;
+		break;
+	case MENU:
+		m_ppDisplayableObjects[objID++] = m_menuPlay;
+		m_ppDisplayableObjects[objID++] = m_menuHelp;
+		break;
+	}
+
 	/* End of array */
 	m_ppDisplayableObjects[objID++] = NULL;
-
-	/* Let other functions know we changed the array */
 	DrawableObjectsChanged();
 }
 

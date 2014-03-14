@@ -12,6 +12,7 @@ class StatusBar;
 class Waves;
 class NavalMine;
 class GameObjectManager;
+class Button;
 
 class MyProjectMain : public BaseEngine {
 public:
@@ -22,6 +23,11 @@ public:
 		PAUSED,
 		HELP
 	} GameState;
+
+	typedef enum MenuState {
+		MENU_PLAY,
+		MENU_HELP
+	} MenuState;
 
 	typedef enum StaticGameObject {
 		BACKGROUND_TERRAIN,
@@ -40,6 +46,9 @@ public:
 	virtual void GameAction();
 	virtual void CleanUp();
 
+	void menuAction(int elapsedTime);
+	void playingAction(int elapsedTime);
+
 	virtual int InitialiseObjects();
 	virtual void SetupBackgroundBuffer();
 
@@ -57,12 +66,17 @@ protected:
 	Submarine *m_sub;
 	Waves *m_waves;
 
+	/* Menu objects */
+	Button *m_menuPlay;
+	Button *m_menuHelp;
+
 	/* Game properties */
 	const int m_fpsTarget;
 
 	void updateDisplayableObjectArray();
 private:
-	GameState m_state;
+	GameState m_gameState;
+	MenuState m_menuState;
 
 	void printDebugInformation();
 };
