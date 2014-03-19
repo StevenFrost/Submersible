@@ -2,7 +2,7 @@
 
 ImageSurface *Waves::m_base = new ImageSurface();
 
-Waves::Waves(MyProjectMain *engine) : DisplayableObject(engine), m_speed(80.0), m_offset(0.0) {
+Waves::Waves(MyProjectMain *engine, double speed) : DisplayableObject(engine), m_speed(speed), m_offset(0.0) {
 	/* Load the graphic */
 	if (!m_base->IsLoaded()) {
 		m_base->LoadImage("../resources/waves.png");

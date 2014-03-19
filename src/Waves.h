@@ -8,7 +8,7 @@
 
 class Waves : public DisplayableObject {
 public:
-	Waves(MyProjectMain *engine);
+	Waves(MyProjectMain *engine, double speed);
 	virtual ~Waves();
 
 	/* Overrides from DisplayableObject */
@@ -16,11 +16,14 @@ public:
 	virtual void DoUpdate(int elapsedTime);
 	virtual void GetRedrawRect(SDL_Rect *rectangle);
 	virtual void RedrawBackground();
+
+	/* Setters */
+	void setSpeed(double speed) { m_speed = speed; }
 private:
-	static ImageSurface *m_base;
+	static ImageSurface * m_base;
 
 	double m_offset;
-	const double m_speed;
+	double m_speed;
 };
 
 #endif // !WAVES_H
