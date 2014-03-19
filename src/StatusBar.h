@@ -19,12 +19,16 @@ public:
 	/* Observer implementation */
 	virtual void update(IObservable *observable);
 
+	void initialise();
 	void drawBackground();
 
 	inline void incrementDistance(double delta) { m_distance += delta; }
 	inline void incrementPoints()               { m_points++;          }
 
-	void initialise();
+	/* Getters */
+	inline double       getDistance() const { return m_distance; }
+	inline unsigned int getPoints()   const { return m_points;   }
+	inline double       getSeconds()  const { return m_seconds;  }
 protected:
 	MyProjectMain *m_pEngine;
 

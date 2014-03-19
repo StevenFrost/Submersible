@@ -9,3 +9,5 @@
 #include <SDL_ttf.h>
 
 #endif
+
+#undef DEBUG

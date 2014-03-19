@@ -36,6 +36,7 @@ void Submarine::Draw() {
 	/* Draw the main submarine body */
 	m_body->RenderImage(m_pEngine->GetForeground(), 0, 0, m_currentScreenXPrecise, m_currentScreenYPrecise, m_body->GetWidth(), m_body->GetHeight());
 
+	/* Update the submarine position cache */
 	StoreLastScreenPositionAndUpdateRect();
 }
 
@@ -55,6 +56,8 @@ void Submarine::controlSub(int elapsedTime) {
 	double delta = m_acceleration * secondsThisFrame;
 	static bool subRight = true;
 	static bool subUp = true;
+
+	if (m_immobilised) return;
 
 	/* Handle Right, Left, Up and Down array key presses for submarine movement */
 	if (m_pEngine->IsKeyPressed(SDLK_RIGHT)) {
@@ -121,4 +124,9 @@ void Submarine::controlSub(int elapsedTime) {
 		m_currentScreenXPrecise = m_iCurrentScreenX;
 		m_xVelocity = 0;
 	}
+}
+
+void Submarine::setSubPosition(int x, int y) {
+	m_currentScreenXPrecise = m_iCurrentScreenX = x;
+	m_currentScreenYPrecise = m_iCurrentScreenY = y;
 }

@@ -90,6 +90,7 @@
   <ItemGroup>
     <ClInclude Include="Button.h" />
     <ClInclude Include="Collision.h" />
+    <ClInclude Include="DialogBox.h" />
     <ClInclude Include="GameObjectManager.h" />
     <ClInclude Include="header.h" />
     <ClInclude Include="BaseEngine.h" />
@@ -112,6 +113,7 @@
   <ItemGroup>
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Collision.cpp" />
+    <ClCompile Include="DialogBox.cpp" />
     <ClCompile Include="GameObjectManager.cpp" />
     <ClCompile Include="mainfunction.cpp" />
     <ClCompile Include="BaseEngine.cpp" />

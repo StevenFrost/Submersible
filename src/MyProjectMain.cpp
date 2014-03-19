@@ -6,12 +6,14 @@
 #include "JPGImage.h"
 #include "StatusBar.h"
 #include "Submarine.h"
+#include "DialogBox.h"
 #include "NavalMine.h"
 #include "Collision.h"
 #include "BaseEngine.h"
 #include "MyProjectMain.h"
 #include "DisplayableObject.h"
 #include "GameObjectManager.h"
+#include <SDL_TTF.h>
 
 /* General properties */
 #define SKY_COLOUR                0x3990C6
@@ -21,6 +23,10 @@
 #define PIXELS_TO_M               0.153
 #define MAX_OBJECTS               30
 #define PERMINANT_OBJECTS         6
+
+#define FOREGROUND_TERRAIN_SPEED  70.0
+#define BACKGROUND_TERRAIN_SPEED  20.0
+#define WAVE_SPEED                80.0
 
 MyProjectMain::MyProjectMain() : BaseEngine(MAX_OBJECTS), m_fpsTarget(60), m_gameState(MENU), m_menuState(MENU_PLAY) {}
 MyProjectMain::~MyProjectMain() {
@@ -54,22 +60,25 @@ int MyProjectMain::InitialiseObjects() {
 	/* Background terrain initialisation */
 	m_backgroundTerrain = new Terrain(this, GetScreenWidth(), 600, BACKGROUND_TERRAIN_COLOUR);
 	m_backgroundTerrain->initialise();
-	m_backgroundTerrain->setSpeed(20.0);
+	m_backgroundTerrain->setSpeed(BACKGROUND_TERRAIN_SPEED);
 	
 	/* Foreground terrain initialisation */
 	m_foregroundTerrain = new Terrain(this, GetScreenWidth(), 400, FOREGROUND_TERRAIN_COLOUR);
 	m_foregroundTerrain->initialise();
-	m_foregroundTerrain->setSpeed(70.0);
+	m_foregroundTerrain->setSpeed(FOREGROUND_TERRAIN_SPEED);
 
 	/* Submarine, waves and the status bar */
 	m_sub = new Submarine(this, 100, 250);
-	m_waves = new Waves(this);
+	m_waves = new Waves(this, WAVE_SPEED);
 	m_statusBar = new StatusBar(this);
 	m_statusBar->initialise();
 	
 	/* Menu objects */
 	m_menuPlay = new Button(this, 300, 200, "Play", GetFont("../resources/Segoe UI.ttf", 42), true);
 	m_menuHelp = new Button(this, 667, 200, "Help", GetFont("../resources/Segoe UI.ttf", 42), false);
+
+	/* Dialog boxes */
+	m_crashBox = new CrashedDialogBox(this, m_statusBar, 550, 300);
 	return 0;
 }
 
@@ -95,8 +104,15 @@ void MyProjectMain::GameAction() {
 	case PLAYING:
 		playingAction(elapsedTime);
 		break;
+	case CRASHED:
+		crashedAction(elapsedTime);
+		break;
+	case PAUSED:
+		break;
 	case MENU:
 		menuAction(elapsedTime);
+		break;
+	case HELP:
 		break;
 	}
 
@@ -124,39 +140,107 @@ void MyProjectMain::playingAction(int elapsedTime) {
 	m_statusBar->incrementDistance(m_foregroundTerrain->getSpeed() * PIXELS_TO_M * (elapsedTime / 1000.0));
 
 	/* Collision detection */
-	Collision::boundingBox(m_sub, m_foregroundTerrain);
+	if (Collision::boundingBox(m_sub, m_foregroundTerrain)) {
+		bool terrainCollide1 = Collision::surface(2, m_sub->getSurface(), m_foregroundTerrain->getMainSurface(), m_sub->getXPosition(), m_sub->getYPosition(), -10 + m_foregroundTerrain->getOffset(), 350);
+		
+		if (terrainCollide1) {
+			changeGameState(CRASHED);
+		} else {
+			bool terrainCollide2 = Collision::surface(2, m_sub->getSurface(), m_foregroundTerrain->getBufferSurface(), m_sub->getXPosition(), m_sub->getYPosition(), 1270 + m_foregroundTerrain->getOffset(), 350);
+			if (terrainCollide2) changeGameState(CRASHED);
+		}
+	}
+}
+
+void MyProjectMain::crashedAction(int elapsedTIme) {
+	static int crashTime = 0;
+
+	/* Get the current time if it's the initial collision being detected */
+	if (crashTime == 0) crashTime = GetTime();
+
+	/* Show a crash message */
+	DrawString(400, 300, "CRASHED", 0xFF0000, GetFont("../resources/Segoe UI.ttf", 50), GetForeground());
+	
+	/* Stop the terrain from moving */
+	m_foregroundTerrain->setSpeed(0);
+	m_backgroundTerrain->setSpeed(0);
+	m_sub->setImmobilised(true);
+	m_waves->setSpeed(0.0);
+
+	if (GetTime() >= crashTime + 4000) {
+		crashTime = 0;
+		m_foregroundTerrain->setSpeed(FOREGROUND_TERRAIN_SPEED);
+		m_backgroundTerrain->setSpeed(BACKGROUND_TERRAIN_SPEED);
+		m_waves->setSpeed(WAVE_SPEED);
+		changeGameState(MENU);
+		m_menuState = MENU_PLAY;
+		Redraw(true);
+	}
 }
 
 void MyProjectMain::KeyDown(int keyCode) {
+	/* Key events common in all states */
 	switch (keyCode) {
 	case SDLK_ESCAPE:
 		SetExitWithCode(0);
 		break;
-	case SDLK_RETURN:
-		if (m_gameState == MENU) {
-			if (m_menuState == MENU_PLAY) {
-				m_gameState = PLAYING;
-				updateDisplayableObjectArray();
+	}
+
+	/* Game state specific key events */
+	switch (m_gameState) {
+	case PLAYING:
+		switch (keyCode) {
+		case SDLK_h:
+			m_gameState = HELP;
+			break;
+		case SDLK_p:
+			m_gameState = PAUSED;
+			break;
+		case SDLK_r:
+			m_gameState = RESTART;
+		}
+		break;
+	case CRASHED:
+		break;
+	case PAUSED:
+	case HELP:
+		switch (keyCode) {
+		case SDLK_RETURN:
+			changeGameState(PLAYING);
+			m_sub->setImmobilised(false);
+			m_foregroundTerrain->setSpeed(FOREGROUND_TERRAIN_SPEED);
+			m_backgroundTerrain->setSpeed(BACKGROUND_TERRAIN_SPEED);
+			m_waves->setSpeed(WAVE_SPEED);
+			Redraw(true);
+			break;
+		}
+		break;
+	case MENU:
+		switch (keyCode) {
+		case SDLK_RETURN:
+			switch (m_menuState) {
+			case MENU_PLAY:
+				changeGameState(PLAYING);
+				m_sub->setSubPosition(100, 250);
+				m_sub->setImmobilised(false);
+				m_waves->setSpeed(WAVE_SPEED);
 				Redraw(true);
-			} else if (m_menuState == MENU_HELP) {
+				break;
+			case MENU_HELP:
 				m_gameState = HELP;
+				break;
 			}
-		}
-		break;
-	case SDLK_h:
-		m_gameState = HELP;
-		break;
-	case SDLK_p:
-		m_gameState = PAUSED;
-		break;
-	case SDLK_LEFT:
-		if (m_menuState == MENU_HELP) {
-			m_menuState = MENU_PLAY;
-		}
-		break;
-	case SDLK_RIGHT:
-		if (m_menuState == MENU_PLAY) {
-			m_menuState = MENU_HELP;
+			break;
+		case SDLK_LEFT:
+			if (m_menuState == MENU_HELP) {
+				m_menuState = MENU_PLAY;
+			}
+			break;
+		case SDLK_RIGHT:
+			if (m_menuState == MENU_PLAY) {
+				m_menuState = MENU_HELP;
+			}
+			break;
 		}
 		break;
 	}
@@ -190,8 +274,15 @@ void MyProjectMain::updateDisplayableObjectArray() {
 	/* State depentant objects */
 	switch (m_gameState) {
 	case PLAYING:
+		m_ppDisplayableObjects[objID++] = m_sub;
+		break;
 	case PAUSED:
+		m_ppDisplayableObjects[objID++] = m_sub;
+		break;
 	case CRASHED:
+		m_ppDisplayableObjects[objID++] = m_sub;
+		m_ppDisplayableObjects[objID++] = m_crashBox;
+		break;
 	case HELP:
 		m_ppDisplayableObjects[objID++] = m_sub;
 		break;
@@ -204,6 +295,11 @@ void MyProjectMain::updateDisplayableObjectArray() {
 	/* End of array */
 	m_ppDisplayableObjects[objID++] = NULL;
 	DrawableObjectsChanged();
+}
+
+void MyProjectMain::changeGameState(GameState state) {
+	m_gameState = state;
+	updateDisplayableObjectArray();
 }
 
 DisplayableObject *MyProjectMain::getStaticObject(StaticGameObject object) const {
@@ -221,4 +317,20 @@ DisplayableObject *MyProjectMain::getStaticObject(StaticGameObject object) const
 	default:
 		return NULL;
 	}
+}
+
+int MyProjectMain::getStringWidth(const char *str, int size) {
+	int width, height;
+	TTF_Font *fnt = GetFont("../resources/Segoe UI.ttf", size)->GetFont();
+	TTF_SizeText(fnt, str, &width, &height);
+
+	return width;
+}
+
+int MyProjectMain::getStringHeight(const char *str, int size) {
+	int width, height;
+	TTF_Font *fnt = GetFont("../resources/Segoe UI.ttf", size)->GetFont();
+	TTF_SizeText(fnt, str, &width, &height);
+
+	return height;
 }

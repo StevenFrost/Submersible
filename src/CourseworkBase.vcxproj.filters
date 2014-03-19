@@ -92,6 +92,9 @@
     <ClInclude Include="Button.h">
       <Filter>Header Files\Submersible</Filter>
     </ClInclude>
+    <ClInclude Include="DialogBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="mainfunction.cpp">
@@ -138,6 +141,9 @@
     </ClCompile>
     <ClCompile Include="Button.cpp">
       <Filter>Source Files\Submersible</Filter>
+    </ClCompile>
+    <ClCompile Include="DialogBox.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

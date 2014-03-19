@@ -13,12 +13,15 @@ class Waves;
 class NavalMine;
 class GameObjectManager;
 class Button;
+class DialogBox;
+class CrashedDialogBox;
 
 class MyProjectMain : public BaseEngine {
 public:
 	typedef enum GameState {
 		MENU,
 		PLAYING,
+		RESTART,
 		CRASHED,
 		PAUSED,
 		HELP
@@ -48,15 +51,20 @@ public:
 
 	void menuAction(int elapsedTime);
 	void playingAction(int elapsedTime);
+	void crashedAction(int elapsedTIme);
 
 	virtual int InitialiseObjects();
 	virtual void SetupBackgroundBuffer();
 
 	virtual void KeyDown(int keyCode);
 
+	void changeGameState(GameState state);
+
 	/* Getters */
 	inline GameObjectManager *getObjectManager()                       const { return m_objectManager; }
 	DisplayableObject *       getStaticObject(StaticGameObject object) const;
+	int getStringWidth (const char *str, int size);
+	int getStringHeight(const char *str, int size);
 protected:
 	/* Game objects */
 	GameObjectManager *m_objectManager;
@@ -69,6 +77,9 @@ protected:
 	/* Menu objects */
 	Button *m_menuPlay;
 	Button *m_menuHelp;
+
+	/* Dialog boxes */
+	CrashedDialogBox *m_crashBox;
 
 	/* Game properties */
 	const int m_fpsTarget;
