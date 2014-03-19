@@ -54,6 +54,7 @@ public:
 	double       getSpeed()         const     { return m_speed;                }
 	double       getWidth()         const     { return m_polygonWidth * 2;     }
 	int          getHighestPoint()  const     { return m_terrainMaxHeight;     }
+	double       getOffset()        const     { return m_offset;               }
 
 	/**
 	* Initialises core terrain objects, such as the surfaces onto which to the

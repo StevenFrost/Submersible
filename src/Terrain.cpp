@@ -128,6 +128,14 @@ void Terrain::drawTerrainSurface(SDL_Surface *surface, double *buffer) {
 	/* Draw the polygon on the specified surface */
 	GetEngine()->DrawPolygon(m_bufSize, terrainMainX, buffer, m_colour, surface);
 
+#ifdef DEBUG
+	// Saves the generated terrain surface to a bitmap for debugging
+	static int count = 0;
+	char buf[512];
+	sprintf(buf, "../resources/debug/buffer-%02d.bmp", count++);
+	SDL_SaveBMP_RW(surface, SDL_RWFromFile(buf, "wb"), 1);
+#endif
+
 	/* Now free the temporary terrain points, we don't need them */
 	delete[] terrainMainX;
 }
