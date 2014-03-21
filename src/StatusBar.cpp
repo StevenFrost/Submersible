@@ -96,10 +96,7 @@ void StatusBar::Draw() {
 	m_pEngine->SetNextUpdateRect(m_pEngine->GetScreenWidth() - (138 + 9), 10, 138, 20);
 }
 
-void StatusBar::DoUpdate(int elapsedTime) {
-	/* Increment the number of seconds the game has been active for */
-	m_seconds += elapsedTime / 1000.0;
-}
+void StatusBar::DoUpdate(int elapsedTime) {}
 
 void StatusBar::update(IObservable *observable) {
 	m_fuel = dynamic_cast<Submarine *>(m_pEngine->getStaticObject(MyProjectMain::SUBMARINE))->getFuel();

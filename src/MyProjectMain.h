@@ -4,7 +4,6 @@
 #include "header.h"
 #include "JPGImage.h"
 #include "BaseEngine.h"
-#include <cmath>
 
 class Submarine;
 class Terrain;
@@ -15,13 +14,15 @@ class GameObjectManager;
 class Button;
 class DialogBox;
 class CrashedDialogBox;
+class PausedDialogBox;
+class HelpDialogBox;
+class MainDialogBox;
 
 class MyProjectMain : public BaseEngine {
 public:
 	typedef enum GameState {
 		MENU,
 		PLAYING,
-		RESTART,
 		CRASHED,
 		PAUSED,
 		HELP
@@ -45,18 +46,28 @@ public:
 	MyProjectMain();
 	~MyProjectMain();
 
+	/* Overrides from BaseEngine */
 	virtual int GameInit();
-	virtual void GameAction();
 	virtual void CleanUp();
-
-	void menuAction(int elapsedTime);
-	void playingAction(int elapsedTime);
-	void crashedAction(int elapsedTIme);
-
+	virtual void GameAction();
+	virtual int GetModifiedTime();
 	virtual int InitialiseObjects();
+	virtual void KeyDown(int keyCode);
 	virtual void SetupBackgroundBuffer();
 
-	virtual void KeyDown(int keyCode);
+	/* Action functions for different game states */
+	void playingAction(int elapsedTime);
+
+	/* Key event functions for different game states */
+	void menuKeyEvent(int keyCode);
+	void pausedKeyEvent(int keyCode);
+	void helpKeyEvent(int keyCode);
+	void crashedKeyEvent(int keyCode);
+	void playingKeyEvent(int keyCode);
+
+	/* Timer functions for tracking time while paused */
+	void pauseTimer();
+	void unpauseTimer();
 
 	void changeGameState(GameState state);
 
@@ -74,22 +85,21 @@ protected:
 	Submarine *m_sub;
 	Waves *m_waves;
 
-	/* Menu objects */
-	Button *m_menuPlay;
-	Button *m_menuHelp;
-
 	/* Dialog boxes */
+	MainDialogBox *m_mainBox;
 	CrashedDialogBox *m_crashBox;
+	PausedDialogBox *m_pausedBox;
+	HelpDialogBox *m_helpBox;
 
 	/* Game properties */
 	const int m_fpsTarget;
+	bool m_paused;
+	unsigned int m_pausedTime;
+	unsigned int m_startTime;
 
 	void updateDisplayableObjectArray();
 private:
 	GameState m_gameState;
-	MenuState m_menuState;
-
-	void printDebugInformation();
 };
 
 #endif // !MYPROJECTMAIN_H

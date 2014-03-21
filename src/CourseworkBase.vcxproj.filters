@@ -89,11 +89,8 @@
     <ClInclude Include="GameObjectManager.h">
       <Filter>Header Files\Submersible</Filter>
     </ClInclude>
-    <ClInclude Include="Button.h">
-      <Filter>Header Files\Submersible</Filter>
-    </ClInclude>
     <ClInclude Include="DialogBox.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Submersible</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -139,11 +136,8 @@
     <ClCompile Include="GameObjectManager.cpp">
       <Filter>Source Files\Submersible</Filter>
     </ClCompile>
-    <ClCompile Include="Button.cpp">
-      <Filter>Source Files\Submersible</Filter>
-    </ClCompile>
     <ClCompile Include="DialogBox.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Submersible</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -22,8 +22,14 @@ public:
 	void initialise();
 	void drawBackground();
 
-	inline void incrementDistance(double delta) { m_distance += delta; }
+	inline void incrementTime(double delta)     { m_seconds += delta;  }
 	inline void incrementPoints()               { m_points++;          }
+	inline void incrementDistance(double delta) { m_distance += delta; }
+	
+	/* Reset functions */
+	inline void resetTime()     { m_seconds = 0;  }
+	inline void resetPoints()   { m_points = 0;   }
+	inline void resetDistance() { m_distance = 0; }
 
 	/* Getters */
 	inline double       getDistance() const { return m_distance; }
