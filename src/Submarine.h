@@ -17,19 +17,20 @@ public:
 	virtual void DoUpdate(int elapsedTime);
 
 	/* Getters */
-	Image       *getSubBody()   const   { return m_body;                  }
-	SDL_Surface *getSurface()   const   { return m_body->getSurface();    }
-	double       getFuel()      const   { return m_fuel;                  }
-	double       getXVelocity() const   { return m_xVelocity;             }
-	double       getYVelocity() const   { return m_yVelocity;             }
-	double       getXPosition() const   { return m_currentScreenXPrecise; }
-	double       getYPosition() const   { return m_currentScreenYPrecise; }
+	Image       *getSubBody()     const { return m_body;                  }
+	SDL_Surface *getSurface()     const { return m_body->getSurface();    }
+	double       getFuel()        const { return m_fuel;                  }
+	double       getXVelocity()   const { return m_xVelocity;             }
+	double       getYVelocity()   const { return m_yVelocity;             }
+	double       getXPosition()   const { return m_currentScreenXPrecise; }
+	double       getYPosition()   const { return m_currentScreenYPrecise; }
 	double       getImmobilised() const { return m_immobilised;           }
 
 	/* Setters */
 	void setXVelocity(double velocity)  { m_xVelocity = velocity;         }
 	void setYVelocity(double velocity)  { m_yVelocity = velocity;         }
 	void setImmobilised(bool value)     { m_immobilised = value;          }
+	void setFuelLevel(double level)     { m_fuel = level; notify();       }
 	void setSubPosition(int x, int y);
 protected:
 	static Image *m_body;
@@ -52,8 +53,6 @@ private:
 	/**
 	* Handles the submarine movement when the user holds down keys that affect
 	* the submarine control surfaces
-	*
-	* @param elapsedTime	the elapsed time for the current frame
 	*/
 	void controlSub(int elapsedTime);
 };

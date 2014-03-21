@@ -41,6 +41,8 @@ void Submarine::Draw() {
 }
 
 void Submarine::DoUpdate(int elapsedTime) {
+	if (m_immobilised) return;
+
 	/* Update the submarine position */
 	controlSub(elapsedTime);
 
@@ -56,8 +58,6 @@ void Submarine::controlSub(int elapsedTime) {
 	double delta = m_acceleration * secondsThisFrame;
 	static bool subRight = true;
 	static bool subUp = true;
-
-	if (m_immobilised) return;
 
 	/* Handle Right, Left, Up and Down array key presses for submarine movement */
 	if (m_pEngine->IsKeyPressed(SDLK_RIGHT)) {
