@@ -9,7 +9,7 @@ class DialogBox : public DisplayableObject {
 public:
 	typedef enum Type {
 		CRASH	= 0xBC0D0D,
-		MESSAGE = 0x2D4452
+		MESSAGE = 0x21323C
 	} Type;
 
 	DialogBox(MyProjectMain *engine, int width, int height, Type boxType);
@@ -29,18 +29,40 @@ protected:
 	int m_height;
 };
 
-/**
-* Specialised version of DialogBox, which shows the user's distance, score and
-* total time at the point the dialog was updated
-*/
 class CrashedDialogBox : public DialogBox {
 public:
-	CrashedDialogBox(MyProjectMain *engine, StatusBar *status, int width, int height) : DialogBox(engine, width, height, Type::CRASH), m_statusBar(status) {}
+	CrashedDialogBox(MyProjectMain *engine, StatusBar *status, int width, int height) : DialogBox(engine, width, height, Type::CRASH), m_statusBar(status), m_str("CRASHED") {}
 	virtual ~CrashedDialogBox() {}
 
 	virtual void Draw();
+	void setTitle(const char *str) { m_str = str; }
 private:
 	StatusBar *m_statusBar;
+	const char *m_str;
+};
+
+class PausedDialogBox : public DialogBox {
+public:
+	PausedDialogBox(MyProjectMain *engine, int width, int height) : DialogBox(engine, width, height, Type::MESSAGE) {}
+	virtual ~PausedDialogBox() {}
+
+	virtual void Draw();
+};
+
+class HelpDialogBox : public DialogBox {
+public:
+	HelpDialogBox(MyProjectMain *engine, int width, int height) : DialogBox(engine, width, height, Type::MESSAGE) {}
+	virtual ~HelpDialogBox() {}
+
+	virtual void Draw();
+};
+
+class MainDialogBox : public DialogBox {
+public:
+	MainDialogBox(MyProjectMain *engine, int width, int height) : DialogBox(engine, width, height, Type::MESSAGE) {}
+	virtual ~MainDialogBox() {}
+
+	virtual void Draw();
 };
 
 #endif // !DIALOG_BOX_H
