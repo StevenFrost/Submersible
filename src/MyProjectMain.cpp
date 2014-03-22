@@ -72,7 +72,7 @@ int MyProjectMain::InitialiseObjects() {
 	m_mainBox = new MainDialogBox(this, 550, 300);
 	m_crashBox = new CrashedDialogBox(this, m_statusBar, 550, 300);
 	m_pausedBox = new PausedDialogBox(this, 550, 300);
-	m_helpBox = new HelpDialogBox(this, 550, 300);
+	m_helpBox = new HelpDialogBox(this, 650, 420);
 
 	return 0;
 }
