@@ -1,22 +1,19 @@
 #include "GameObjectManager.h"
 #include "NavalMine.h"
+#include "Coin.h"
 
 GameObjectManager::GameObjectManager(MyProjectMain *engine, int maxObjects) : m_pEngine(engine), m_numWaveObjectsBuffer1(0), m_numWaveObjectsBuffer2(0), m_maxObjects(maxObjects) {
 	reset();
 }
 
-GameObjectManager::~GameObjectManager() {}
+GameObjectManager::~GameObjectManager() {
+	delete[] m_waveObjectsBuffer1;
+	delete[] m_waveObjectsBuffer2;
+}
 
 void GameObjectManager::update(IObservable *observerable) {
-	/* Delete all objects from buffer 1, they're all off-screen now */
-	for (int i = 0; i < m_numWaveObjectsBuffer1; i++) {
-		if (m_waveObjectsBuffer1[i] != NULL) {
-			delete m_waveObjectsBuffer1[i];
-		}
-	}
-	
 	/* Delete the first buffer */
-	delete m_waveObjectsBuffer1;
+	delete[] m_waveObjectsBuffer1;
 
 	/* Swap the wave pointers */
 	m_waveObjectsBuffer1 = m_waveObjectsBuffer2;
@@ -36,8 +33,23 @@ void GameObjectManager::reset() {
 }
 
 void GameObjectManager::generateWave() {
-	m_waveObjectsBuffer2[0] = new NavalMine(m_pEngine, 1270 + 300, 360, 70.0);
-	m_waveObjectsBuffer2[1] = NULL;
+	int count = 0;
 
-	m_numWaveObjectsBuffer2 = 1;
+	m_waveObjectsBuffer2[count++] = new NavalMine(m_pEngine, 1270 + 300, 360);
+	m_waveObjectsBuffer2[count++] = new Coin(m_pEngine, 1270 + 0,    250);
+	m_waveObjectsBuffer2[count++] = new Coin(m_pEngine, 1270 + 100,  250);
+	m_waveObjectsBuffer2[count++] = new Coin(m_pEngine, 1270 + 200,  250);
+	m_waveObjectsBuffer2[count++] = new Coin(m_pEngine, 1270 + 300,  250);
+	m_waveObjectsBuffer2[count++] = new Coin(m_pEngine, 1270 + 400,  250);
+	m_waveObjectsBuffer2[count++] = new Coin(m_pEngine, 1270 + 500,  250);
+	m_waveObjectsBuffer2[count++] = new Coin(m_pEngine, 1270 + 600,  250);
+	m_waveObjectsBuffer2[count++] = new Coin(m_pEngine, 1270 + 700,  250);
+	m_waveObjectsBuffer2[count++] = new Coin(m_pEngine, 1270 + 800,  250);
+	m_waveObjectsBuffer2[count++] = new Coin(m_pEngine, 1270 + 900,  250);
+	m_waveObjectsBuffer2[count++] = new Coin(m_pEngine, 1270 + 1000, 250);
+	m_waveObjectsBuffer2[count++] = new Coin(m_pEngine, 1270 + 1100, 250);
+	m_waveObjectsBuffer2[count++] = new Coin(m_pEngine, 1270 + 1200, 250);
+	m_waveObjectsBuffer2[count++] = NULL;
+
+	m_numWaveObjectsBuffer2 = count;
 }

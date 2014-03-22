@@ -46,6 +46,8 @@ public:
 	MyProjectMain();
 	~MyProjectMain();
 
+	friend class Terrain;
+
 	/* Overrides from BaseEngine */
 	virtual int GameInit();
 	virtual void CleanUp();
@@ -100,6 +102,8 @@ protected:
 	void updateDisplayableObjectArray();
 private:
 	GameState m_gameState;
+
+	bool gameObjectCollisionTest(DisplayableObject **objects, int size);
 };
 
 #endif // !MYPROJECTMAIN_H

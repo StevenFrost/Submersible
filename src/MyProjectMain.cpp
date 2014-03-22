@@ -1,4 +1,5 @@
 #include <cmath>
+#include <typeinfo>
 #include "Waves.h"
 #include "header.h"
 #include "Terrain.h"
@@ -8,6 +9,7 @@
 #include "DialogBox.h"
 #include "NavalMine.h"
 #include "Collision.h"
+#include "GameObject.h"
 #include "BaseEngine.h"
 #include "MyProjectMain.h"
 #include "DisplayableObject.h"
@@ -19,7 +21,7 @@
 #define FOREGROUND_TERRAIN_COLOUR 0xFF28485D
 #define BACKGROUND_TERRAIN_COLOUR 0xFF2E6D94
 #define PIXELS_TO_M               0.153
-#define MAX_OBJECTS               30
+#define MAX_OBJECTS               100
 #define PERMINANT_OBJECTS         6
 
 #define FOREGROUND_TERRAIN_SPEED  70.0
@@ -118,16 +120,13 @@ void MyProjectMain::GameAction() {
 }
 
 void MyProjectMain::playingAction(int elapsedTime) {
+	bool fatalCollision = false;
+
 	/* Update the status bar */
 	m_statusBar->incrementDistance(m_foregroundTerrain->getSpeed() * PIXELS_TO_M * (elapsedTime / 1000.0));
 	m_statusBar->incrementTime(elapsedTime / 1000.0);
 
-	if (m_foregroundTerrain->getJustGenerated()) {
-		updateDisplayableObjectArray();
-	}
-
-	/* Collision detection */
-	bool fatalCollision = false;
+	/* Terrain collision detection */
 	if (Collision::boundingBox(m_sub, m_foregroundTerrain)) {
 		fatalCollision |= Collision::surface(2, m_sub->getSurface(), m_foregroundTerrain->getMainSurface(),
 			m_sub->getXPosition(), m_sub->getYPosition(), m_foregroundTerrain->getOffset(), 350);
@@ -135,14 +134,52 @@ void MyProjectMain::playingAction(int elapsedTime) {
 			m_sub->getXPosition(), m_sub->getYPosition(), 1270 + m_foregroundTerrain->getOffset(), 350);
 	}
 
+	/* Check for collisions between the submarine and game objects in the object manager */
+	fatalCollision |= gameObjectCollisionTest(m_objectManager->getWaveObjectsBuffer1(), m_objectManager->getNumWaveObjectsBuffer1());
+	fatalCollision |= gameObjectCollisionTest(m_objectManager->getWaveObjectsBuffer2(), m_objectManager->getNumWaveObjectsBuffer2());
+
 	/* If a fatal collision occurred, we need to stop the game */
 	if (fatalCollision) {
+#ifndef NO_CRASH
 		m_crashBox->setTitle("CRASHED");
 		changeGameState(CRASHED);
+		pauseTimer();
+#endif // NO_CRASH
 	} else if (m_sub->getFuel() <= 0.1) {
+#ifndef UNLIMITED_FUEL
 		m_crashBox->setTitle("OUT OF FUEL");
 		changeGameState(CRASHED);
+#endif // UNLIMITED_FUEL
 	}
+}
+
+bool MyProjectMain::gameObjectCollisionTest(DisplayableObject **objects, int size) {
+	bool fatalCollision = false;
+
+	for (int i = 0; i < size; i++) {
+		if (objects[i] != NULL && Collision::boundingBox(m_sub, objects[i])) {
+			GameObject *object = dynamic_cast<GameObject *>(objects[i]);
+
+			bool collision = Collision::surface(2, m_sub->getSurface(), object->getCollidableSurface(),
+				m_sub->getXPosition(), m_sub->getYPosition(), object->getCollidableSurfaceX(), object->getCollidableSurfaceY());
+
+			switch (object->getType()) {
+			case GameObject::TORPEDO:
+			case GameObject::NAVAL_MINE:
+			case GameObject::RISING_MINE:
+				fatalCollision |= collision;
+				break;
+			case GameObject::COIN:
+				if (object->IsVisible() && collision) {
+					m_statusBar->incrementPoints();
+					object->SetVisible(false);
+				}
+				break;
+			}
+		}
+	}
+
+	return fatalCollision;
 }
 
 void MyProjectMain::KeyDown(int keyCode) {
@@ -220,12 +257,14 @@ void MyProjectMain::crashedKeyEvent(int keyCode) {
 		m_sub->setSubPosition(100, 250);
 		m_sub->setXVelocity(0);
 		m_sub->setYVelocity(0);
+		unpauseTimer();
 		break;
 	case SDLK_m:
 		changeGameState(MENU);
 		m_statusBar->resetTime();
 		m_statusBar->resetDistance();
 		m_sub->setFuelLevel(100);
+		unpauseTimer();
 		break;
 	}
 }
@@ -253,7 +292,7 @@ void MyProjectMain::updateDisplayableObjectArray() {
 	int objID = 0;
 	DisplayableObject **gameObjects;
 	m_ppDisplayableObjects[objID++] = m_backgroundTerrain;
-	
+
 	/* Add all game objects for the first terrain buffer */
 	gameObjects = m_objectManager->getWaveObjectsBuffer1();
 	for (int i = 0; i < m_objectManager->getNumWaveObjectsBuffer1(); i++) {

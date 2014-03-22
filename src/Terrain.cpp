@@ -128,7 +128,7 @@ void Terrain::drawTerrainSurface(SDL_Surface *surface, double *buffer) {
 	/* Draw the polygon on the specified surface */
 	GetEngine()->DrawPolygon(m_bufSize, terrainMainX, buffer, m_colour, surface);
 
-#ifdef DEBUG
+#ifdef TERRAIN_BUFFER_OUTPUT
 	// Saves the generated terrain surface to a bitmap for debugging
 	static int count = 0;
 	char buf[512];
@@ -189,8 +189,9 @@ void Terrain::DoUpdate(int elapsedTime) {
 		m_offset = 0.0;
 
 		/* Notify observers that we generated some new terrain */
-		m_justGenerated = true;
+		printf("New terrain buffer generated, building new wave...\r\n");
 		notify();
+		dynamic_cast<MyProjectMain *>(m_pEngine)->updateDisplayableObjectArray();
 	}
 
 	/* Move the terrain backwards. This gives the impression that the user is moving forwards */

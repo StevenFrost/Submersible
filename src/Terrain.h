@@ -55,7 +55,6 @@ public:
 	inline double       getWidth()         const     { return m_polygonWidth * 2;     }
 	inline int          getHighestPoint()  const     { return m_terrainMaxHeight;     }
 	inline double       getOffset()        const     { return m_offset;               }
-	inline bool         getJustGenerated()           { if (m_justGenerated) { m_justGenerated = false;  return true; } return false; }
 
 	/**
 	* Initialises core terrain objects, such as the surfaces onto which to the
@@ -86,7 +85,6 @@ protected:
 private:
 	/* Class-contruction members */
 	bool m_initialised;				// True if the terrain class has been correctly initialised
-	bool m_justGenerated;			// True if the terrain was just generated in the previous loop
 
 	/* SDL Members */
 	SDL_Surface *m_terrainMain;		// Primary terrain surface

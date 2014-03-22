@@ -10,4 +10,6 @@
 
 #endif
 
-#undef DEBUG
+#undef  TERRAIN_BUFFER_OUTPUT
+#define UNLIMITED_FUEL
+#undef  NO_CRASH

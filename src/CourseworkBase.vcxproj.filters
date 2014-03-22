@@ -92,6 +92,12 @@
     <ClInclude Include="DialogBox.h">
       <Filter>Header Files\Submersible</Filter>
     </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Header Files\Submersible</Filter>
+    </ClInclude>
+    <ClInclude Include="Coin.h">
+      <Filter>Header Files\Submersible</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="mainfunction.cpp">
@@ -137,6 +143,9 @@
       <Filter>Source Files\Submersible</Filter>
     </ClCompile>
     <ClCompile Include="DialogBox.cpp">
+      <Filter>Source Files\Submersible</Filter>
+    </ClCompile>
+    <ClCompile Include="Coin.cpp">
       <Filter>Source Files\Submersible</Filter>
     </ClCompile>
   </ItemGroup>
