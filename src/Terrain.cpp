@@ -189,6 +189,7 @@ void Terrain::DoUpdate(int elapsedTime) {
 		m_offset = 0.0;
 
 		/* Notify observers that we generated some new terrain */
+		m_justGenerated = true;
 		notify();
 	}
 

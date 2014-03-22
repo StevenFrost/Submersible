@@ -74,6 +74,9 @@ int MyProjectMain::InitialiseObjects() {
 	m_pausedBox = new PausedDialogBox(this, 550, 300);
 	m_helpBox = new HelpDialogBox(this, 650, 420);
 
+	/* Observables */
+	m_foregroundTerrain->attach(m_objectManager);
+
 	return 0;
 }
 
@@ -118,6 +121,10 @@ void MyProjectMain::playingAction(int elapsedTime) {
 	/* Update the status bar */
 	m_statusBar->incrementDistance(m_foregroundTerrain->getSpeed() * PIXELS_TO_M * (elapsedTime / 1000.0));
 	m_statusBar->incrementTime(elapsedTime / 1000.0);
+
+	if (m_foregroundTerrain->getJustGenerated()) {
+		updateDisplayableObjectArray();
+	}
 
 	/* Collision detection */
 	bool fatalCollision = false;
@@ -244,11 +251,22 @@ void MyProjectMain::updateDisplayableObjectArray() {
 	 * objects (other than core game objects) are inserted at the end of the array.
 	 */
 	int objID = 0;
+	DisplayableObject **gameObjects;
 	m_ppDisplayableObjects[objID++] = m_backgroundTerrain;
-	DisplayableObject **gameObjects = m_objectManager->getWaveObjects();
-	for (objID = 1; objID < m_objectManager->getNumWaveObjects(); objID++) {
-		if (gameObjects[objID] != NULL) {
-			m_ppDisplayableObjects[objID] = gameObjects[objID - 1];
+	
+	/* Add all game objects for the first terrain buffer */
+	gameObjects = m_objectManager->getWaveObjectsBuffer1();
+	for (int i = 0; i < m_objectManager->getNumWaveObjectsBuffer1(); i++) {
+		if (gameObjects[i] != NULL) {
+			m_ppDisplayableObjects[objID++] = gameObjects[i];
+		}
+	}
+
+	/* Add all game objects for the second terrain buffer */
+	gameObjects = m_objectManager->getWaveObjectsBuffer2();
+	for (int i = 0; i < m_objectManager->getNumWaveObjectsBuffer2(); i++) {
+		if (gameObjects[i] != NULL) {
+			m_ppDisplayableObjects[objID++] = gameObjects[i];
 		}
 	}
 

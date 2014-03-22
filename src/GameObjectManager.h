@@ -13,7 +13,6 @@
 *    + Moored mines
 *    + Rising mines
 *    + Torpedoes
-*    + Powerup items
 *    + Coins
 */
 class GameObjectManager : public IObserver {
@@ -22,17 +21,23 @@ public:
 	virtual ~GameObjectManager();
 
 	virtual void update(IObservable *observerable);
+	virtual void reset();
 
 	/* Getters */
-	inline DisplayableObject **getWaveObjects()    { return m_waveObjects;    }
-	inline int                 getNumWaveObjects() { return m_numWaveObjects; }
+	inline DisplayableObject **getWaveObjectsBuffer1()    { return m_waveObjectsBuffer1;    }
+	inline DisplayableObject **getWaveObjectsBuffer2()    { return m_waveObjectsBuffer2;    }
+	inline int                 getNumWaveObjectsBuffer1() { return m_numWaveObjectsBuffer1; }
+	inline int                 getNumWaveObjectsBuffer2() { return m_numWaveObjectsBuffer2; }
 protected:
 	virtual void generateWave();
 private:
 	MyProjectMain *m_pEngine;
+	int m_maxObjects;
 
-	int m_numWaveObjects;
-	DisplayableObject **m_waveObjects;
+	int m_numWaveObjectsBuffer1;
+	int m_numWaveObjectsBuffer2;
+	DisplayableObject **m_waveObjectsBuffer1;
+	DisplayableObject **m_waveObjectsBuffer2;
 };
 
 #endif // !GAME_OBJECT_MANAGER

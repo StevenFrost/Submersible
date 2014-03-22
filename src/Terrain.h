@@ -44,17 +44,18 @@ public:
 	virtual void RedrawBackground();
 
 	/* Setters */
-	void setSpeed(double speed)               { m_speed = speed;               }
-	void setRoughness(double roughness)       { m_roughness = roughness;       }
-	void setDisplacement(double displacement) { m_displacement = displacement; }
+	inline void setSpeed(double speed)               { m_speed = speed;               }
+	inline void setRoughness(double roughness)       { m_roughness = roughness;       }
+	inline void setDisplacement(double displacement) { m_displacement = displacement; }
 
 	/* Getters */
-	SDL_Surface *getMainSurface()   const     { return m_terrainMain;          }
-	SDL_Surface *getBufferSurface() const     { return m_terrainBuffer;        }
-	double       getSpeed()         const     { return m_speed;                }
-	double       getWidth()         const     { return m_polygonWidth * 2;     }
-	int          getHighestPoint()  const     { return m_terrainMaxHeight;     }
-	double       getOffset()        const     { return m_offset;               }
+	inline SDL_Surface *getMainSurface()   const     { return m_terrainMain;          }
+	inline SDL_Surface *getBufferSurface() const     { return m_terrainBuffer;        }
+	inline double       getSpeed()         const     { return m_speed;                }
+	inline double       getWidth()         const     { return m_polygonWidth * 2;     }
+	inline int          getHighestPoint()  const     { return m_terrainMaxHeight;     }
+	inline double       getOffset()        const     { return m_offset;               }
+	inline bool         getJustGenerated()           { if (m_justGenerated) { m_justGenerated = false;  return true; } return false; }
 
 	/**
 	* Initialises core terrain objects, such as the surfaces onto which to the
@@ -85,6 +86,7 @@ protected:
 private:
 	/* Class-contruction members */
 	bool m_initialised;				// True if the terrain class has been correctly initialised
+	bool m_justGenerated;			// True if the terrain was just generated in the previous loop
 
 	/* SDL Members */
 	SDL_Surface *m_terrainMain;		// Primary terrain surface

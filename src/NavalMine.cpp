@@ -56,12 +56,6 @@ void NavalMine::DoUpdate(int elapsedTime) {
 	// mines with the terrain. Instead, we use the more accurate member
 	// m_currentScreenXPrecise
 	m_currentScreenXPrecise -= (70.0 * elapsedTime / 1000.0);
-	m_currentScreenYPrecise -= (0.0 * elapsedTime / 1000.0);
-
-	if (m_currentScreenXPrecise < (0 - m_mine->GetWidth() - 6)) {
-		m_currentScreenXPrecise = m_pEngine->GetScreenWidth() + 6;
-		m_currentScreenYPrecise = (rand() % (500 - 200)) + 200;
-	}
 
 	/* Animate the mine lights */
 	animateLights(elapsedTime);
