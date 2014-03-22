@@ -18,18 +18,19 @@
 class GameObjectManager : public IObserver {
 public:
 	GameObjectManager(MyProjectMain *engine, int maxObjects);
-	virtual ~GameObjectManager();
+	~GameObjectManager();
 
-	virtual void update(IObservable *observerable);
-	virtual void reset();
+	void update(IObservable *observerable);
+	void reset();
 
 	/* Getters */
 	inline DisplayableObject **getWaveObjectsBuffer1()    { return m_waveObjectsBuffer1;    }
 	inline DisplayableObject **getWaveObjectsBuffer2()    { return m_waveObjectsBuffer2;    }
 	inline int                 getNumWaveObjectsBuffer1() { return m_numWaveObjectsBuffer1; }
 	inline int                 getNumWaveObjectsBuffer2() { return m_numWaveObjectsBuffer2; }
-protected:
-	virtual void generateWave();
+
+	void generateWave();
+	void generateWave(DisplayableObject **&buffer, int &size);
 private:
 	MyProjectMain *m_pEngine;
 	int m_maxObjects;

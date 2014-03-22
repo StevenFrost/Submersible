@@ -47,6 +47,7 @@ public:
 	~MyProjectMain();
 
 	friend class Terrain;
+	friend class GameObjectManager;
 
 	/* Overrides from BaseEngine */
 	virtual int GameInit();

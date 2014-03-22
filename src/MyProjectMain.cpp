@@ -257,13 +257,18 @@ void MyProjectMain::crashedKeyEvent(int keyCode) {
 		m_sub->setSubPosition(100, 250);
 		m_sub->setXVelocity(0);
 		m_sub->setYVelocity(0);
+		m_objectManager->reset();
+		updateDisplayableObjectArray();
 		unpauseTimer();
 		break;
 	case SDLK_m:
 		changeGameState(MENU);
+		m_sub->setFuelLevel(100);
 		m_statusBar->resetTime();
 		m_statusBar->resetDistance();
-		m_sub->setFuelLevel(100);
+		m_statusBar->resetPoints();
+		m_objectManager->reset();
+		updateDisplayableObjectArray();
 		unpauseTimer();
 		break;
 	}
