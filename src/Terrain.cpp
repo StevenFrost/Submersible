@@ -120,13 +120,15 @@ bool Terrain::createTerrainSurface(SDL_Surface *&surface) {
 }
 
 void Terrain::drawTerrainSurface(SDL_Surface *surface, double *buffer) {
-	// Make a copy of the original terrain X-buffer to avoid the
+	// Make a copy of the original terrain buffers to avoid the
 	// DrawBackgroundPolygon function mutating our primary array
-	double *terrainMainX = new double[m_bufSize];
-	memcpy(terrainMainX, m_terrainMainX, m_bufSize * sizeof(double));
+	double *terrainX = new double[m_bufSize];
+	double *terrainY = new double[m_bufSize];
+	memcpy(terrainX, m_terrainMainX, m_bufSize * sizeof(double));
+	memcpy(terrainY, buffer, m_bufSize * sizeof(double));
 
 	/* Draw the polygon on the specified surface */
-	GetEngine()->DrawPolygon(m_bufSize, terrainMainX, buffer, m_colour, surface);
+	GetEngine()->DrawPolygon(m_bufSize, terrainX, terrainY, m_colour, surface);
 
 #ifdef TERRAIN_BUFFER_OUTPUT
 	// Saves the generated terrain surface to a bitmap for debugging
@@ -137,7 +139,8 @@ void Terrain::drawTerrainSurface(SDL_Surface *surface, double *buffer) {
 #endif
 
 	/* Now free the temporary terrain points, we don't need them */
-	delete[] terrainMainX;
+	delete[] terrainX;
+	delete[] terrainY;
 }
 
 void Terrain::Draw() {

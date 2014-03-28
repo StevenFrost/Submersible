@@ -17,21 +17,26 @@ public:
 	virtual void GetRedrawRect(SDL_Rect *rectangle);
 	virtual void RedrawBackground();
 
-	virtual SDL_Surface *getCollidableSurface()  { return m_mine->getSurface();        }
-	virtual int          getCollidableSurfaceX() { return m_currentScreenXPrecise + 6; }
-	virtual int          getCollidableSurfaceY() { return m_currentScreenYPrecise + 6; }
+	virtual SDL_Surface *getCollidableSurface()  const { return m_mine->getSurface();        }
+	virtual int          getCollidableSurfaceX() const { return m_currentScreenXPrecise + 6; }
+	virtual int          getCollidableSurfaceY() const { return m_currentScreenYPrecise + 6; }
 protected:
 	static Image *m_mine;
 	static Image *m_chain;
 	static Image *m_lights;
 
-	double m_currentScreenXPrecise;		// A more precise version of m_iCurrentScreenX
-	double m_currentScreenYPrecise;		// A More precise version of m_iCurrentScreenY
+	void animateLights(int elapsedTime);
 private:
 	int m_lightSpriteOffset;
 	int m_totalTimeElapsed;
+};
 
-	void animateLights(int elapsedTime);
+class RisingMine : public NavalMine {
+public:
+	RisingMine(MyProjectMain *engine, int x, int y) : NavalMine(engine, x, y) {}
+	virtual ~RisingMine() {}
+
+	virtual void DoUpdate(int elapsedTime);
 };
 
 #endif // !NAVAL_MINE_H

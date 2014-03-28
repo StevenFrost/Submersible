@@ -14,6 +14,7 @@ Coin::Coin(MyProjectMain *engine, int x, int y) : GameObject(engine, Type::COIN)
 
 	m_iDrawWidth = m_coin->GetWidth() + 1;
 	m_iDrawHeight = m_coin->GetHeight() + 1;
+	m_bVisible = true;
 }
 
 Coin::~Coin() {}

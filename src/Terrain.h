@@ -47,6 +47,7 @@ public:
 	inline void setSpeed(double speed)               { m_speed = speed;               }
 	inline void setRoughness(double roughness)       { m_roughness = roughness;       }
 	inline void setDisplacement(double displacement) { m_displacement = displacement; }
+	inline void setOffset(double offset)             { m_offset = offset;             }
 
 	/* Getters */
 	inline SDL_Surface *getMainSurface()   const     { return m_terrainMain;          }
@@ -55,6 +56,9 @@ public:
 	inline double       getWidth()         const     { return m_polygonWidth * 2;     }
 	inline int          getHighestPoint()  const     { return m_terrainMaxHeight;     }
 	inline double       getOffset()        const     { return m_offset;               }
+	inline double      *getMainArray()     const     { return m_terrainMainY;         }
+	inline double      *getBufferArray()   const     { return m_terrainBufferY;       }
+	inline int          getBufferSize()    const     { return m_bufSize;              }
 
 	/**
 	* Initialises core terrain objects, such as the surfaces onto which to the

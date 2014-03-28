@@ -16,6 +16,8 @@ public:
 	*/
 	static bool boundingBox(DisplayableObject *a, DisplayableObject *b);
 
+	static bool boundingBox(int aX, int aY, int aW, int aH, int bX, int bY, int bW, int bH);
+	
 	/**
 	* Performs a slower collision test on two SDL surfaces. The test speed can
 	* be increased by using a less precise check (higher resolution parameter

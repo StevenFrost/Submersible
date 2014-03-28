@@ -11,5 +11,5 @@
 #endif
 
 #undef  TERRAIN_BUFFER_OUTPUT
-#define UNLIMITED_FUEL
+#undef  UNLIMITED_FUEL
 #undef  NO_CRASH

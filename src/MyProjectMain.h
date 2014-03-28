@@ -9,6 +9,9 @@ class Submarine;
 class Terrain;
 class StatusBar;
 class Waves;
+class Shark;
+class GameObject;
+class Flare;
 class NavalMine;
 class GameObjectManager;
 class Button;
@@ -86,7 +89,9 @@ protected:
 	Terrain *m_foregroundTerrain;
 	StatusBar *m_statusBar;
 	Submarine *m_sub;
+	Flare *m_flare;
 	Waves *m_waves;
+	Shark *m_shark;
 
 	/* Dialog boxes */
 	MainDialogBox *m_mainBox;
@@ -104,7 +109,14 @@ protected:
 private:
 	GameState m_gameState;
 
-	bool gameObjectCollisionTest(DisplayableObject **objects, int size);
+	void subCollisionTest();
+	void torpedoCollisionTest();
+
+	bool subCollisionAction(GameObject *src, GameObject *obj);
+	bool torpedoCollisionAction(GameObject *src, GameObject *obj);
+
+	bool gameObjectArrayCollisionTest(GameObject *source, GameObject **objects, int size);
+	bool gameObjectCollisionTest(GameObject *src, GameObject *obj);
 };
 
 #endif // !MYPROJECTMAIN_H

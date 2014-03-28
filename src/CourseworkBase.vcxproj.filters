@@ -98,6 +98,18 @@
     <ClInclude Include="Coin.h">
       <Filter>Header Files\Submersible</Filter>
     </ClInclude>
+    <ClInclude Include="Flare.h">
+      <Filter>Header Files\Submersible</Filter>
+    </ClInclude>
+    <ClInclude Include="Fuel.h">
+      <Filter>Header Files\Submersible</Filter>
+    </ClInclude>
+    <ClInclude Include="Shark.h">
+      <Filter>Header Files\Submersible</Filter>
+    </ClInclude>
+    <ClInclude Include="Torpedo.h">
+      <Filter>Header Files\Submersible</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="mainfunction.cpp">
@@ -146,6 +158,18 @@
       <Filter>Source Files\Submersible</Filter>
     </ClCompile>
     <ClCompile Include="Coin.cpp">
+      <Filter>Source Files\Submersible</Filter>
+    </ClCompile>
+    <ClCompile Include="Flare.cpp">
+      <Filter>Source Files\Submersible</Filter>
+    </ClCompile>
+    <ClCompile Include="Fuel.cpp">
+      <Filter>Source Files\Submersible</Filter>
+    </ClCompile>
+    <ClCompile Include="Shark.cpp">
+      <Filter>Source Files\Submersible</Filter>
+    </ClCompile>
+    <ClCompile Include="Torpedo.cpp">
       <Filter>Source Files\Submersible</Filter>
     </ClCompile>
   </ItemGroup>

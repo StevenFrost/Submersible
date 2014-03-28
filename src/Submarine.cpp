@@ -1,8 +1,9 @@
 #include "Submarine.h"
+#include "GameObject.h"
 
 Image *Submarine::m_body = new Image();
 
-Submarine::Submarine(MyProjectMain *engine, unsigned int x, unsigned int y) : DisplayableObject(engine),
+Submarine::Submarine(MyProjectMain *engine, unsigned int x, unsigned int y) : GameObject(engine, SUBMARINE),
 	m_fuel(100.0),
 	m_maxVelocityX(0.25),
 	m_maxVelocityY(0.4),

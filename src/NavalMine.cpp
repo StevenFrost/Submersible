@@ -9,12 +9,8 @@ Image *NavalMine::m_lights = new Image();
 NavalMine::NavalMine(MyProjectMain *engine, int x, int y) : GameObject(engine, Type::NAVAL_MINE), m_totalTimeElapsed(0) {
 	m_iStartDrawPosX = 0;
 	m_iStartDrawPosY = 0;
-	m_iCurrentScreenX = x;
-	m_iCurrentScreenY = y;
-	m_currentScreenXPrecise = m_iCurrentScreenX;
-	m_currentScreenYPrecise = m_iCurrentScreenY;
-	m_iPreviousScreenX = m_iCurrentScreenX;
-	m_iPreviousScreenY = m_iCurrentScreenY;
+	m_currentScreenXPrecise = m_iCurrentScreenX = m_iPreviousScreenX = x;
+	m_currentScreenYPrecise = m_iCurrentScreenY = m_iPreviousScreenY = y;
 
 	if (!m_mine->IsLoaded()) {
 		m_mine->LoadImage("../resources/mine.png");
@@ -28,11 +24,14 @@ NavalMine::NavalMine(MyProjectMain *engine, int x, int y) : GameObject(engine, T
 
 	m_iDrawWidth = 98;
 	m_iDrawHeight = m_pEngine->GetScreenHeight() - m_iCurrentScreenY;
+	m_bVisible = true;
 }
 
 NavalMine::~NavalMine() {}
 
 void NavalMine::Draw() {
+	if (!m_bVisible) return;
+
 	/* Draw the mine body */
 	m_mine->RenderImage(m_pEngine->GetForeground(), 0, 0, m_currentScreenXPrecise + 6, m_currentScreenYPrecise + 6, m_mine->GetWidth(), m_mine->GetHeight());
 
@@ -106,4 +105,20 @@ void NavalMine::GetRedrawRect(SDL_Rect *rectangle) {
 	rectangle->y = m_iCurrentScreenY;
 	rectangle->w = m_iDrawWidth;
 	rectangle->h = m_iDrawHeight;
+}
+
+void RisingMine::DoUpdate(int elapsedTime) {
+	m_currentScreenXPrecise -= (70.0 * elapsedTime / 1000.0);
+	m_iCurrentScreenX = static_cast<int>(m_currentScreenXPrecise);
+
+	if (m_iCurrentScreenX <= 1100 && m_iCurrentScreenY > 130) {
+		m_currentScreenYPrecise -= (10.0 * elapsedTime / 1000.0);
+		m_iCurrentScreenY = static_cast<int>(m_currentScreenYPrecise);
+	}
+
+	/* Animate the mine lights */
+	animateLights(elapsedTime);
+
+	/* Update the redraw rectangles */
+	StoreLastScreenPositionAndUpdateRect();
 }

@@ -1,15 +1,15 @@
-#ifndef COIN_H
-#define COIN_H
+#ifndef FUEL_H
+#define FUEL_H
 
 #include "Image.h"
 #include "header.h"
 #include "GameObject.h"
 #include "MyProjectMain.h"
 
-class Coin : public GameObject {
+class Fuel : public GameObject {
 public:
-	Coin(MyProjectMain *engine, int x, int y);
-	virtual ~Coin();
+	Fuel(MyProjectMain *engine, int x, int y);
+	virtual ~Fuel();
 
 	/* Overrides from DisplayableObject */
 	virtual void Draw();
@@ -17,9 +17,9 @@ public:
 	virtual void GetRedrawRect(SDL_Rect *rectangle);
 	virtual void RedrawBackground();
 
-	virtual SDL_Surface *getCollidableSurface() const { return m_coin->getSurface();    }
+	virtual SDL_Surface *getCollidableSurface() const { return m_fuel->getSurface(); }
 protected:
-	static Image *m_coin;
+	static Image *m_fuel;
 };
 
-#endif // !COIN_H
+#endif // !FUEL_H

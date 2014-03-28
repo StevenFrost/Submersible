@@ -3,6 +3,7 @@
 
 #include "IObserver.h"
 #include "MyProjectMain.h"
+#include "GameObject.h"
 
 /**
 * This class manages the current wave of game objects scrolling along the
@@ -14,6 +15,7 @@
 *    + Rising mines
 *    + Torpedoes
 *    + Coins
+*    + Fuel
 */
 class GameObjectManager : public IObserver {
 public:
@@ -24,21 +26,24 @@ public:
 	void reset();
 
 	/* Getters */
-	inline DisplayableObject **getWaveObjectsBuffer1()    { return m_waveObjectsBuffer1;    }
-	inline DisplayableObject **getWaveObjectsBuffer2()    { return m_waveObjectsBuffer2;    }
+	inline GameObject **getWaveObjectsBuffer1()           { return m_waveObjectsBuffer1;    }
+	inline GameObject **getWaveObjectsBuffer2()           { return m_waveObjectsBuffer2;    }
 	inline int                 getNumWaveObjectsBuffer1() { return m_numWaveObjectsBuffer1; }
 	inline int                 getNumWaveObjectsBuffer2() { return m_numWaveObjectsBuffer2; }
+	inline GameObject         *getTorpedo()               { return m_torpedo;               }
 
 	void generateWave();
-	void generateWave(DisplayableObject **&buffer, int &size);
+	void generateWave(GameObject **&buffer, int &size);
 private:
 	MyProjectMain *m_pEngine;
 	int m_maxObjects;
 
 	int m_numWaveObjectsBuffer1;
 	int m_numWaveObjectsBuffer2;
-	DisplayableObject **m_waveObjectsBuffer1;
-	DisplayableObject **m_waveObjectsBuffer2;
+	GameObject **m_waveObjectsBuffer1;
+	GameObject **m_waveObjectsBuffer2;
+
+	GameObject *m_torpedo;
 };
 
 #endif // !GAME_OBJECT_MANAGER

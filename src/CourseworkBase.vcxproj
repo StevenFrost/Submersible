@@ -91,6 +91,8 @@
     <ClInclude Include="Coin.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="DialogBox.h" />
+    <ClInclude Include="Flare.h" />
+    <ClInclude Include="Fuel.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameObjectManager.h" />
     <ClInclude Include="header.h" />
@@ -103,18 +105,22 @@
     <ClInclude Include="JPGImage.h" />
     <ClInclude Include="MovementPosition.h" />
     <ClInclude Include="NavalMine.h" />
+    <ClInclude Include="Shark.h" />
     <ClInclude Include="StatusBar.h" />
     <ClInclude Include="Submarine.h" />
     <ClInclude Include="templates.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="TileManager.h" />
     <ClInclude Include="MyProjectMain.h" />
+    <ClInclude Include="Torpedo.h" />
     <ClInclude Include="Waves.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Coin.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="DialogBox.cpp" />
+    <ClCompile Include="Flare.cpp" />
+    <ClCompile Include="Fuel.cpp" />
     <ClCompile Include="GameObjectManager.cpp" />
     <ClCompile Include="mainfunction.cpp" />
     <ClCompile Include="BaseEngine.cpp" />
@@ -123,10 +129,12 @@
     <ClCompile Include="JPGImage.cpp" />
     <ClCompile Include="MyProjectMain.cpp" />
     <ClCompile Include="NavalMine.cpp" />
+    <ClCompile Include="Shark.cpp" />
     <ClCompile Include="StatusBar.cpp" />
     <ClCompile Include="Submarine.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="TileManager.cpp" />
+    <ClCompile Include="Torpedo.cpp" />
     <ClCompile Include="Waves.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
