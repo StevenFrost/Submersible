@@ -2,7 +2,7 @@
 #define GAME_OBJECT_H
 
 #include "header.h"
-#include "MyProjectMain.h"
+#include "BaseEngine.h"
 #include "DisplayableObject.h"
 
 class GameObject : public DisplayableObject {
@@ -13,10 +13,11 @@ public:
 		TORPEDO,
 		COIN,
 		FUEL,
-		SUBMARINE
+		SUBMARINE,
+		FLARE
 	} Type;
 
-	GameObject(MyProjectMain *engine, Type type) : DisplayableObject(engine), m_type(type) {}
+	GameObject(BaseEngine *engine, Type type) : DisplayableObject(engine), m_type(type) {}
 	virtual ~GameObject() {}
 
 	Type getType() { return m_type; }

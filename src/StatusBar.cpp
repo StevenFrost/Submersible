@@ -1,5 +1,6 @@
 #include "StatusBar.h"
 #include "Submarine.h"
+#include "MyProjectMain.h"
 
 /* File-scoped constants */
 static const unsigned int BACKGROUND_COLOUR     = 0x2D4452;
@@ -21,14 +22,9 @@ static const unsigned int TIME_LABEL_Y          = 5;
 static const unsigned int TIME_LABEL_HEIGHT     = 35;
 static const unsigned int TIME_LABEL_WIDTH      = 150;
 
-StatusBar::StatusBar(MyProjectMain *engine) : DisplayableObject(engine), m_pEngine(engine),
-	m_alpha(0xBD),
-	m_height(40),
-	m_distance(0),
-	m_points(0),
-	m_seconds(0.0),
-	m_fuel(100)
-{}
+StatusBar::StatusBar(BaseEngine *engine) : DisplayableObject(engine), m_alpha(0xBD), m_height(40), m_distance(0), m_points(0), m_seconds(0.0), m_fuel(100) {
+	m_pEngine = dynamic_cast<MyProjectMain *>(engine);
+}
 
 StatusBar::~StatusBar() {
 }

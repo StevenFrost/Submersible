@@ -3,14 +3,14 @@
 
 #include "Image.h"
 #include "header.h"
+#include "BaseEngine.h"
 #include "GameObject.h"
 #include "IObservable.h"
-#include "MyProjectMain.h"
 #include "DisplayableObject.h"
 
 class Submarine : public GameObject, public IObservable {
 public:
-	Submarine(MyProjectMain *engine, unsigned int x, unsigned int y);
+	Submarine(BaseEngine *engine, unsigned int x, unsigned int y);
 	virtual ~Submarine();
 
 	/* Overrides from DisplayableObject */

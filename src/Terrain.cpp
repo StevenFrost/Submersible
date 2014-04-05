@@ -1,11 +1,12 @@
 #include "Terrain.h"
+#include "MyProjectMain.h"
 
 // Implementation-dependant constant for scaling the width of the buffers down.
 // This allows us to control how many points are on the surface for a more
 // realistic distribution
 static const double SCALING_FACTOR = 0.1;
 
-Terrain::Terrain(MyProjectMain *engine, unsigned int width, unsigned int height, unsigned int colour) : DisplayableObject(engine),
+Terrain::Terrain(BaseEngine *engine, unsigned int width, unsigned int height, unsigned int colour) : DisplayableObject(engine),
 	m_initialised(false),
 	m_width(width * SCALING_FACTOR),
 	m_height(height),

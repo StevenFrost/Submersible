@@ -3,12 +3,12 @@
 
 #include "Image.h"
 #include "header.h"
+#include "BaseEngine.h"
 #include "GameObject.h"
-#include "MyProjectMain.h"
 
 class Fuel : public GameObject {
 public:
-	Fuel(MyProjectMain *engine, int x, int y);
+	Fuel(BaseEngine *engine, int x, int y);
 	virtual ~Fuel();
 
 	/* Overrides from DisplayableObject */

@@ -3,12 +3,12 @@
 
 #include "Image.h"
 #include "header.h"
+#include "BaseEngine.h"
 #include "GameObject.h"
-#include "MyProjectMain.h"
 
 class Torpedo : public GameObject {
 public:
-	Torpedo(MyProjectMain *engine, DisplayableObject *target);
+	Torpedo(BaseEngine *engine, DisplayableObject *target);
 	virtual ~Torpedo();
 
 	/* Overrides from DisplayableObject */
@@ -19,10 +19,14 @@ public:
 
 	virtual SDL_Surface *getCollidableSurface() const { return m_torpedo->getSurface(); }
 
-	void retarget(DisplayableObject *target)          { m_target = target;              }
+	void retarget(DisplayableObject *target) { m_target = target; m_needsRetarget = false; }
+
+	bool needsNewTarget() { return m_needsRetarget; }
 protected:
 	static Image *m_torpedo;
 	DisplayableObject *m_target;
+private:
+	bool m_needsRetarget;
 };
 
 #endif // !TORPEDO_H

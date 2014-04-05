@@ -1,9 +1,8 @@
 #include "Torpedo.h"
-#include "MyProjectMain.h"
 
 Image *Torpedo::m_torpedo = new Image();
 
-Torpedo::Torpedo(MyProjectMain *engine, DisplayableObject *target) : GameObject(engine, Type::TORPEDO), m_target(target) {
+Torpedo::Torpedo(BaseEngine *engine, DisplayableObject *target) : GameObject(engine, Type::TORPEDO), m_target(target), m_needsRetarget(false) {
 	m_iStartDrawPosX = 0;
 	m_iStartDrawPosY = 0;
 	m_currentScreenXPrecise = m_iCurrentScreenX = m_iPreviousScreenX = -(rand() % (400 - 100) + 100);
@@ -29,10 +28,15 @@ void Torpedo::Draw() {
 void Torpedo::DoUpdate(int elapsedTime) {
 	m_currentScreenXPrecise += (50.0 * elapsedTime / 1000.0);
 
-	if (m_currentScreenYPrecise < m_target->GetYCentre() - 0.1) {
-		m_currentScreenYPrecise += (40.0 * elapsedTime / 1000.0);
-	} else if (m_currentScreenYPrecise > m_target->GetYCentre() + 0.1) {
-		m_currentScreenYPrecise -= (40.0 * elapsedTime / 1000.0);
+	/* Home in on the target */
+	if (m_currentScreenXPrecise < m_target->GetXCentre()) {
+		if (m_currentScreenYPrecise < m_target->GetYCentre() - 0.1) {
+			m_currentScreenYPrecise += (40.0 * elapsedTime / 1000.0);
+		} else if (m_currentScreenYPrecise > m_target->GetYCentre() + 0.1) {
+			m_currentScreenYPrecise -= (40.0 * elapsedTime / 1000.0);
+		}
+	} else {
+		m_needsRetarget = true;
 	}
 
 	/* Keep the less precise version updated, we need it for redrawing */

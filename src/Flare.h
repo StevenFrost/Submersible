@@ -3,23 +3,27 @@
 
 #include "Image.h"
 #include "header.h"
-#include "MyProjectMain.h"
-#include "DisplayableObject.h"
+#include "GameObject.h"
+#include "BaseEngine.h"
 
-class Flare : public DisplayableObject {
+class Flare : public GameObject {
 public:
-	Flare(MyProjectMain *engine, int x, int y);
+	Flare(BaseEngine *engine, int x, int y);
 	virtual ~Flare();
 
-	/* Overrides from DisplayableObject */
+	/* Overrides from GameObject */
 	virtual void Draw();
 	virtual void DoUpdate(int elapsedTime);
 	virtual void GetRedrawRect(SDL_Rect *rectangle);
 	virtual void RedrawBackground();
+	virtual SDL_Surface *getCollidableSurface()  const { return m_flare->getSurface(); }
+
+	void reset();
 
 	/* Setters */
 	void setX(int x) { m_currentScreenXPrecise = m_iCurrentScreenX = x; }
 	void setY(int y) { m_currentScreenYPrecise = m_iCurrentScreenY = y; }
+	void setActive(bool val) { m_active = val; }
 protected:
 	static Image *m_flare;
 
@@ -30,9 +34,6 @@ private:
 
 	int m_flareSpriteOffset;	// Sprite sheet offset for flare animation
 	int m_totalTimeElapsed;		// Total time elapsed since the flare was fired
-
-	double m_currentScreenXPrecise;
-	double m_currentScreenYPrecise;
 };
 
 #endif // !FLARE_H

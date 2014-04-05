@@ -3,12 +3,12 @@
 
 #include "header.h"
 #include "JPGImage.h"
-#include "MyProjectMain.h"
+#include "BaseEngine.h"
 #include "DisplayableObject.h"
 
 class Waves : public DisplayableObject {
 public:
-	Waves(MyProjectMain *engine, double speed);
+	Waves(BaseEngine *engine, double speed);
 	virtual ~Waves();
 
 	/* Overrides from DisplayableObject */

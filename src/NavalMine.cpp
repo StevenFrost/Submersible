@@ -6,7 +6,7 @@ Image *NavalMine::m_mine = new Image();
 Image *NavalMine::m_chain = new Image();
 Image *NavalMine::m_lights = new Image();
 
-NavalMine::NavalMine(MyProjectMain *engine, int x, int y) : GameObject(engine, Type::NAVAL_MINE), m_totalTimeElapsed(0) {
+NavalMine::NavalMine(BaseEngine *engine, int x, int y) : GameObject(engine, Type::NAVAL_MINE), m_totalTimeElapsed(0) {
 	m_iStartDrawPosX = 0;
 	m_iStartDrawPosY = 0;
 	m_currentScreenXPrecise = m_iCurrentScreenX = m_iPreviousScreenX = x;
@@ -51,6 +51,9 @@ void NavalMine::Draw() {
 }
 
 void NavalMine::DoUpdate(int elapsedTime) {
+	m_iPreviousScreenX = m_iCurrentScreenX;
+	m_iPreviousScreenY = m_iCurrentScreenY;
+
 	// We can't use m_iCurrentScreenX as it's too inaccurate and we can't sync
 	// mines with the terrain. Instead, we use the more accurate member
 	// m_currentScreenXPrecise
@@ -92,12 +95,6 @@ void NavalMine::animateLights(int elapsedTime) {
 	} else {
 		m_lightSpriteOffset = 135;
 	}
-}
-
-void NavalMine::RedrawBackground() {
-	SDL_Rect *rect = new SDL_Rect();
-	GetRedrawRect(rect);
-	m_pEngine->CopyBackgroundPixels(rect->x, rect->y, rect->w, rect->h);
 }
 
 void NavalMine::GetRedrawRect(SDL_Rect *rectangle) {

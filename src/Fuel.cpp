@@ -2,7 +2,7 @@
 
 Image *Fuel::m_fuel = new Image();
 
-Fuel::Fuel(MyProjectMain *engine, int x, int y) : GameObject(engine, Type::FUEL) {
+Fuel::Fuel(BaseEngine *engine, int x, int y) : GameObject(engine, Type::FUEL) {
 	m_iStartDrawPosX = 0;
 	m_iStartDrawPosY = 0;
 	m_currentScreenXPrecise = m_iCurrentScreenX = m_iPreviousScreenX = x;

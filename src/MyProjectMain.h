@@ -1,25 +1,18 @@
 #ifndef MYPROJECTMAIN_H
 #define MYPROJECTMAIN_H
 
+#include "Flare.h"
+#include "Shark.h"
+#include "Waves.h"
 #include "header.h"
+#include "Terrain.h"
 #include "JPGImage.h"
+#include "DialogBox.h"
+#include "StatusBar.h"
+#include "Submarine.h"
 #include "BaseEngine.h"
-
-class Submarine;
-class Terrain;
-class StatusBar;
-class Waves;
-class Shark;
-class GameObject;
-class Flare;
-class NavalMine;
-class GameObjectManager;
-class Button;
-class DialogBox;
-class CrashedDialogBox;
-class PausedDialogBox;
-class HelpDialogBox;
-class MainDialogBox;
+#include "GameObject.h"
+#include "GameObjectManager.h"
 
 class MyProjectMain : public BaseEngine {
 public:
@@ -61,16 +54,6 @@ public:
 	virtual void KeyDown(int keyCode);
 	virtual void SetupBackgroundBuffer();
 
-	/* Action functions for different game states */
-	void playingAction(int elapsedTime);
-
-	/* Key event functions for different game states */
-	void menuKeyEvent(int keyCode);
-	void pausedKeyEvent(int keyCode);
-	void helpKeyEvent(int keyCode);
-	void crashedKeyEvent(int keyCode);
-	void playingKeyEvent(int keyCode);
-
 	/* Timer functions for tracking time while paused */
 	void pauseTimer();
 	void unpauseTimer();
@@ -78,7 +61,7 @@ public:
 	void changeGameState(GameState state);
 
 	/* Getters */
-	inline GameObjectManager *getObjectManager()                       const { return m_objectManager; }
+	inline GameObjectManager *getObjectManager() const { return m_objectManager; }
 	DisplayableObject *       getStaticObject(StaticGameObject object) const;
 	int getStringWidth (const char *str, int size);
 	int getStringHeight(const char *str, int size);
@@ -108,6 +91,16 @@ protected:
 	void updateDisplayableObjectArray();
 private:
 	GameState m_gameState;
+
+	/* Action functions for different game states */
+	void playingAction(int elapsedTime);
+
+	/* Key event functions for different game states */
+	void menuKeyEvent(int keyCode);
+	void pausedKeyEvent(int keyCode);
+	void helpKeyEvent(int keyCode);
+	void crashedKeyEvent(int keyCode);
+	void playingKeyEvent(int keyCode);
 
 	void subCollisionTest();
 	void torpedoCollisionTest();

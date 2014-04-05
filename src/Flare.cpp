@@ -2,7 +2,7 @@
 
 Image *Flare::m_flare = new Image();
 
-Flare::Flare(MyProjectMain *engine, int x, int y) : DisplayableObject(engine), m_flareSpriteOffset(0), m_totalTimeElapsed(0) {
+Flare::Flare(BaseEngine*engine, int x, int y) : GameObject(engine, FLARE) {
 	m_iStartDrawPosX = 0;
 	m_iStartDrawPosY = 0;
 	m_currentScreenXPrecise = m_iCurrentScreenX = m_iPreviousScreenX = x;
@@ -15,10 +15,17 @@ Flare::Flare(MyProjectMain *engine, int x, int y) : DisplayableObject(engine), m
 	m_iDrawWidth = m_flare->GetWidth() + 1;
 	m_iDrawHeight = m_flare->GetHeight() + 1;
 
-	m_bVisible = false;
+	reset();
 }
 
 Flare::~Flare() {}
+
+void Flare::reset() {
+	m_bVisible = false;
+	m_active = false;
+	m_flareSpriteOffset = 0;
+	m_totalTimeElapsed = 0;
+}
 
 void Flare::Draw() {
 	if (!m_bVisible) return;
@@ -30,20 +37,21 @@ void Flare::Draw() {
 void Flare::DoUpdate(int elapsedTime) {
 	if (!m_bVisible) return;
 
-	/* Update the flare position */
-	m_currentScreenXPrecise -= (m_velocity * elapsedTime / 1000.0);
-	m_currentScreenYPrecise += (20.0 * elapsedTime / 1000.0);
-
-	if (m_velocity < 70.0) {
-		m_velocity += (20.0 * elapsedTime / 1000.0);
-	}
-
 	/* Animate the flare */
 	animate(elapsedTime);
 
-	/* Keep the less precise version updated, we need it for redrawing */
+	/* Update the flare position */
+	m_currentScreenXPrecise -= (m_velocity * elapsedTime / 1000.0);
 	m_iCurrentScreenX = static_cast<int>(m_currentScreenXPrecise);
-	m_iCurrentScreenY = static_cast<int>(m_currentScreenYPrecise);
+
+	if (m_active) {
+		m_currentScreenYPrecise += (20.0 * elapsedTime / 1000.0);
+		m_iCurrentScreenY = static_cast<int>(m_currentScreenYPrecise);
+	}
+	
+	if (m_velocity < 70.0) {
+		m_velocity += (20.0 * elapsedTime / 1000.0);
+	}
 
 	/* Update the redraw rectangles */
 	StoreLastScreenPositionAndUpdateRect();
@@ -56,9 +64,7 @@ void Flare::animate(int elapsedTime) {
 	if (m_totalTimeElapsed < 3000.0) {
 		return;
 	} else if (m_totalTimeElapsed > 4000.0) {
-		m_flareSpriteOffset = 0;
-		m_totalTimeElapsed = 0;
-		m_bVisible = false;
+		reset();
 		return;
 	}
 

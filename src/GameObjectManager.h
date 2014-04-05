@@ -2,8 +2,10 @@
 #define GAME_OBJECT_MANAGER_H
 
 #include "IObserver.h"
-#include "MyProjectMain.h"
+#include "BaseEngine.h"
 #include "GameObject.h"
+
+class MyProjectMain;
 
 /**
 * This class manages the current wave of game objects scrolling along the
@@ -19,7 +21,7 @@
 */
 class GameObjectManager : public IObserver {
 public:
-	GameObjectManager(MyProjectMain *engine, int maxObjects);
+	GameObjectManager(BaseEngine *engine, int maxObjects);
 	~GameObjectManager();
 
 	void update(IObservable *observerable);

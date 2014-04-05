@@ -1,9 +1,10 @@
 #ifndef DIALOG_BOX_H
 #define DIALOG_BOX_H
 
-#include "MyProjectMain.h"
-#include "DisplayableObject.h"
+#include "header.h"
 #include "StatusBar.h"
+#include "BaseEngine.h"
+#include "DisplayableObject.h"
 
 class DialogBox : public DisplayableObject {
 public:
@@ -12,7 +13,7 @@ public:
 		MESSAGE = 0x21323C
 	} Type;
 
-	DialogBox(MyProjectMain *engine, int width, int height, Type boxType);
+	DialogBox(BaseEngine *engine, int width, int height, Type boxType);
 	virtual ~DialogBox();
 
 	/* Overrides from DisplayableObject */
@@ -31,7 +32,7 @@ protected:
 
 class CrashedDialogBox : public DialogBox {
 public:
-	CrashedDialogBox(MyProjectMain *engine, StatusBar *status, int width, int height) : DialogBox(engine, width, height, Type::CRASH), m_statusBar(status), m_str("CRASHED") {}
+	CrashedDialogBox(BaseEngine *engine, StatusBar *status, int width, int height) : DialogBox(engine, width, height, Type::CRASH), m_statusBar(status), m_str("CRASHED") {}
 	virtual ~CrashedDialogBox() {}
 
 	virtual void Draw();
@@ -43,7 +44,7 @@ private:
 
 class PausedDialogBox : public DialogBox {
 public:
-	PausedDialogBox(MyProjectMain *engine, int width, int height) : DialogBox(engine, width, height, Type::MESSAGE) {}
+	PausedDialogBox(BaseEngine *engine, int width, int height) : DialogBox(engine, width, height, Type::MESSAGE) {}
 	virtual ~PausedDialogBox() {}
 
 	virtual void Draw();
@@ -51,7 +52,7 @@ public:
 
 class HelpDialogBox : public DialogBox {
 public:
-	HelpDialogBox(MyProjectMain *engine, int width, int height) : DialogBox(engine, width, height, Type::MESSAGE) {}
+	HelpDialogBox(BaseEngine *engine, int width, int height) : DialogBox(engine, width, height, Type::MESSAGE) {}
 	virtual ~HelpDialogBox() {}
 
 	virtual void Draw();
@@ -59,7 +60,7 @@ public:
 
 class MainDialogBox : public DialogBox {
 public:
-	MainDialogBox(MyProjectMain *engine, int width, int height) : DialogBox(engine, width, height, Type::MESSAGE) {}
+	MainDialogBox(BaseEngine *engine, int width, int height) : DialogBox(engine, width, height, Type::MESSAGE) {}
 	virtual ~MainDialogBox() {}
 
 	virtual void Draw();

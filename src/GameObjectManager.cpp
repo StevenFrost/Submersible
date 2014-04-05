@@ -6,8 +6,10 @@
 #include "Terrain.h"
 #include "Torpedo.h"
 #include "Collision.h"
+#include "MyProjectMain.h"
 
-GameObjectManager::GameObjectManager(MyProjectMain *engine, int maxObjects) : m_pEngine(engine), m_numWaveObjectsBuffer1(0), m_numWaveObjectsBuffer2(0), m_maxObjects(maxObjects), m_torpedo(NULL) {
+GameObjectManager::GameObjectManager(BaseEngine *engine, int maxObjects) : m_numWaveObjectsBuffer1(0), m_numWaveObjectsBuffer2(0), m_maxObjects(maxObjects), m_torpedo(NULL) {
+	m_pEngine = dynamic_cast<MyProjectMain *>(engine);
 	reset();
 }
 
@@ -34,6 +36,7 @@ void GameObjectManager::update(IObservable *observerable) {
 void GameObjectManager::reset() {
 	if (m_numWaveObjectsBuffer1) delete[] m_waveObjectsBuffer1;
 	if (m_numWaveObjectsBuffer2) delete[] m_waveObjectsBuffer2;
+	if (m_torpedo) delete m_torpedo; m_torpedo = NULL;
 
 	m_waveObjectsBuffer1 = new GameObject*[m_maxObjects];
 	m_waveObjectsBuffer2 = new GameObject*[m_maxObjects];

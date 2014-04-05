@@ -1,9 +1,10 @@
-#include "DialogBox.h"
 #include <cmath>
+#include "DialogBox.h"
+#include "MyProjectMain.h"
 
 #define BOX_ALPHA 140
 
-DialogBox::DialogBox(MyProjectMain *engine, int width, int height, Type boxType) : DisplayableObject(engine), m_width(width), m_height(height) {
+DialogBox::DialogBox(BaseEngine *engine, int width, int height, Type boxType) : DisplayableObject(engine), m_width(width), m_height(height) {
 	/* Calculate the box position*/
 	m_iCurrentScreenX = m_iPreviousScreenX = static_cast<int>((m_pEngine->GetScreenWidth() - width) / 2);
 	m_iCurrentScreenY = m_iPreviousScreenY = static_cast<int>((m_pEngine->GetScreenHeight() - height) / 2);

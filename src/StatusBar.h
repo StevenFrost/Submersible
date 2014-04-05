@@ -3,12 +3,14 @@
 
 #include "header.h"
 #include "IObserver.h"
-#include "MyProjectMain.h"
+#include "BaseEngine.h"
 #include "DisplayableObject.h"
+
+class MyProjectMain;
 
 class StatusBar : public DisplayableObject, public IObserver {
 public:
-	StatusBar(MyProjectMain *engine);
+	StatusBar(BaseEngine *engine);
 	virtual ~StatusBar();
 
 	/* Overrides from DisplayableObject */

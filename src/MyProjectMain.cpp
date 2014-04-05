@@ -1,22 +1,12 @@
 #include <cmath>
-#include <typeinfo>
-#include "Waves.h"
-#include "Shark.h"
-#include "Flare.h"
 #include "header.h"
-#include "Terrain.h"
 #include "Torpedo.h"
 #include "JPGImage.h"
-#include "StatusBar.h"
-#include "Submarine.h"
-#include "DialogBox.h"
 #include "NavalMine.h"
 #include "Collision.h"
-#include "GameObject.h"
 #include "BaseEngine.h"
 #include "MyProjectMain.h"
 #include "DisplayableObject.h"
-#include "GameObjectManager.h"
 
 /* General properties */
 #define SKY_COLOUR                0x3990C6
@@ -32,12 +22,7 @@
 #define BACKGROUND_TERRAIN_SPEED  20.0
 #define WAVE_SPEED                80.0
 
-MyProjectMain::MyProjectMain() : BaseEngine(MAX_OBJECTS),
-	m_fpsTarget(60),
-	m_gameState(MENU),
-	m_pausedTime(0),
-	m_startTime(0),
-	m_paused(false) {}
+MyProjectMain::MyProjectMain() : BaseEngine(MAX_OBJECTS), m_fpsTarget(60), m_gameState(MENU), m_pausedTime(0), m_startTime(0), m_paused(false) {}
 
 MyProjectMain::~MyProjectMain() {
 	delete m_objectManager;
@@ -135,8 +120,28 @@ void MyProjectMain::playingAction(int elapsedTime) {
 
 	/* The torpedo might not be present, so we need to check that */
 	if (m_objectManager->getTorpedo() != NULL) {
+		Torpedo *torpedo = dynamic_cast<Torpedo *>(m_objectManager->getTorpedo());
+		if (torpedo->needsNewTarget()) {
+			torpedo->retarget(m_sub);
+		}
+
 		torpedoCollisionTest();
 	}
+
+	/* The flare should sit on the terrain when a collision is detected */
+	//if (m_flare->IsVisible()) {
+	//	if (Collision::boundingBox(m_flare, m_foregroundTerrain)) {
+	//		bool collision = false;
+	//		collision |= Collision::surface(COLLISION_RESOLUTION, m_flare->getCollidableSurface(), m_foregroundTerrain->getMainSurface(),
+	//			m_flare->getCollidableSurfaceX(), m_flare->getCollidableSurfaceY(), m_foregroundTerrain->getOffset(), 350);
+	//		collision |= Collision::surface(COLLISION_RESOLUTION, m_flare->getCollidableSurface(), m_foregroundTerrain->getMainSurface(),
+	//			m_flare->getCollidableSurfaceX(), m_flare->getCollidableSurfaceY(), 1270 + m_foregroundTerrain->getOffset(), 350);
+
+	//		if (collision) {
+	//			m_flare->setActive(false);
+	//		}
+	//	}
+	//}
 
 	if (m_sub->getFuel() <= 1.0) {
 #ifndef UNLIMITED_FUEL
@@ -179,7 +184,7 @@ void MyProjectMain::torpedoCollisionTest() {
 	if (!torpedo->IsVisible()) return;
 
 	/* Terrain collision test */
-	if (Collision::boundingBox(m_sub, m_foregroundTerrain)) {
+	if (Collision::boundingBox(torpedo, m_foregroundTerrain)) {
 		fatalCollision |= Collision::surface(COLLISION_RESOLUTION, torpedo->getCollidableSurface(), m_foregroundTerrain->getMainSurface(),
 			torpedo->getCollidableSurfaceX(), torpedo->getCollidableSurfaceY(), m_foregroundTerrain->getOffset(), 350);
 		fatalCollision |= Collision::surface(COLLISION_RESOLUTION, torpedo->getCollidableSurface(), m_foregroundTerrain->getBufferSurface(),
@@ -192,15 +197,25 @@ void MyProjectMain::torpedoCollisionTest() {
 
 	/* Submarine collision test */
 	if (Collision::boundingBox(torpedo, m_sub)) {
-		fatalCollision |= gameObjectCollisionTest(torpedo, m_sub);
+		bool collide = gameObjectCollisionTest(torpedo, m_sub);
+		if (collide) {
+#ifndef NO_CRASH
+			m_crashBox->setTitle("CRASHED");
+			changeGameState(CRASHED);
+			pauseTimer();
+#endif // NO_CRASH
+		}
 	}
 
 	/* Flare collision test */
-	if (Collision::boundingBox(torpedo, m_flare)) {
-		m_flare->SetVisible(false);
-		fatalCollision |= true;
-	}
-
+	//if (m_flare->IsVisible()) {
+	//	if (Collision::boundingBox(torpedo, m_flare)) {
+	//		m_flare->SetVisible(false);
+	//		m_flare->reset();
+	//		fatalCollision |= true;
+	//	}
+	//}
+	
 	if (fatalCollision) {
 		torpedo->SetVisible(false);
 	}
@@ -351,6 +366,7 @@ void MyProjectMain::crashedKeyEvent(int keyCode) {
 		m_sub->setSubPosition(100, 250);
 		m_sub->setXVelocity(0);
 		m_sub->setYVelocity(0);
+		m_flare->reset();
 		m_objectManager->reset();
 		updateDisplayableObjectArray();
 		m_foregroundTerrain->setOffset(-1260);
@@ -362,6 +378,7 @@ void MyProjectMain::crashedKeyEvent(int keyCode) {
 		m_statusBar->resetTime();
 		m_statusBar->resetDistance();
 		m_statusBar->resetPoints();
+		m_flare->reset();
 		m_objectManager->reset();
 		updateDisplayableObjectArray();
 		unpauseTimer();
@@ -376,6 +393,7 @@ void MyProjectMain::playingKeyEvent(int keyCode) {
 			m_flare->setX(m_sub->getXPosition());
 			m_flare->setY(m_sub->getYPosition() + m_sub->getCollidableSurface()->h);
 			m_flare->SetVisible(true);
+			m_flare->setActive(true);
 
 			if (m_objectManager->getTorpedo() != NULL) {
 				dynamic_cast<Torpedo *>(m_objectManager->getTorpedo())->retarget(m_flare);

@@ -2,8 +2,8 @@
 #define TERRAIN_H
 
 #include "header.h"
+#include "BaseEngine.h"
 #include "IObservable.h"
-#include "MyProjectMain.h"
 #include "DisplayableObject.h"
 
 /**
@@ -34,7 +34,7 @@
 */
 class Terrain : public DisplayableObject, public IObservable {
 public:
-	Terrain(MyProjectMain *engine, unsigned int width, unsigned int height, unsigned int colour);
+	Terrain(BaseEngine *engine, unsigned int width, unsigned int height, unsigned int colour);
 	virtual ~Terrain();
 
 	/* Overrides from DisplayableObject */

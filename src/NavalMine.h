@@ -4,18 +4,16 @@
 #include "Image.h"
 #include "header.h"
 #include "GameObject.h"
-#include "MyProjectMain.h"
 
 class NavalMine : public GameObject {
 public:
-	NavalMine(MyProjectMain *engine, int x, int y);
+	NavalMine(BaseEngine *engine, int x, int y);
 	virtual ~NavalMine();
 
 	/* Overrides from DisplayableObject */
 	virtual void Draw();
 	virtual void DoUpdate(int elapsedTime);
 	virtual void GetRedrawRect(SDL_Rect *rectangle);
-	virtual void RedrawBackground();
 
 	virtual SDL_Surface *getCollidableSurface()  const { return m_mine->getSurface();        }
 	virtual int          getCollidableSurfaceX() const { return m_currentScreenXPrecise + 6; }
@@ -33,7 +31,7 @@ private:
 
 class RisingMine : public NavalMine {
 public:
-	RisingMine(MyProjectMain *engine, int x, int y) : NavalMine(engine, x, y) {}
+	RisingMine(BaseEngine *engine, int x, int y) : NavalMine(engine, x, y) {}
 	virtual ~RisingMine() {}
 
 	virtual void DoUpdate(int elapsedTime);
