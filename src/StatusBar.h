@@ -15,7 +15,6 @@ public:
 
 	/* Overrides from DisplayableObject */
 	virtual void Draw();
-	virtual void DoUpdate(int elapsedTime);
 	virtual void GetRedrawRect(SDL_Rect *rectangle);
 
 	/* Observer implementation */
@@ -25,25 +24,28 @@ public:
 	void drawBackground();
 
 	/* Setters */
-	void		 incrementTime(double delta)     { m_seconds += delta;  }
-	void		 incrementPoints()               { m_points++;          }
-	void		 incrementDistance(double delta) { m_distance += delta; }
+	void		 incrementTime(double delta)     { m_seconds += delta;   }
+	void		 incrementPoints()               { m_points++;           }
+	void		 incrementDistance(double delta) { m_distance += delta;  }
+	void         setHighscore(int val)           { m_highPoints = val;   }
 	
 	/* Reset functions */
-	void		 resetTime()					 { m_seconds = 0;		}
-	void		 resetPoints()					 { m_points = 0;		}
-	void		 resetDistance()				 { m_distance = 0;		}
+	void		 resetTime()					 { m_seconds = 0;		 }
+	void		 resetPoints()					 { m_points = 0;		 }
+	void		 resetDistance()				 { m_distance = 0;		 }
 
 	/* Getters */
-	double       getDistance() const			 { return m_distance;	}
-	unsigned int getPoints()   const			 { return m_points;		}
-	double       getSeconds()  const			 { return m_seconds;	}
+	double       getDistance()  const			 { return m_distance;	 }
+	unsigned int getPoints()    const			 { return m_points;		 }
+	double       getSeconds()   const			 { return m_seconds;	 }
+	unsigned int getHighscore() const            { return m_highPoints;  }
 protected:
 	MyProjectMain *m_pEngine;
 
 	double m_distance;
 	unsigned int m_points;
 	double m_seconds;
+	unsigned int m_highPoints;
 private:
 	unsigned int m_alpha;
 	unsigned int m_height;

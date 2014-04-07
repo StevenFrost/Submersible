@@ -1,6 +1,7 @@
 #ifndef MYPROJECTMAIN_H
 #define MYPROJECTMAIN_H
 
+#include <string>
 #include "Flare.h"
 #include "Shark.h"
 #include "Waves.h"
@@ -47,7 +48,6 @@ public:
 
 	/* Overrides from BaseEngine */
 	virtual int GameInit();
-	virtual void CleanUp();
 	virtual void GameAction();
 	virtual int GetModifiedTime();
 	virtual int InitialiseObjects();
@@ -91,6 +91,7 @@ protected:
 	void updateDisplayableObjectArray();
 private:
 	GameState m_gameState;
+	int m_currentHighscorePoints;
 
 	/* Action functions for different game states */
 	void playingAction(int elapsedTime);
@@ -110,6 +111,11 @@ private:
 
 	bool gameObjectArrayCollisionTest(GameObject *source, GameObject **objects, int size);
 	bool gameObjectCollisionTest(GameObject *src, GameObject *obj);
+
+	void updateHighscoreInformation();
+
+	void getHighscore(int &distance, int &points, std::string &time);
+	void writeHighscore(int distance, int points, const char *time);
 };
 
 #endif // !MYPROJECTMAIN_H

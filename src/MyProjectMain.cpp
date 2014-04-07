@@ -1,4 +1,7 @@
 #include <cmath>
+#include <fstream>
+#include <sstream>
+#include <iostream>
 #include "header.h"
 #include "Torpedo.h"
 #include "JPGImage.h"
@@ -8,14 +11,19 @@
 #include "MyProjectMain.h"
 #include "DisplayableObject.h"
 
+using std::string;
+using std::getline;
+using std::ofstream;
+using std::ifstream;
+using std::istringstream;
+
 /* General properties */
 #define SKY_COLOUR                0x3990C6
 #define WATER_COLOUR              0x2F76A2
 #define FOREGROUND_TERRAIN_COLOUR 0xFF28485D
 #define BACKGROUND_TERRAIN_COLOUR 0xFF2E6D94
-#define PIXELS_TO_M               0.153
-#define MAX_OBJECTS               100
-#define PERMINANT_OBJECTS         6
+#define PIXELS_TO_M               0.00276190476
+#define MAX_OBJECTS               50
 #define COLLISION_RESOLUTION	  2
 
 #define FOREGROUND_TERRAIN_SPEED  70.0
@@ -31,6 +39,7 @@ MyProjectMain::~MyProjectMain() {
 int MyProjectMain::GameInit() {
 	InitialiseObjects();
 	updateDisplayableObjectArray();
+	updateHighscoreInformation();
 	SetupBackgroundBuffer();
 
 	return 0;
@@ -41,7 +50,7 @@ int MyProjectMain::InitialiseObjects() {
 
 	/* Displayable object array initialisation */
 	m_ppDisplayableObjects = new DisplayableObject*[MAX_OBJECTS];
-	m_objectManager = new GameObjectManager(this, MAX_OBJECTS - PERMINANT_OBJECTS);
+	m_objectManager = new GameObjectManager(this, MAX_OBJECTS);
 
 	/* Background terrain initialisation */
 	m_backgroundTerrain = new Terrain(this, GetScreenWidth(), 600, BACKGROUND_TERRAIN_COLOUR);
@@ -58,6 +67,8 @@ int MyProjectMain::InitialiseObjects() {
 	m_waves = new Waves(this, WAVE_SPEED);
 	m_shark1 = new Shark(this, 1150);
 	m_shark2 = new Shark(this, 400);
+
+	/* Configure the status bar */
 	m_statusBar = new StatusBar(this);
 	m_statusBar->initialise();
 
@@ -90,10 +101,9 @@ void MyProjectMain::SetupBackgroundBuffer() {
 	DrawRectangle(0, 120, GetScreenWidth(), GetScreenHeight(), WATER_COLOUR, GetBackground());
 }
 
-void MyProjectMain::CleanUp(void) {}
-
 void MyProjectMain::GameAction() {
 	static int lastFrameTime = GetModifiedTime();
+	static int frame = 0;
 	int thisFrameTime = GetModifiedTime();
 	int elapsedTime = thisFrameTime - lastFrameTime;
 	lastFrameTime = thisFrameTime;
@@ -107,13 +117,24 @@ void MyProjectMain::GameAction() {
 	/* Update and redraw all displayable objects */
 	UpdateAllObjects(elapsedTime);
 	Redraw(false);
-	//SDL_Delay(1);
 }
 
 void MyProjectMain::playingAction(int elapsedTime) {
+	static int nextDistanceIncrement = 100;
+
 	/* Update the status bar */
 	m_statusBar->incrementDistance((m_sub->getXVelocity() + m_sub->getMaxVelocityX()) * m_foregroundTerrain->getSpeed() * PIXELS_TO_M * (elapsedTime / 1000.0));
 	m_statusBar->incrementTime(elapsedTime / 1000.0);
+
+	if (m_statusBar->getPoints() > m_statusBar->getHighscore()) {
+		m_statusBar->setHighscore(m_statusBar->getPoints());
+	}
+
+	/* The user gets 1 point per 100m travelled */
+	if (static_cast<int>(m_statusBar->getDistance()) == nextDistanceIncrement) {
+		m_statusBar->incrementPoints();
+		nextDistanceIncrement += 100;
+	}
 
 	/* Check submarine-based collisions */
 	subCollisionTest();
@@ -326,6 +347,7 @@ void MyProjectMain::menuKeyEvent(int keyCode) {
 		m_statusBar->resetTime();
 		m_statusBar->resetDistance();
 		m_statusBar->resetPoints();
+		m_currentHighscorePoints = m_statusBar->getHighscore();
 		m_sub->setSubPosition(100, 250);
 		m_sub->setXVelocity(0);
 		m_sub->setYVelocity(0);
@@ -363,6 +385,7 @@ void MyProjectMain::crashedKeyEvent(int keyCode) {
 		m_statusBar->resetTime();
 		m_statusBar->resetDistance();
 		m_statusBar->resetPoints();
+		m_currentHighscorePoints = m_statusBar->getHighscore();
 		m_sub->setSubPosition(100, 250);
 		m_sub->setXVelocity(0);
 		m_sub->setYVelocity(0);
@@ -378,6 +401,7 @@ void MyProjectMain::crashedKeyEvent(int keyCode) {
 		m_statusBar->resetTime();
 		m_statusBar->resetDistance();
 		m_statusBar->resetPoints();
+		m_currentHighscorePoints = m_statusBar->getHighscore();
 		m_sub->getFlare()->reset();
 		m_objectManager->reset();
 		updateDisplayableObjectArray();
@@ -500,6 +524,13 @@ void MyProjectMain::changeGameState(GameState state) {
 		m_backgroundTerrain->setSpeed(0);
 		m_sub->setImmobilised(true);
 		m_waves->setSpeed(0);
+
+		/* Write the highscore if there is one */
+		if (m_statusBar->getHighscore() > m_currentHighscorePoints) {
+			char buf[50];
+			sprintf(buf, "%02.0f:%02.0f", floor(m_statusBar->getSeconds() / 60.0), fmod(floor(m_statusBar->getSeconds()), 60));
+			writeHighscore(m_statusBar->getDistance(), m_statusBar->getPoints(), buf);
+		}
 		break;
 	}
 
@@ -561,4 +592,56 @@ void MyProjectMain::unpauseTimer() {
 		m_startTime = GetTime() - m_pausedTime;
 		m_pausedTime = 0;
 	}
+}
+
+void MyProjectMain::updateHighscoreInformation() {
+	/* Read the current highscore */
+	int distance; string cha;
+	getHighscore(distance, m_currentHighscorePoints, cha);
+	m_statusBar->setHighscore(m_currentHighscorePoints);
+}
+
+void MyProjectMain::getHighscore(int &distance, int &points, string &time) {
+	enum FileState { UNK, HS };
+	FileState state = UNK;
+	ifstream file;
+	string line;
+
+	file.open("../resources/highscore.log");
+	if (file.is_open()) {
+		while (getline(file, line)) {
+			switch (state) {
+			case UNK:
+				state = (line == "[HIGHSCORE]") ? HS : UNK;
+				break;
+			case HS:
+				istringstream tokenizer(line);
+				string token;
+				string value;
+				getline(tokenizer, token, '=');
+				getline(tokenizer, value, '=');
+				istringstream intStream(value);
+
+				if (token == "distance") {
+					intStream >> distance;
+				} else if (token == "points") {
+					intStream >> points;
+				} else if (token == "time") {
+					time = string(value);
+				}
+				break;
+			}
+		}
+		file.close();
+	}
+}
+
+void MyProjectMain::writeHighscore(int distance, int points, const char *time) {
+	ofstream file;
+	file.open("../resources/highscore.log");
+	file << "[HIGHSCORE]"	<< std::endl <<
+			"distance="		<< distance << std::endl <<
+			"points="		<< points << std::endl <<
+			"time="			<< time << std::endl;
+	file.close();
 }

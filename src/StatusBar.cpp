@@ -3,26 +3,31 @@
 #include "MyProjectMain.h"
 
 /* File-scoped constants */
-static const unsigned int BACKGROUND_COLOUR     = 0x2D4452;
-static const unsigned int BORDER_COLOUR         = 0x292929;
-static const unsigned int FONT_COLOUR           = 0xEEEEEE;
+#define BACKGROUND_COLOUR     0x2D4452
+#define BORDER_COLOUR         0x292929
+#define FONT_COLOUR           0xEEEEEE
 
-static const unsigned int DISTANCE_LABEL_X      = 10;
-static const unsigned int DISTANCE_LABEL_Y      = 5;
-static const unsigned int DISTANCE_LABEL_HEIGHT = 35;
-static const unsigned int DISTANCE_LABEL_WIDTH  = 160;
+#define DISTANCE_LABEL_X       10
+#define DISTANCE_LABEL_Y       5
+#define DISTANCE_LABEL_HEIGHT  35
+#define DISTANCE_LABEL_WIDTH   170
+							   
+#define POINTS_LABEL_X         200
+#define POINTS_LABEL_Y         5
+#define POINTS_LABEL_HEIGHT    35
+#define POINTS_LABEL_WIDTH     200
 
-static const unsigned int POINTS_LABEL_X        = 200;
-static const unsigned int POINTS_LABEL_Y        = 5;
-static const unsigned int POINTS_LABEL_HEIGHT   = 35;
-static const unsigned int POINTS_LABEL_WIDTH    = 150;
+#define HIGHSCORE_LABEL_X      350
+#define HIGHSCORE_LABEL_Y      5
+#define HIGHSCORE_LABEL_HEIGHT 35
+#define HIGHSCORE_LABEL_WIDTH  200
 
-static const unsigned int TIME_LABEL_X          = 526;
-static const unsigned int TIME_LABEL_Y          = 5;
-static const unsigned int TIME_LABEL_HEIGHT     = 35;
-static const unsigned int TIME_LABEL_WIDTH      = 150;
+#define TIME_LABEL_X           526
+#define TIME_LABEL_Y           5
+#define TIME_LABEL_HEIGHT      35
+#define TIME_LABEL_WIDTH       150
 
-StatusBar::StatusBar(BaseEngine *engine) : DisplayableObject(engine), m_alpha(0xBD), m_height(40), m_distance(0), m_points(0), m_seconds(0.0), m_fuel(100) {
+StatusBar::StatusBar(BaseEngine *engine) : DisplayableObject(engine), m_alpha(0xBD), m_height(40), m_distance(0), m_points(0), m_seconds(0.0), m_highPoints(0), m_fuel(100) {
 	m_pEngine = dynamic_cast<MyProjectMain *>(engine);
 }
 
@@ -77,6 +82,12 @@ void StatusBar::Draw() {
 	m_pEngine->DrawString(POINTS_LABEL_X, POINTS_LABEL_Y, buf, FONT_COLOUR, NULL, m_pEngine->GetForeground());
 	m_pEngine->SetNextUpdateRect(POINTS_LABEL_X, POINTS_LABEL_Y, POINTS_LABEL_WIDTH, POINTS_LABEL_HEIGHT);
 
+	/* Highscore */
+	sprintf(buf, "Highscore: %d", m_highPoints);
+	m_pEngine->CopyBackgroundPixels(HIGHSCORE_LABEL_X, HIGHSCORE_LABEL_Y, HIGHSCORE_LABEL_WIDTH, HIGHSCORE_LABEL_HEIGHT);
+	m_pEngine->DrawString(HIGHSCORE_LABEL_X, HIGHSCORE_LABEL_Y, buf, FONT_COLOUR, NULL, m_pEngine->GetForeground());
+	m_pEngine->SetNextUpdateRect(HIGHSCORE_LABEL_X, HIGHSCORE_LABEL_Y, HIGHSCORE_LABEL_WIDTH, HIGHSCORE_LABEL_HEIGHT);
+
 	/* Time */
 	sprintf(buf, "%02.0f:%02.0f", floor(m_seconds / 60.0), fmod(floor(m_seconds), 60));
 	m_pEngine->CopyBackgroundPixels(TIME_LABEL_X, TIME_LABEL_Y, TIME_LABEL_WIDTH, TIME_LABEL_HEIGHT);
@@ -91,8 +102,6 @@ void StatusBar::Draw() {
 	}
 	m_pEngine->SetNextUpdateRect(m_pEngine->GetScreenWidth() - (138 + 9), 10, 138, 20);
 }
-
-void StatusBar::DoUpdate(int elapsedTime) {}
 
 void StatusBar::update(IObservable *observable) {
 	m_fuel = dynamic_cast<Submarine *>(m_pEngine->getStaticObject(MyProjectMain::SUBMARINE))->getFuel();

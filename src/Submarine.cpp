@@ -3,7 +3,7 @@
 
 Image Submarine::m_body = Image();
 
-Submarine::Submarine(BaseEngine *engine, unsigned int x, unsigned int y) : GameObject(engine, SUBMARINE), m_flare(new Flare(engine, x, y)), m_fuel(100.0), m_maxVelocityX(0.3), m_maxVelocityY(0.4), m_acceleration(0.6), m_xVelocity(0.0), m_yVelocity(0.0) {
+Submarine::Submarine(BaseEngine *engine, unsigned int x, unsigned int y) : GameObject(engine, SUBMARINE), m_flare(new Flare(engine, x, y)), m_fuel(100.0), m_maxVelocityX(70.0), m_maxVelocityY(50.0), m_acceleration(140.0), m_xVelocity(0.0), m_yVelocity(0.0) {
 	/* GameObject member initialisation */
 	m_bVisible = true;
 	m_iStartDrawPosX = 0;
@@ -87,8 +87,8 @@ void Submarine::controlSub(int elapsedTime) {
 	}
 
 	/* Update the precise submarine location */
-	m_currentScreenXPrecise += m_xVelocity;
-	m_currentScreenYPrecise += m_yVelocity;
+	m_currentScreenXPrecise += (m_xVelocity * secondsThisFrame);
+	m_currentScreenYPrecise += (m_yVelocity * secondsThisFrame);
 
 	/* Keep the less-precise coordinates so we can stil redraw easily */
 	m_iCurrentScreenX = static_cast<int>(m_currentScreenXPrecise);

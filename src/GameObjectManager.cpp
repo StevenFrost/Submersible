@@ -62,14 +62,14 @@ void GameObjectManager::generateWave(GameObject **&buffer, int &size) {
 	bool fuelGenerated = false;
 
 	for (int i = 1; i < terrainBufferSize; i += 5) {
-		int lowY  = 130;
+		int lowY = 130;
 		int highY = 750;
 		int lowX  = (1270 + (i * 10)) - 20;
 		int highX = (1270 + (i * 10)) + 20;
-
+		
 		// We need to look at the terrain points either side of the potential
 		// object location to make sure we don't collide with the terrain surface
-		for (int j = i - 4; j < i + 4; j++) {
+		for (int j = i - 6; j < i + 6; j++) {
 			if (j < 0 || j >= terrainBufferSize) { continue;            }
 			if (terrainY[j] < highY)             { highY = terrainY[j]; }
 		}
@@ -77,38 +77,42 @@ void GameObjectManager::generateWave(GameObject **&buffer, int &size) {
 		// We add the height of the terrain surface to convert the height into
 		// screen coordinates
 		highY = 750 - (400 - highY) - 100;
-
-		/* Naval mines */
+		
+		/* Naval Mine */
 		if (i % 40 == 1) {
 			int mineX = rand() % (highX - lowX) + lowX;
-			int mineY = rand() % (highY - lowY) + lowY;
+			int mineY = (rand() % (highY - lowY) + lowY) - 20;
 
-			if (mineX + 98 < 2400) {
-				if ((double)rand() / RAND_MAX < 0.6) {
-					buffer[count++] = new NavalMine(m_pEngine, mineX, mineY);
-				} else {
-					buffer[count++] = new RisingMine(m_pEngine, mineX, mineY);
-				}
+			if (mineX + 130 < 2410) {
+				buffer[count++] = ((double)rand() / RAND_MAX < 0.6) ?
+					new NavalMine(m_pEngine, mineX, mineY) : new RisingMine(m_pEngine, mineX, mineY);
 				i += 10;
+				continue;
 			}
 		}
 
-		/* Coins */
-		if (i % 15 == 1 && i % 45 != 1) {
-			int coinX = rand() % ((highX - 10) - (lowX + 10)) + (lowX + 10);
-			int coinY = rand() % ((highY - 10) - (lowY + 10)) + (lowY + 10);
+		/* Fuel & Coins */
+		if (i % 15 == 1) {
+			int coinX = rand() % (highX - lowX) + lowX;
+			int coinY = rand() % (highY - lowY) + lowY;
 
-			if (coinX + 53 < 2400) {
+			if (coinX + 60 < 2410) {
 				buffer[count++] = new Coin(m_pEngine, coinX, coinY);
 			}
 
-			if (!fuelGenerated) {
-				Submarine *sub = dynamic_cast<Submarine *>(m_pEngine->getStaticObject(MyProjectMain::SUBMARINE));
-				if (sub->getFuel() < (rand() % (100 - 80) + 80)) {
-					buffer[count++] = new Fuel(m_pEngine, coinX, highY - coinY + lowY);
-				}
-				fuelGenerated = true;
+			if ((double)rand() / RAND_MAX < 0.2) {
+				/* Generate a non-colliding position for the fuel can */
+				//int fuelX = rand() % (highX - lowX) + lowX;
+				//int fuelY = 0;
+				//do {
+				//	fuelY = rand() % (highY - lowY) + lowY;
+				//	printf("%d\t%d:%d\r\n", i, coinY, fuelY);
+				//} while (fuelY + 60 < coinY || fuelY > coinY + 60);
+
+				//buffer[count++] = new Fuel(m_pEngine, fuelX, fuelY);
+				buffer[count++] = new Fuel(m_pEngine, coinX, highY - coinY + lowY);
 			}
+			continue;
 		}
 	}
 
@@ -116,7 +120,7 @@ void GameObjectManager::generateWave(GameObject **&buffer, int &size) {
 	if (m_torpedo != NULL && m_torpedo->GetXCentre() > 1200) {
 		m_torpedo = NULL;
 	}
-	if (m_torpedo == NULL && (double)rand() / RAND_MAX > 0.1) {
+	if (m_torpedo == NULL) {
 		m_torpedo = new Torpedo(m_pEngine, m_pEngine->getStaticObject(MyProjectMain::SUBMARINE));
 	}
 	

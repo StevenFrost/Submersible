@@ -103,9 +103,8 @@ int BaseEngine::Initialise(char* strCaption, int iScreenWidth, int iScreenHeight
 		g_pMainFont = m_oFontManager.GetFont(szFontName, iFontSize);
 
 	// Attempt to create a m_iScreenWidth x m_iScreenHeight window with 32bit pixels.
-	m_pActualScreen = SDL_SetVideoMode(m_iScreenWidth, m_iScreenHeight, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
+	m_pActualScreen = SDL_SetVideoMode(m_iScreenWidth, m_iScreenHeight, 32, SDL_SWSURFACE);
 
-	//m_pActualScreen = SDL_SetVideoMode(m_iScreenWidth, m_iScreenHeight, 32, SDL_SWSURFACE);
 	//	m_pActualScreen = SDL_SetVideoMode(m_iScreenWidth, m_iScreenHeight, 32, SDL_HWSURFACE);
 	//	m_pActualScreen = SDL_SetVideoMode(m_iScreenWidth, m_iScreenHeight, 32, SDL_DOUBLEBUF);
 
@@ -339,15 +338,13 @@ void BaseEngine::GameRender(void) {
 		// Now actually perform the updates
 		if (m_iUpdateRectsInUse >= m_iMaxObjects) {
 			//printf( "Update whole window\n" );
-			//SDL_UpdateRect(m_pActualScreen, 0, 0, m_iScreenWidth, m_iScreenHeight);    
+			SDL_UpdateRect(m_pActualScreen, 0, 0, m_iScreenWidth, m_iScreenHeight);    
 			
-			SDL_Flip(m_pActualScreen);
 			//SDL_UpdateRect(m_pActualScreen, 0, 0, 0, 0);
 		} else {
 			//printf( "Update %d rectangles\n", m_iUpdateRectsInUse );
 
-			SDL_Flip(m_pActualScreen);
-			//SDL_UpdateRects(m_pActualScreen, m_iUpdateRectsInUse, m_pUpdateRectangles);
+			SDL_UpdateRects(m_pActualScreen, m_iUpdateRectsInUse, m_pUpdateRectangles);
 		}
 		// DEBUG
 		//printf( "%d update rectangles found\n", m_iUpdateRectsInUse );

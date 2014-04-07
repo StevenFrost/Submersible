@@ -201,9 +201,8 @@ void Terrain::DoUpdate(int elapsedTime) {
 		m_offset = 0.0;
 
 		/* Notify observers that we generated some new terrain */
-		printf("New terrain buffer generated, building new wave...\r\n");
 		notify();
-		dynamic_cast<MyProjectMain *>(m_pEngine)->updateDisplayableObjectArray();
+		static_cast<MyProjectMain *>(m_pEngine)->updateDisplayableObjectArray();
 	}
 
 	/* Move the terrain backwards. This gives the impression that the user is moving forwards */
