@@ -1,96 +1,86 @@
 #include "Submarine.h"
 #include "GameObject.h"
 
-Image *Submarine::m_body = new Image();
+Image Submarine::m_body = Image();
 
-Submarine::Submarine(BaseEngine *engine, unsigned int x, unsigned int y) : GameObject(engine, SUBMARINE),
-	m_fuel(100.0),
-	m_maxVelocityX(0.25),
-	m_maxVelocityY(0.4),
-	m_acceleration(0.6),
-	m_xVelocity(0.0),
-	m_yVelocity(0.0)
-{
-	/* Load the graphic */
-	if (!m_body->IsLoaded()) {
-		m_body->LoadImage("../resources/sub.png");
-	}
-	
-	/* Set the initial position */
+Submarine::Submarine(BaseEngine *engine, unsigned int x, unsigned int y) : GameObject(engine, SUBMARINE), m_flare(new Flare(engine, x, y)), m_fuel(100.0), m_maxVelocityX(0.3), m_maxVelocityY(0.4), m_acceleration(0.6), m_xVelocity(0.0), m_yVelocity(0.0) {
+	/* GameObject member initialisation */
+	m_bVisible = true;
 	m_iStartDrawPosX = 0;
 	m_iStartDrawPosY = 0;
-	m_iCurrentScreenX = x;
-	m_iCurrentScreenY = y;
-	m_iDrawWidth = m_body->GetWidth();
-	m_iDrawHeight = m_body->GetHeight();
-	m_iPreviousScreenX = m_iCurrentScreenX;
-	m_iPreviousScreenY = m_iCurrentScreenY;
-	m_currentScreenXPrecise = m_iCurrentScreenX;
-	m_currentScreenYPrecise = m_iCurrentScreenY;
-}
+	m_currentScreenXPrecise = m_iCurrentScreenX = m_iPreviousScreenX = x;
+	m_currentScreenYPrecise = m_iCurrentScreenY = m_iPreviousScreenY = y;
 
-Submarine::~Submarine() {
-	delete(m_body);
+	/* Load the graphic */
+	if (!m_body.IsLoaded()) {
+		m_body.LoadImage("../resources/sub.png");
+	}
+	
+	/* Redraw rectangle width/height */
+	m_iDrawWidth = m_body.GetWidth() + 2;
+	m_iDrawHeight = m_body.GetHeight() + 2;
 }
 
 void Submarine::Draw() {
-	/* Draw the main submarine body */
-	m_body->RenderImage(m_pEngine->GetForeground(), 0, 0, m_currentScreenXPrecise, m_currentScreenYPrecise, m_body->GetWidth(), m_body->GetHeight());
+	if (!m_bVisible) return;
 
-	/* Update the submarine position cache */
-	StoreLastScreenPositionAndUpdateRect();
+	/* Draw the main submarine body */
+	m_body.RenderImage(m_pEngine->GetForeground(), 0, 0, m_currentScreenXPrecise + 1, m_currentScreenYPrecise + 1, m_body.GetWidth(), m_body.GetHeight());
 }
 
 void Submarine::DoUpdate(int elapsedTime) {
 	if (m_immobilised) return;
+
+	/* Save the previous position */
+	m_iPreviousScreenX = m_iCurrentScreenX;
+	m_iPreviousScreenY = m_iCurrentScreenY;
 
 	/* Update the submarine position */
 	controlSub(elapsedTime);
 
 	/* Calculate the quantity of fuel remaining */
 	m_fuel -= (0.2 * (elapsedTime / 100.0));
-
-	/* Notify any observers that something changed */
 	notify();
+
+	/* Update the redraw rectangle position */
+	StoreLastScreenPositionAndUpdateRect();
 }
 
 void Submarine::controlSub(int elapsedTime) {
 	double secondsThisFrame = elapsedTime / 1000.0;
 	double delta = m_acceleration * secondsThisFrame;
-	static bool subRight = true;
-	static bool subUp = true;
 
-	/* Handle Right, Left, Up and Down array key presses for submarine movement */
+	/* Right and Left movement */
 	if (m_pEngine->IsKeyPressed(SDLK_RIGHT)) {
-		subRight = true;
 		m_xVelocity += (m_xVelocity < m_maxVelocityX ? delta : 0);
 	} else if (m_pEngine->IsKeyPressed(SDLK_LEFT)) {
-		subRight = false;
 		m_xVelocity -= (m_xVelocity > -m_maxVelocityX ? delta : 0);
 	} else {
-		if (subRight) {
+		if (m_xVelocity > 0.0) {
 			m_xVelocity -= (m_xVelocity > 0.0 ? delta : 0);
 		} else {
 			m_xVelocity += (m_xVelocity < -0.0 ? delta : 0);
 		}
 
+		/* Solves floating point 'sliding' issues */
 		if (abs(m_xVelocity) < 0.01) {
 			m_xVelocity = 0.0;
 		}
 	}
+
+	/* Up and down movement */
 	if (m_pEngine->IsKeyPressed(SDLK_UP)) {
-		subUp = true;
 		m_yVelocity -= (m_yVelocity > -m_maxVelocityY ? delta : 0);
 	} else if (m_pEngine->IsKeyPressed(SDLK_DOWN)) {
-		subUp = false;
 		m_yVelocity += (m_yVelocity < m_maxVelocityY ? delta : 0);
 	} else {
-		if (subUp) {
+		if (m_yVelocity < 0.0) {
 			m_yVelocity += (m_yVelocity < -0.0 ? delta : 0);
 		} else {
 			m_yVelocity -= (m_yVelocity > 0.0 ? delta : 0);
 		}
 
+		/* Solves floating point 'sliding' issues */
 		if (abs(m_yVelocity) < 0.01) {
 			m_yVelocity = 0.0;
 		}
@@ -110,8 +100,8 @@ void Submarine::controlSub(int elapsedTime) {
 		m_currentScreenYPrecise = m_iCurrentScreenY;
 		m_yVelocity = 0.0;
 	}
-	if (m_currentScreenYPrecise >(m_pEngine->GetScreenHeight() - m_body->GetHeight())) {
-		m_iCurrentScreenY = (m_pEngine->GetScreenHeight() - m_body->GetHeight());
+	if (m_currentScreenYPrecise >(m_pEngine->GetScreenHeight() - m_body.GetHeight())) {
+		m_iCurrentScreenY = (m_pEngine->GetScreenHeight() - m_body.GetHeight());
 		m_currentScreenYPrecise = m_iCurrentScreenY;
 		m_yVelocity = 0.0;
 	}
@@ -120,14 +110,21 @@ void Submarine::controlSub(int elapsedTime) {
 		m_currentScreenXPrecise = m_iCurrentScreenX;
 		m_xVelocity = 0;
 	}
-	if (m_currentScreenXPrecise >(m_pEngine->GetScreenWidth() - m_body->GetWidth())) {
-		m_iCurrentScreenX = (m_pEngine->GetScreenWidth() - m_body->GetWidth());
+	if (m_currentScreenXPrecise >(m_pEngine->GetScreenWidth() - m_body.GetWidth())) {
+		m_iCurrentScreenX = (m_pEngine->GetScreenWidth() - m_body.GetWidth());
 		m_currentScreenXPrecise = m_iCurrentScreenX;
 		m_xVelocity = 0;
 	}
 }
 
 void Submarine::setSubPosition(int x, int y) {
+	/* Store the old position */
+	m_iPreviousScreenX = m_iCurrentScreenX;
+	m_iPreviousScreenY = m_iCurrentScreenY;
+
+	/* Set the new position */
 	m_currentScreenXPrecise = m_iCurrentScreenX = x;
 	m_currentScreenYPrecise = m_iCurrentScreenY = y;
+
+	StoreLastScreenPositionAndUpdateRect();
 }

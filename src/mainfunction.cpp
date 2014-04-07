@@ -1,8 +1,6 @@
-#include "header.h"
-#include "templates.h"
-#include "MyProjectMain.h"
 #include <ctime>
-#include <string>
+#include "header.h"
+#include "MyProjectMain.h"
 
 #define BASE_SCREEN_WIDTH  1100
 #define BASE_SCREEN_HEIGHT 750

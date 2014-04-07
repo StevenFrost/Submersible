@@ -55,9 +55,9 @@ int MyProjectMain::InitialiseObjects() {
 
 	/* Submarine, waves and the status bar */
 	m_sub = new Submarine(this, 100, 250);
-	m_flare = new Flare(this, m_sub->getXPosition(), m_sub->getYPosition() + m_sub->getCollidableSurface()->h);
 	m_waves = new Waves(this, WAVE_SPEED);
-	m_shark = new Shark(this, -230);
+	m_shark1 = new Shark(this, 1150);
+	m_shark2 = new Shark(this, 400);
 	m_statusBar = new StatusBar(this);
 	m_statusBar->initialise();
 
@@ -112,7 +112,7 @@ void MyProjectMain::GameAction() {
 
 void MyProjectMain::playingAction(int elapsedTime) {
 	/* Update the status bar */
-	m_statusBar->incrementDistance(m_foregroundTerrain->getSpeed() * PIXELS_TO_M * (elapsedTime / 1000.0));
+	m_statusBar->incrementDistance((m_sub->getXVelocity() + m_sub->getMaxVelocityX()) * m_foregroundTerrain->getSpeed() * PIXELS_TO_M * (elapsedTime / 1000.0));
 	m_statusBar->incrementTime(elapsedTime / 1000.0);
 
 	/* Check submarine-based collisions */
@@ -121,28 +121,33 @@ void MyProjectMain::playingAction(int elapsedTime) {
 	/* The torpedo might not be present, so we need to check that */
 	if (m_objectManager->getTorpedo() != NULL) {
 		Torpedo *torpedo = dynamic_cast<Torpedo *>(m_objectManager->getTorpedo());
+
+		/* Check if we need to retarget */
 		if (torpedo->needsNewTarget()) {
 			torpedo->retarget(m_sub);
 		}
 
+		/* Perform the collision test */
 		torpedoCollisionTest();
 	}
 
 	/* The flare should sit on the terrain when a collision is detected */
-	//if (m_flare->IsVisible()) {
-	//	if (Collision::boundingBox(m_flare, m_foregroundTerrain)) {
-	//		bool collision = false;
-	//		collision |= Collision::surface(COLLISION_RESOLUTION, m_flare->getCollidableSurface(), m_foregroundTerrain->getMainSurface(),
-	//			m_flare->getCollidableSurfaceX(), m_flare->getCollidableSurfaceY(), m_foregroundTerrain->getOffset(), 350);
-	//		collision |= Collision::surface(COLLISION_RESOLUTION, m_flare->getCollidableSurface(), m_foregroundTerrain->getMainSurface(),
-	//			m_flare->getCollidableSurfaceX(), m_flare->getCollidableSurfaceY(), 1270 + m_foregroundTerrain->getOffset(), 350);
+	Flare *flare = m_sub->getFlare();
+	if (flare->IsVisible() && flare->isActive()) {
+		if (Collision::boundingBox(flare, m_foregroundTerrain)) {
+			bool collision = false;
+			collision |= Collision::surface(COLLISION_RESOLUTION, flare->getCollidableSurface(), m_foregroundTerrain->getMainSurface(),
+				flare->getCollidableSurfaceX(), flare->getCollidableSurfaceY(), 26, m_foregroundTerrain->getOffset(), 350, 1270);
+			collision |= Collision::surface(COLLISION_RESOLUTION, flare->getCollidableSurface(), m_foregroundTerrain->getBufferSurface(),
+				flare->getCollidableSurfaceX(), flare->getCollidableSurfaceY(), 26, 1270 + m_foregroundTerrain->getOffset(), 350, 1270);
 
-	//		if (collision) {
-	//			m_flare->setActive(false);
-	//		}
-	//	}
-	//}
+			if (collision) {
+				flare->setActive(false);
+			}
+		}
+	}
 
+	/* Fuel quantity enforcement */
 	if (m_sub->getFuel() <= 1.0) {
 #ifndef UNLIMITED_FUEL
 		m_crashBox->setTitle("OUT OF FUEL");
@@ -158,9 +163,9 @@ void MyProjectMain::subCollisionTest() {
 	/* Terrain collision test */
 	if (Collision::boundingBox(m_sub, m_foregroundTerrain)) {
 		fatalCollision |= Collision::surface(COLLISION_RESOLUTION, m_sub->getCollidableSurface(), m_foregroundTerrain->getMainSurface(),
-							m_sub->getXPosition(), m_sub->getYPosition(), m_foregroundTerrain->getOffset(), 350);
+			m_sub->getXPosition(), m_sub->getYPosition(), m_foregroundTerrain->getOffset(), 350);
 		fatalCollision |= Collision::surface(COLLISION_RESOLUTION, m_sub->getCollidableSurface(), m_foregroundTerrain->getBufferSurface(),
-							m_sub->getXPosition(), m_sub->getYPosition(), 1270 + m_foregroundTerrain->getOffset(), 350);
+			m_sub->getXPosition(), m_sub->getYPosition(), 1270 + m_foregroundTerrain->getOffset(), 350);
 	}
 
 	/* Game object collision test */
@@ -206,16 +211,8 @@ void MyProjectMain::torpedoCollisionTest() {
 #endif // NO_CRASH
 		}
 	}
-
-	/* Flare collision test */
-	//if (m_flare->IsVisible()) {
-	//	if (Collision::boundingBox(torpedo, m_flare)) {
-	//		m_flare->SetVisible(false);
-	//		m_flare->reset();
-	//		fatalCollision |= true;
-	//	}
-	//}
 	
+	/* If a fatal collision was detected, we make the torpedo invisible */
 	if (fatalCollision) {
 		torpedo->SetVisible(false);
 	}
@@ -246,12 +243,15 @@ bool MyProjectMain::subCollisionAction(GameObject *src, GameObject *obj) {
 
 bool MyProjectMain::torpedoCollisionAction(GameObject *src, GameObject *obj) {
 	switch (obj->getType()) {
-	case GameObject::TORPEDO:
 	case GameObject::NAVAL_MINE:
+		if (src->IsVisible() && obj->IsVisible()) {
+			dynamic_cast<NavalMine *>(obj)->explode();
+		}
+	case GameObject::TORPEDO:
 	case GameObject::RISING_MINE:
 		if (src->IsVisible() && obj->IsVisible()) {
 			src->SetVisible(false);
-			obj->SetVisible(false);
+			//obj->SetVisible(false);
 			return true;
 		}
 	case GameObject::COIN:
@@ -366,7 +366,7 @@ void MyProjectMain::crashedKeyEvent(int keyCode) {
 		m_sub->setSubPosition(100, 250);
 		m_sub->setXVelocity(0);
 		m_sub->setYVelocity(0);
-		m_flare->reset();
+		m_sub->getFlare()->reset();
 		m_objectManager->reset();
 		updateDisplayableObjectArray();
 		m_foregroundTerrain->setOffset(-1260);
@@ -378,7 +378,7 @@ void MyProjectMain::crashedKeyEvent(int keyCode) {
 		m_statusBar->resetTime();
 		m_statusBar->resetDistance();
 		m_statusBar->resetPoints();
-		m_flare->reset();
+		m_sub->getFlare()->reset();
 		m_objectManager->reset();
 		updateDisplayableObjectArray();
 		unpauseTimer();
@@ -387,16 +387,17 @@ void MyProjectMain::crashedKeyEvent(int keyCode) {
 }
 
 void MyProjectMain::playingKeyEvent(int keyCode) {
+	Flare *flare = m_sub->getFlare();
 	switch (keyCode) {
 	case SDLK_f:
-		if (!m_flare->IsVisible()) {
-			m_flare->setX(m_sub->getXPosition());
-			m_flare->setY(m_sub->getYPosition() + m_sub->getCollidableSurface()->h);
-			m_flare->SetVisible(true);
-			m_flare->setActive(true);
+		if (!flare->IsVisible()) {
+			flare->setX(m_sub->getXPosition());
+			flare->setY(m_sub->getYPosition() + m_sub->getCollidableSurface()->h);
+			flare->SetVisible(true);
+			flare->setActive(true);
 
 			if (m_objectManager->getTorpedo() != NULL) {
-				dynamic_cast<Torpedo *>(m_objectManager->getTorpedo())->retarget(m_flare);
+				dynamic_cast<Torpedo *>(m_objectManager->getTorpedo())->retarget(flare);
 			}
 		}
 		break;
@@ -418,7 +419,8 @@ void MyProjectMain::updateDisplayableObjectArray() {
 	int objID = 0;
 	GameObject **gameObjects;
 	m_ppDisplayableObjects[objID++] = m_backgroundTerrain;
-	m_ppDisplayableObjects[objID++] = m_shark;
+	m_ppDisplayableObjects[objID++] = m_shark1;
+	m_ppDisplayableObjects[objID++] = m_shark2;
 
 	if (m_gameState == PLAYING || CRASHED || PAUSED ) {
 		/* Add all game objects for the first terrain buffer */
@@ -451,7 +453,7 @@ void MyProjectMain::updateDisplayableObjectArray() {
 	switch (m_gameState) {
 	case PLAYING:
 		m_ppDisplayableObjects[objID++] = m_sub;
-		m_ppDisplayableObjects[objID++] = m_flare;
+		m_ppDisplayableObjects[objID++] = m_sub->getFlare();
 		break;
 	case PAUSED:
 		m_ppDisplayableObjects[objID++] = m_sub;

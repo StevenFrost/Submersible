@@ -1,10 +1,9 @@
 #include "Terrain.h"
 #include "MyProjectMain.h"
 
-// Implementation-dependant constant for scaling the width of the buffers down.
-// This allows us to control how many points are on the surface for a more
-// realistic distribution
-static const double SCALING_FACTOR = 0.1;
+// Constant for scaling the width of the buffers down. This allows us to
+// control how many points are on the surface for a more realistic distribution
+#define SCALING_FACTOR 0.1
 
 Terrain::Terrain(BaseEngine *engine, unsigned int width, unsigned int height, unsigned int colour) : DisplayableObject(engine),
 	m_initialised(false),
@@ -130,6 +129,15 @@ void Terrain::drawTerrainSurface(SDL_Surface *surface, double *buffer) {
 
 	/* Draw the polygon on the specified surface */
 	GetEngine()->DrawPolygon(m_bufSize, terrainX, terrainY, m_colour, surface);
+
+	/* Draw the next terrain level for a nicer effect */
+	delete[] terrainX, terrainY;
+	terrainX = new double[m_bufSize];
+	terrainY = new double[m_bufSize];
+	memcpy(terrainX, m_terrainMainX, m_bufSize * sizeof(double));
+	memcpy(terrainY, buffer, m_bufSize * sizeof(double));
+	for (int i = 1; i < m_bufSize - 1; i++) terrainY[i] += 10;
+	GetEngine()->DrawPolygon(m_bufSize, terrainX, terrainY, m_colour - 0x0020405, surface);
 
 #ifdef TERRAIN_BUFFER_OUTPUT
 	// Saves the generated terrain surface to a bitmap for debugging

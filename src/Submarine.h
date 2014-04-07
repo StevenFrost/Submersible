@@ -2,6 +2,7 @@
 #define SUBMARINE_H
 
 #include "Image.h"
+#include "Flare.h"
 #include "header.h"
 #include "BaseEngine.h"
 #include "GameObject.h"
@@ -11,21 +12,23 @@
 class Submarine : public GameObject, public IObservable {
 public:
 	Submarine(BaseEngine *engine, unsigned int x, unsigned int y);
-	virtual ~Submarine();
+	virtual ~Submarine() {}
 
 	/* Overrides from DisplayableObject */
 	virtual void Draw();
 	virtual void DoUpdate(int elapsedTime);
 
 	/* Getters */
-	Image       *getSubBody()           const { return m_body;                  }
-	SDL_Surface *getCollidableSurface() const { return m_body->getSurface();    }
+	Image       *getSubBody()           const { return &m_body;                 }
+	SDL_Surface *getCollidableSurface() const { return m_body.getSurface();     }
 	double       getFuel()			    const { return m_fuel;                  }
 	double       getXVelocity()		    const { return m_xVelocity;             }
 	double       getYVelocity()		    const { return m_yVelocity;             }
+	double		 getMaxVelocityX()		const { return m_maxVelocityX;          }
 	double       getXPosition()		    const { return m_currentScreenXPrecise; }
 	double       getYPosition()		    const { return m_currentScreenYPrecise; }
 	double       getImmobilised()	    const { return m_immobilised;           }
+	Flare		*getFlare()             const { return m_flare;                 }
 
 	/* Setters */
 	void setXVelocity(double velocity)  { m_xVelocity = velocity;         }
@@ -34,7 +37,9 @@ public:
 	void setFuelLevel(double level)     { m_fuel = level; notify();       }
 	void setSubPosition(int x, int y);
 protected:
-	static Image *m_body;
+	static Image m_body;				// Main submarine body
+	Flare *m_flare;						// Single flare associated with the submarine
+
 private:
 	/* Generic properties */
 	double m_fuel;						// The submarine fuel quantity

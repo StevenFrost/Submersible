@@ -19,15 +19,12 @@ public:
 	/* Overrides from DisplayableObject */
 	virtual void Draw();
 	virtual void DoUpdate(int elapsedTime);
-	virtual void GetRedrawRect(SDL_Rect *rectangle);
 
 	/* Getters */
 	int getCurrentX() { return m_iCurrentScreenX; }
 	int getCurrentY() { return m_iCurrentScreenY; }
 protected:
 	SDL_Surface *m_boxBase;
-	int m_width;
-	int m_height;
 };
 
 class CrashedDialogBox : public DialogBox {

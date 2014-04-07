@@ -9,9 +9,7 @@ public:
 	Image() {}
 	virtual ~Image() {}
 
-	/**
-	* Gets the raw SDL image surface
-	*/
+	/* Gets the raw SDL image surface */
 	SDL_Surface *getSurface() { return m_pSurface; }
 };
 

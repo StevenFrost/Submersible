@@ -4,18 +4,19 @@
 
 #define BOX_ALPHA 140
 
-DialogBox::DialogBox(BaseEngine *engine, int width, int height, Type boxType) : DisplayableObject(engine), m_width(width), m_height(height) {
-	/* Calculate the box position*/
+DialogBox::DialogBox(BaseEngine *engine, int width, int height, Type boxType) : DisplayableObject(engine) {
+	/* DisplayableObject member initialisation */
 	m_iCurrentScreenX = m_iPreviousScreenX = static_cast<int>((m_pEngine->GetScreenWidth() - width) / 2);
 	m_iCurrentScreenY = m_iPreviousScreenY = static_cast<int>((m_pEngine->GetScreenHeight() - height) / 2);
 	m_iDrawHeight = height;
 	m_iDrawWidth = width;
+	m_bVisible = true;
 
-	/* Create the RGB surface */
+	/* Create the dialog RGB surface */
 	m_boxBase = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_ANYFORMAT,
-				m_width, m_height, m_pEngine->GetForeground()->format->BitsPerPixel,
-				m_pEngine->GetForeground()->format->Rmask, m_pEngine->GetForeground()->format->Gmask,
-				m_pEngine->GetForeground()->format->Bmask, m_pEngine->GetForeground()->format->Amask);
+		m_iDrawWidth, m_iDrawHeight, m_pEngine->GetForeground()->format->BitsPerPixel,
+		m_pEngine->GetForeground()->format->Rmask, m_pEngine->GetForeground()->format->Gmask,
+		m_pEngine->GetForeground()->format->Bmask, m_pEngine->GetForeground()->format->Amask);
 	
 	/* Fill the surface with the solid colour, then apply the alpha */
 	if (boxType == Type::CRASH) {
@@ -24,7 +25,8 @@ DialogBox::DialogBox(BaseEngine *engine, int width, int height, Type boxType) : 
 		SDL_FillRect(m_boxBase, NULL, static_cast<Uint32>(boxType) - 0x131C22);
 	}
 
-	m_pEngine->DrawRectangle(10, 10, m_width - 10, m_height - 10, static_cast<Uint32>(boxType), m_boxBase);
+	/* Draw the base dialog box rectangle */
+	m_pEngine->DrawRectangle(10, 10, m_iDrawWidth - 10, m_iDrawHeight - 10, static_cast<Uint32>(boxType), m_boxBase);
 	SDL_SetAlpha(m_boxBase, SDL_SRCALPHA, BOX_ALPHA);
 }
 
@@ -38,13 +40,9 @@ void DialogBox::Draw() {
 	SDL_BlitSurface(m_boxBase, NULL, m_pEngine->GetForeground(), &rect);
 }
 
-void DialogBox::DoUpdate(int elapsedTime) {}
-
-void DialogBox::GetRedrawRect(SDL_Rect *rectangle) {
-	rectangle->x = m_iCurrentScreenX;
-	rectangle->y = m_iCurrentScreenY;
-	rectangle->w = m_width;
-	rectangle->h = m_height;
+void DialogBox::DoUpdate(int elapsedTime) {
+	/* Update the redraw rectangle */
+	StoreLastScreenPositionAndUpdateRect();
 }
 
 void CrashedDialogBox::Draw() {
@@ -62,7 +60,7 @@ void CrashedDialogBox::Draw() {
 	MyProjectMain *engine = dynamic_cast<MyProjectMain *>(m_pEngine);
 	Font *font = m_pEngine->GetFont("../resources/Segoe UI.ttf", 50);
 
-	int titleX = static_cast<int>((m_width - engine->getStringWidth(m_str, 50)) / 2) + m_iCurrentScreenX;
+	int titleX = static_cast<int>((m_iDrawWidth - engine->getStringWidth(m_str, 50)) / 2) + m_iCurrentScreenX;
 	m_pEngine->DrawString(titleX, 20 + m_iCurrentScreenY, m_str, 0xFFFFFF, font, m_pEngine->GetForeground());
 
 	/* Draw the body containing score information */
@@ -87,11 +85,11 @@ void CrashedDialogBox::Draw() {
 
 	/* Restart label */
 	int xPos = m_iCurrentScreenX + 30;
-	m_pEngine->DrawString(xPos, m_height - 50 + m_iCurrentScreenY, restart, 0xFFFFFF, font, m_pEngine->GetForeground());
+	m_pEngine->DrawString(xPos, m_iDrawHeight - 50 + m_iCurrentScreenY, restart, 0xFFFFFF, font, m_pEngine->GetForeground());
 
 	/* Menu label */
-	xPos = m_width - 30 - engine->getStringWidth(menu, 18) + m_iCurrentScreenX;
-	m_pEngine->DrawString(xPos, m_height - 50 + m_iCurrentScreenY, menu, 0xFFFFFF, font, m_pEngine->GetForeground());
+	xPos = m_iDrawWidth - 30 - engine->getStringWidth(menu, 18) + m_iCurrentScreenX;
+	m_pEngine->DrawString(xPos, m_iDrawHeight - 50 + m_iCurrentScreenY, menu, 0xFFFFFF, font, m_pEngine->GetForeground());
 }
 
 void PausedDialogBox::Draw() {
@@ -107,13 +105,13 @@ void PausedDialogBox::Draw() {
 	Font *font = m_pEngine->GetFont("../resources/Segoe UI.ttf", 50);
 
 	/* Title */
-	int xPos = static_cast<int>((m_width - engine->getStringWidth(title, 50)) / 2) + m_iCurrentScreenX;
+	int xPos = static_cast<int>((m_iDrawWidth - engine->getStringWidth(title, 50)) / 2) + m_iCurrentScreenX;
 	m_pEngine->DrawString(xPos, 20 + m_iCurrentScreenY, title, 0xFFFFFF, font, m_pEngine->GetForeground());
 
 	/* Message */
 	char buf[56];
 	font = m_pEngine->GetFont("../resources/Segoe UI.ttf", 18);
-	xPos = static_cast<int>((m_width - engine->getStringWidth(message, 18)) / 2) + m_iCurrentScreenX;
+	xPos = static_cast<int>((m_iDrawWidth - engine->getStringWidth(message, 18)) / 2) + m_iCurrentScreenX;
 	m_pEngine->DrawString(xPos, 145 + m_iCurrentScreenY, message, 0xFFFFFF, font, m_pEngine->GetForeground());
 }
 
@@ -130,15 +128,15 @@ void HelpDialogBox::Draw() {
 	Font *font = m_pEngine->GetFont("../resources/Segoe UI.ttf", 50);
 
 	/* Title */
-	int xPos = static_cast<int>((m_width - engine->getStringWidth(title, 50)) / 2) + m_iCurrentScreenX;
+	int xPos = static_cast<int>((m_iDrawWidth - engine->getStringWidth(title, 50)) / 2) + m_iCurrentScreenX;
 	m_pEngine->DrawString(xPos, 20 + m_iCurrentScreenY, title, 0xFFFFFF, font, m_pEngine->GetForeground());
 
 	/* Help text */
 	font = m_pEngine->GetFont("../resources/Segoe UI.ttf", 16);
 	m_pEngine->DrawString(m_iCurrentScreenX + 30, m_iCurrentScreenY + 100, "Controls:", 0xFFFFFF, font, m_pEngine->GetForeground());
-	m_pEngine->DrawString(m_iCurrentScreenX + 70, m_iCurrentScreenY + 122, "- Press and hold the UP, DOWN, LEFT and RIGHT arrow keys to", 0xFFFFFF, font, m_pEngine->GetForeground());
-	m_pEngine->DrawString(m_iCurrentScreenX + 80, m_iCurrentScreenY + 144, "control the submarine position.", 0xFFFFFF, font, m_pEngine->GetForeground());
-	m_pEngine->DrawString(m_iCurrentScreenX + 70, m_iCurrentScreenY + 166, "- Press F to release a flare", 0xFFFFFF, font, m_pEngine->GetForeground());
+	m_pEngine->DrawString(m_iCurrentScreenX + 70, m_iCurrentScreenY + 122, "- Press and hold the UP, DOWN, LEFT and RIGHT arrow keys to control", 0xFFFFFF, font, m_pEngine->GetForeground());
+	m_pEngine->DrawString(m_iCurrentScreenX + 80, m_iCurrentScreenY + 144, "the submarine position.", 0xFFFFFF, font, m_pEngine->GetForeground());
+	m_pEngine->DrawString(m_iCurrentScreenX + 70, m_iCurrentScreenY + 166, "- Press F to release a flare, only one can be active at any time", 0xFFFFFF, font, m_pEngine->GetForeground());
 	m_pEngine->DrawString(m_iCurrentScreenX + 70, m_iCurrentScreenY + 188, "- Press P to pause the game", 0xFFFFFF, font, m_pEngine->GetForeground());
 
 	m_pEngine->DrawString(m_iCurrentScreenX + 30, m_iCurrentScreenY + 232, "Gameplay:", 0xFFFFFF, font, m_pEngine->GetForeground());
@@ -149,8 +147,8 @@ void HelpDialogBox::Draw() {
 
 	/* Message */
 	font = m_pEngine->GetFont("../resources/Segoe UI.ttf", 18);
-	xPos = static_cast<int>((m_width - engine->getStringWidth(message, 18)) / 2) + m_iCurrentScreenX;
-	m_pEngine->DrawString(xPos, m_height - 50 + m_iCurrentScreenY, message, 0xFFFFFF, font, m_pEngine->GetForeground());
+	xPos = static_cast<int>((m_iDrawWidth - engine->getStringWidth(message, 18)) / 2) + m_iCurrentScreenX;
+	m_pEngine->DrawString(xPos, m_iDrawHeight - 50 + m_iCurrentScreenY, message, 0xFFFFFF, font, m_pEngine->GetForeground());
 }
 
 void MainDialogBox::Draw() {
@@ -171,26 +169,26 @@ void MainDialogBox::Draw() {
 	Font *font = m_pEngine->GetFont("../resources/Segoe UI.ttf", 50);
 
 	/* Title */
-	int xPos = static_cast<int>((m_width - engine->getStringWidth(title, 50)) / 2) + m_iCurrentScreenX;
+	int xPos = static_cast<int>((m_iDrawWidth - engine->getStringWidth(title, 50)) / 2) + m_iCurrentScreenX;
 	m_pEngine->DrawString(xPos, 20 + m_iCurrentScreenY, title, 0xFFFFFF, font, m_pEngine->GetForeground());
 
 	/* Body */
 	font = m_pEngine->GetFont("../resources/Segoe UI.ttf", 16);
-	xPos = static_cast<int>((m_width - engine->getStringWidth(body1, 16)) / 2) + m_iCurrentScreenX;
+	xPos = static_cast<int>((m_iDrawWidth - engine->getStringWidth(body1, 16)) / 2) + m_iCurrentScreenX;
 	m_pEngine->DrawString(xPos, 100 + m_iCurrentScreenY, body1, 0xFFFFFF, font, m_pEngine->GetForeground());
-	xPos = static_cast<int>((m_width - engine->getStringWidth(body2, 16)) / 2) + m_iCurrentScreenX;
+	xPos = static_cast<int>((m_iDrawWidth - engine->getStringWidth(body2, 16)) / 2) + m_iCurrentScreenX;
 	m_pEngine->DrawString(xPos, 122 + m_iCurrentScreenY, body2, 0xFFFFFF, font, m_pEngine->GetForeground());
-	xPos = static_cast<int>((m_width - engine->getStringWidth(body3, 16)) / 2) + m_iCurrentScreenX;
+	xPos = static_cast<int>((m_iDrawWidth - engine->getStringWidth(body3, 16)) / 2) + m_iCurrentScreenX;
 	m_pEngine->DrawString(xPos, 166 + m_iCurrentScreenY, body3, 0xFFFFFF, font, m_pEngine->GetForeground());
-	xPos = static_cast<int>((m_width - engine->getStringWidth(body4, 16)) / 2) + m_iCurrentScreenX;
+	xPos = static_cast<int>((m_iDrawWidth - engine->getStringWidth(body4, 16)) / 2) + m_iCurrentScreenX;
 	m_pEngine->DrawString(xPos, 188 + m_iCurrentScreenY, body4, 0xFFFFFF, font, m_pEngine->GetForeground());
 
 	/* Play label */
 	font = m_pEngine->GetFont("../resources/Segoe UI.ttf", 18);
 	xPos = m_iCurrentScreenX + 30;
-	m_pEngine->DrawString(xPos, m_height - 50 + m_iCurrentScreenY, play, 0xFFFFFF, font, m_pEngine->GetForeground());
+	m_pEngine->DrawString(xPos, m_iDrawHeight - 50 + m_iCurrentScreenY, play, 0xFFFFFF, font, m_pEngine->GetForeground());
 
 	/* Help label */
-	xPos = m_width - 30 - engine->getStringWidth(help, 18) + m_iCurrentScreenX;
-	m_pEngine->DrawString(xPos, m_height - 50 + m_iCurrentScreenY, help, 0xFFFFFF, font, m_pEngine->GetForeground());
+	xPos = m_iDrawWidth - 30 - engine->getStringWidth(help, 18) + m_iCurrentScreenX;
+	m_pEngine->DrawString(xPos, m_iDrawHeight - 50 + m_iCurrentScreenY, help, 0xFFFFFF, font, m_pEngine->GetForeground());
 }

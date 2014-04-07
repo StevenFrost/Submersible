@@ -28,11 +28,11 @@ public:
 	void reset();
 
 	/* Getters */
-	inline GameObject **getWaveObjectsBuffer1()           { return m_waveObjectsBuffer1;    }
-	inline GameObject **getWaveObjectsBuffer2()           { return m_waveObjectsBuffer2;    }
-	inline int                 getNumWaveObjectsBuffer1() { return m_numWaveObjectsBuffer1; }
-	inline int                 getNumWaveObjectsBuffer2() { return m_numWaveObjectsBuffer2; }
-	inline GameObject         *getTorpedo()               { return m_torpedo;               }
+	GameObject **getWaveObjectsBuffer1()    { return m_waveObjectsBuffer1;    }
+	GameObject **getWaveObjectsBuffer2()    { return m_waveObjectsBuffer2;    }
+	int          getNumWaveObjectsBuffer1() { return m_numWaveObjectsBuffer1; }
+	int          getNumWaveObjectsBuffer2() { return m_numWaveObjectsBuffer2; }
+	GameObject  *getTorpedo()               { return m_torpedo;               }
 
 	void generateWave();
 	void generateWave(GameObject **&buffer, int &size);

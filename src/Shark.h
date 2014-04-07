@@ -6,22 +6,23 @@
 #include "BaseEngine.h"
 #include "DisplayableObject.h"
 
-class MyProjectMain;
-
 class Shark : public DisplayableObject {
 public:
 	Shark(BaseEngine *engine, int x);
-	virtual ~Shark();
+	virtual ~Shark() {}
 
 	/* Overrides from DisplayableObject */
 	virtual void Draw();
 	virtual void DoUpdate(int elapsedTime);
-	virtual void GetRedrawRect(SDL_Rect *rectangle);
 protected:
-	static Image *m_shark;
+	static Image m_shark;			// The shark image
 
-	double m_currentScreenXPrecise;
-	double m_currentScreenYPrecise;
+	int m_resetPoint;				// The x coordinate of the shark reset point
+	double m_currentScreenXPrecise;	// Precise version of the current x position
+	double m_currentScreenYPrecise;	// Precise verison of the current y position
+
+private:
+	inline int generateResetPoint() const { return (-100 - (rand() % (500 - 300) + 300)); }
 };
 
 #endif // !SHARK_H

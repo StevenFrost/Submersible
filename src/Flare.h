@@ -9,23 +9,24 @@
 class Flare : public GameObject {
 public:
 	Flare(BaseEngine *engine, int x, int y);
-	virtual ~Flare();
+	virtual ~Flare() {}
 
 	/* Overrides from GameObject */
-	virtual void Draw();
-	virtual void DoUpdate(int elapsedTime);
-	virtual void GetRedrawRect(SDL_Rect *rectangle);
-	virtual void RedrawBackground();
-	virtual SDL_Surface *getCollidableSurface()  const { return m_flare->getSurface(); }
+	virtual void		 Draw();
+	virtual void		 DoUpdate(int elapsedTime);
+	virtual SDL_Surface *getCollidableSurface() const { return m_flare.getSurface(); }
 
 	void reset();
 
+	/* Getters */
+	bool isActive() { return m_active; }
+
 	/* Setters */
-	void setX(int x) { m_currentScreenXPrecise = m_iCurrentScreenX = x; }
-	void setY(int y) { m_currentScreenYPrecise = m_iCurrentScreenY = y; }
-	void setActive(bool val) { m_active = val; }
+	void setX(int x)		 { m_currentScreenXPrecise = m_iCurrentScreenX = x; }
+	void setY(int y)		 { m_currentScreenYPrecise = m_iCurrentScreenY = y; }
+	void setActive(bool val) { m_active = val;									}
 protected:
-	static Image *m_flare;
+	static Image m_flare;
 
 	void animate(int elapsedTime);
 private:

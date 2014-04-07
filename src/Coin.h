@@ -9,16 +9,14 @@
 class Coin : public GameObject {
 public:
 	Coin(BaseEngine *engine, int x, int y);
-	virtual ~Coin();
+	virtual ~Coin() {}
 
-	/* Overrides from DisplayableObject */
+	/* Overrides from GameObject */
 	virtual void Draw();
 	virtual void DoUpdate(int elapsedTime);
-	virtual void GetRedrawRect(SDL_Rect *rectangle);
-
-	virtual SDL_Surface *getCollidableSurface() const { return m_coin->getSurface();    }
+	virtual SDL_Surface *getCollidableSurface() const { return m_coin.getSurface(); }
 protected:
-	static Image *m_coin;
+	static Image m_coin;
 };
 
 #endif // !COIN_H

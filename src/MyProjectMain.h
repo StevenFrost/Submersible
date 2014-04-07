@@ -72,9 +72,9 @@ protected:
 	Terrain *m_foregroundTerrain;
 	StatusBar *m_statusBar;
 	Submarine *m_sub;
-	Flare *m_flare;
 	Waves *m_waves;
-	Shark *m_shark;
+	Shark *m_shark1;
+	Shark *m_shark2;
 
 	/* Dialog boxes */
 	MainDialogBox *m_mainBox;

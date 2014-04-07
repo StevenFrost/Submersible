@@ -1,15 +1,15 @@
 #ifndef WAVES_H
 #define WAVES_H
 
+#include "Image.h"
 #include "header.h"
-#include "JPGImage.h"
 #include "BaseEngine.h"
 #include "DisplayableObject.h"
 
 class Waves : public DisplayableObject {
 public:
 	Waves(BaseEngine *engine, double speed);
-	virtual ~Waves();
+	virtual ~Waves() {}
 
 	/* Overrides from DisplayableObject */
 	virtual void Draw();
@@ -20,7 +20,7 @@ public:
 	/* Setters */
 	void setSpeed(double speed) { m_speed = speed; }
 private:
-	static ImageSurface * m_base;
+	static Image m_base;
 
 	double m_offset;
 	double m_speed;
