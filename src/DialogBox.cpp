@@ -58,7 +58,7 @@ void CrashedDialogBox::Draw() {
 
 	/* Draw the box title */
 	MyProjectMain *engine = dynamic_cast<MyProjectMain *>(m_pEngine);
-	Font *font = m_pEngine->GetFont("../resources/Segoe UI.ttf", 50);
+	Font *font = m_pEngine->GetFont("../resources/NotoSans-Regular.ttf", 50);
 
 	int titleX = static_cast<int>((m_iDrawWidth - engine->getStringWidth(m_str, 50)) / 2) + m_iCurrentScreenX;
 	m_pEngine->DrawString(titleX, 20 + m_iCurrentScreenY, m_str, 0xFFFFFF, font, m_pEngine->GetForeground());
@@ -66,7 +66,7 @@ void CrashedDialogBox::Draw() {
 	/* Draw the body containing score information */
 	char buf[56];
 	double seconds = m_statusBar->getSeconds();
-	font = m_pEngine->GetFont("../resources/Segoe UI.ttf", 18);
+	font = m_pEngine->GetFont("../resources/NotoSans-Regular.ttf", 18);
 
 	/* Distance */
 	m_pEngine->DrawString(m_iCurrentScreenX + 200, 100 + m_iCurrentScreenY, distance, 0xFFFFFF, font, m_pEngine->GetForeground());
@@ -102,7 +102,7 @@ void PausedDialogBox::Draw() {
 
 	/* Draw the box title */
 	MyProjectMain *engine = dynamic_cast<MyProjectMain *>(m_pEngine);
-	Font *font = m_pEngine->GetFont("../resources/Segoe UI.ttf", 50);
+	Font *font = m_pEngine->GetFont("../resources/NotoSans-Regular.ttf", 50);
 
 	/* Title */
 	int xPos = static_cast<int>((m_iDrawWidth - engine->getStringWidth(title, 50)) / 2) + m_iCurrentScreenX;
@@ -110,7 +110,7 @@ void PausedDialogBox::Draw() {
 
 	/* Message */
 	char buf[56];
-	font = m_pEngine->GetFont("../resources/Segoe UI.ttf", 18);
+	font = m_pEngine->GetFont("../resources/NotoSans-Regular.ttf", 18);
 	xPos = static_cast<int>((m_iDrawWidth - engine->getStringWidth(message, 18)) / 2) + m_iCurrentScreenX;
 	m_pEngine->DrawString(xPos, 145 + m_iCurrentScreenY, message, 0xFFFFFF, font, m_pEngine->GetForeground());
 }
@@ -125,14 +125,14 @@ void HelpDialogBox::Draw() {
 
 	/* Draw the box title */
 	MyProjectMain *engine = dynamic_cast<MyProjectMain *>(m_pEngine);
-	Font *font = m_pEngine->GetFont("../resources/Segoe UI.ttf", 50);
+	Font *font = m_pEngine->GetFont("../resources/NotoSans-Regular.ttf", 50);
 
 	/* Title */
 	int xPos = static_cast<int>((m_iDrawWidth - engine->getStringWidth(title, 50)) / 2) + m_iCurrentScreenX;
 	m_pEngine->DrawString(xPos, 20 + m_iCurrentScreenY, title, 0xFFFFFF, font, m_pEngine->GetForeground());
 
 	/* Help text */
-	font = m_pEngine->GetFont("../resources/Segoe UI.ttf", 16);
+	font = m_pEngine->GetFont("../resources/NotoSans-Regular.ttf", 16);
 	m_pEngine->DrawString(m_iCurrentScreenX + 30, m_iCurrentScreenY + 100, "Controls:", 0xFFFFFF, font, m_pEngine->GetForeground());
 	m_pEngine->DrawString(m_iCurrentScreenX + 70, m_iCurrentScreenY + 122, "- Press and hold the UP, DOWN, LEFT and RIGHT arrow keys to control", 0xFFFFFF, font, m_pEngine->GetForeground());
 	m_pEngine->DrawString(m_iCurrentScreenX + 80, m_iCurrentScreenY + 144, "the submarine position.", 0xFFFFFF, font, m_pEngine->GetForeground());
@@ -146,7 +146,7 @@ void HelpDialogBox::Draw() {
 	m_pEngine->DrawString(m_iCurrentScreenX + 70, m_iCurrentScreenY + 320, "- Hitting any part of the terrain will result in a crash", 0xFFFFFF, font, m_pEngine->GetForeground());
 
 	/* Message */
-	font = m_pEngine->GetFont("../resources/Segoe UI.ttf", 18);
+	font = m_pEngine->GetFont("../resources/NotoSans-Regular.ttf", 18);
 	xPos = static_cast<int>((m_iDrawWidth - engine->getStringWidth(message, 18)) / 2) + m_iCurrentScreenX;
 	m_pEngine->DrawString(xPos, m_iDrawHeight - 50 + m_iCurrentScreenY, message, 0xFFFFFF, font, m_pEngine->GetForeground());
 }
@@ -166,14 +166,14 @@ void MainDialogBox::Draw() {
 
 	/* Draw the box title */
 	MyProjectMain *engine = dynamic_cast<MyProjectMain *>(m_pEngine);
-	Font *font = m_pEngine->GetFont("../resources/Segoe UI.ttf", 50);
+	Font *font = m_pEngine->GetFont("../resources/NotoSans-Regular.ttf", 50);
 
 	/* Title */
 	int xPos = static_cast<int>((m_iDrawWidth - engine->getStringWidth(title, 50)) / 2) + m_iCurrentScreenX;
 	m_pEngine->DrawString(xPos, 20 + m_iCurrentScreenY, title, 0xFFFFFF, font, m_pEngine->GetForeground());
 
 	/* Body */
-	font = m_pEngine->GetFont("../resources/Segoe UI.ttf", 16);
+	font = m_pEngine->GetFont("../resources/NotoSans-Regular.ttf", 16);
 	xPos = static_cast<int>((m_iDrawWidth - engine->getStringWidth(body1, 16)) / 2) + m_iCurrentScreenX;
 	m_pEngine->DrawString(xPos, 100 + m_iCurrentScreenY, body1, 0xFFFFFF, font, m_pEngine->GetForeground());
 	xPos = static_cast<int>((m_iDrawWidth - engine->getStringWidth(body2, 16)) / 2) + m_iCurrentScreenX;
@@ -184,7 +184,7 @@ void MainDialogBox::Draw() {
 	m_pEngine->DrawString(xPos, 188 + m_iCurrentScreenY, body4, 0xFFFFFF, font, m_pEngine->GetForeground());
 
 	/* Play label */
-	font = m_pEngine->GetFont("../resources/Segoe UI.ttf", 18);
+	font = m_pEngine->GetFont("../resources/NotoSans-Regular.ttf", 18);
 	xPos = m_iCurrentScreenX + 30;
 	m_pEngine->DrawString(xPos, m_iDrawHeight - 50 + m_iCurrentScreenY, play, 0xFFFFFF, font, m_pEngine->GetForeground());
 

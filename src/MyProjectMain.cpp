@@ -561,7 +561,7 @@ DisplayableObject *MyProjectMain::getStaticObject(StaticGameObject object) const
 
 int MyProjectMain::getStringWidth(const char *str, int size) {
 	int width, height;
-	TTF_Font *fnt = GetFont("../resources/Segoe UI.ttf", size)->GetFont();
+	TTF_Font *fnt = GetFont("../resources/NotoSans-Regular.ttf", size)->GetFont();
 	TTF_SizeText(fnt, str, &width, &height);
 
 	return width;
@@ -569,7 +569,7 @@ int MyProjectMain::getStringWidth(const char *str, int size) {
 
 int MyProjectMain::getStringHeight(const char *str, int size) {
 	int width, height;
-	TTF_Font *fnt = GetFont("../resources/Segoe UI.ttf", size)->GetFont();
+	TTF_Font *fnt = GetFont("../resources/NotoSans-Regular.ttf", size)->GetFont();
 	TTF_SizeText(fnt, str, &width, &height);
 
 	return height;
