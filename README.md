@@ -9,3 +9,8 @@ Preview
 -------
 
 ![Screenshot from the main game](https://github.com/StevenFrost/Submersible/blob/master/preview/ingame.png?raw=true)
+
+References
+----------
+
+* [Noto Sans](http://www.google.com/fonts/specimen/Noto+Sans) font used
