@@ -18,6 +18,18 @@ GameObjectManager::~GameObjectManager() {
 	delete[] m_waveObjectsBuffer2;
 }
 
+void GameObjectManager::update(int elapsedTime) {
+	Submarine *sub = dynamic_cast<Submarine *>(m_pEngine->getStaticObject(MyProjectMain::SUBMARINE));
+
+	/* Torpedo */
+	if (m_torpedo != NULL) {
+		if (!m_torpedo->IsVisible() || m_torpedo->getCollidableSurfaceX() > 1150) {
+			m_torpedo = NULL;
+		}
+	}
+	if (m_torpedo == NULL) m_torpedo = new Torpedo(m_pEngine, sub);
+}
+
 void GameObjectManager::update(IObservable *observerable) {
 	if (m_pEngine->m_gameState != MyProjectMain::PLAYING) return;
 
@@ -59,7 +71,7 @@ void GameObjectManager::generateWave(GameObject **&buffer, int &size) {
 	const int terrainBufferSize   = terrain->getBufferSize();
 	
 	int count = 0;
-	bool fuelGenerated = false;
+	int numFuelLeft = 2;
 
 	for (int i = 1; i < terrainBufferSize; i += 5) {
 		int lowY = 130;
@@ -100,28 +112,19 @@ void GameObjectManager::generateWave(GameObject **&buffer, int &size) {
 				buffer[count++] = new Coin(m_pEngine, coinX, coinY);
 			}
 
-			if ((double)rand() / RAND_MAX < 0.2) {
+			if (numFuelLeft != 0 && (i == 126 || (double)rand() / RAND_MAX < 0.2)) {
 				/* Generate a non-colliding position for the fuel can */
-				//int fuelX = rand() % (highX - lowX) + lowX;
-				//int fuelY = 0;
-				//do {
-				//	fuelY = rand() % (highY - lowY) + lowY;
-				//	printf("%d\t%d:%d\r\n", i, coinY, fuelY);
-				//} while (fuelY + 60 < coinY || fuelY > coinY + 60);
+				int fuelX = rand() % (highX - lowX) + lowX;
+				int fuelY = 0;
+				do {
+					fuelY = rand() % (highY - lowY) + lowY;
+				} while (fuelY + 60 > coinY && fuelY < coinY + 60);
 
-				//buffer[count++] = new Fuel(m_pEngine, fuelX, fuelY);
-				buffer[count++] = new Fuel(m_pEngine, coinX, highY - coinY + lowY);
+				buffer[count++] = new Fuel(m_pEngine, fuelX, fuelY);
+				numFuelLeft--;
 			}
 			continue;
 		}
-	}
-
-	/* Torpedo */
-	if (m_torpedo != NULL && m_torpedo->GetXCentre() > 1200) {
-		m_torpedo = NULL;
-	}
-	if (m_torpedo == NULL) {
-		m_torpedo = new Torpedo(m_pEngine, m_pEngine->getStaticObject(MyProjectMain::SUBMARINE));
 	}
 	
 	buffer[count++] = NULL;

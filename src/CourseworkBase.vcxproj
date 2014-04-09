@@ -110,7 +110,6 @@
     <ClInclude Include="Submarine.h" />
     <ClInclude Include="templates.h" />
     <ClInclude Include="Terrain.h" />
-    <ClInclude Include="TileManager.h" />
     <ClInclude Include="MyProjectMain.h" />
     <ClInclude Include="Torpedo.h" />
     <ClInclude Include="Waves.h" />
@@ -133,7 +132,6 @@
     <ClCompile Include="StatusBar.cpp" />
     <ClCompile Include="Submarine.cpp" />
     <ClCompile Include="Terrain.cpp" />
-    <ClCompile Include="TileManager.cpp" />
     <ClCompile Include="Torpedo.cpp" />
     <ClCompile Include="Waves.cpp" />
   </ItemGroup>

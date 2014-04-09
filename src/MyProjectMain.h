@@ -92,6 +92,7 @@ protected:
 private:
 	GameState m_gameState;
 	int m_currentHighscorePoints;
+	int m_nextDistanceIncrement;
 
 	/* Action functions for different game states */
 	void playingAction(int elapsedTime);

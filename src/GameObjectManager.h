@@ -4,6 +4,7 @@
 #include "IObserver.h"
 #include "BaseEngine.h"
 #include "GameObject.h"
+#include "Torpedo.h"
 
 class MyProjectMain;
 
@@ -24,6 +25,7 @@ public:
 	GameObjectManager(BaseEngine *engine, int maxObjects);
 	~GameObjectManager();
 
+	void update(int elapsedTime);
 	void update(IObservable *observerable);
 	void reset();
 
@@ -45,7 +47,7 @@ private:
 	GameObject **m_waveObjectsBuffer1;
 	GameObject **m_waveObjectsBuffer2;
 
-	GameObject *m_torpedo;
+	Torpedo *m_torpedo;
 };
 
 #endif // !GAME_OBJECT_MANAGER

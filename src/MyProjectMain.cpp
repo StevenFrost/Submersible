@@ -120,8 +120,6 @@ void MyProjectMain::GameAction() {
 }
 
 void MyProjectMain::playingAction(int elapsedTime) {
-	static int nextDistanceIncrement = 100;
-
 	/* Update the status bar */
 	m_statusBar->incrementDistance((m_sub->getXVelocity() + m_sub->getMaxVelocityX()) * m_foregroundTerrain->getSpeed() * PIXELS_TO_M * (elapsedTime / 1000.0));
 	m_statusBar->incrementTime(elapsedTime / 1000.0);
@@ -130,10 +128,13 @@ void MyProjectMain::playingAction(int elapsedTime) {
 		m_statusBar->setHighscore(m_statusBar->getPoints());
 	}
 
+	/* Upadate the object manager explicitly */
+	m_objectManager->update(elapsedTime);
+
 	/* The user gets 1 point per 100m travelled */
-	if (static_cast<int>(m_statusBar->getDistance()) == nextDistanceIncrement) {
+	if (static_cast<int>(m_statusBar->getDistance()) == m_nextDistanceIncrement) {
 		m_statusBar->incrementPoints();
-		nextDistanceIncrement += 100;
+		m_nextDistanceIncrement += 100;
 	}
 
 	/* Check submarine-based collisions */
@@ -347,6 +348,7 @@ void MyProjectMain::menuKeyEvent(int keyCode) {
 		m_statusBar->resetTime();
 		m_statusBar->resetDistance();
 		m_statusBar->resetPoints();
+		m_nextDistanceIncrement = 100;
 		m_currentHighscorePoints = m_statusBar->getHighscore();
 		m_sub->setSubPosition(100, 250);
 		m_sub->setXVelocity(0);
@@ -385,6 +387,7 @@ void MyProjectMain::crashedKeyEvent(int keyCode) {
 		m_statusBar->resetTime();
 		m_statusBar->resetDistance();
 		m_statusBar->resetPoints();
+		m_nextDistanceIncrement = 100;
 		m_currentHighscorePoints = m_statusBar->getHighscore();
 		m_sub->setSubPosition(100, 250);
 		m_sub->setXVelocity(0);
@@ -401,6 +404,7 @@ void MyProjectMain::crashedKeyEvent(int keyCode) {
 		m_statusBar->resetTime();
 		m_statusBar->resetDistance();
 		m_statusBar->resetPoints();
+		m_nextDistanceIncrement = 100;
 		m_currentHighscorePoints = m_statusBar->getHighscore();
 		m_sub->getFlare()->reset();
 		m_objectManager->reset();
